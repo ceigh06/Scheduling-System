@@ -1,0 +1,361 @@
+package view.common;
+
+import javax.swing.*;
+import view.components.RoundedButton;
+import view.components.RoundedComboBox;
+import view.components.RoundedPanel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+@SuppressWarnings("serial")
+public class ViewSchedule extends JPanel {
+    JLabel roomLbl;
+    JPanel timeSched, form;
+    JScrollPane scrollPanel;
+    GridBagConstraints gbc;
+    private boolean[][] occupied = new boolean[28][2];
+//    BACKEND TO DO: checker if the time has overlapping schedule 'markOccupied()'
+    
+    //reports: utilize capacity
+    String[] times = { "7:00 AM", "8:00 AM", 
+    		"9:00 AM", "10:00 AM", "11:00 AM", 
+    		"12:00 PM", "1:00 PM", "2:00 PM",
+            "3:00 PM", "4:00 PM", "5:00 PM", 
+            "6:00 PM", "7:00 PM", "8:00 PM" };
+    
+    public ViewSchedule(String roomCode) {
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
+
+        //contains all the components of the view schedule frame
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0)); //test line
+        container.setBackground(Color.WHITE);
+        
+        //contains the information of the panel 
+        //BACKEND TO DO: Make it so that the database is automatically giving the information 
+        //of the class to this panel
+        RoundedPanel labelPanel = new RoundedPanel(25, 0, new BorderLayout());
+        roomLbl = new JLabel(roomCode, SwingConstants.CENTER);
+        roomLbl.setForeground(Color.WHITE);
+        roomLbl.setFont(new Font("Arial", Font.BOLD, 16));
+        roomLbl.setOpaque(false);
+        
+        labelPanel.setBackground(new Color(139, 0, 0));
+        labelPanel.setPreferredSize(new Dimension(200, 50));
+        labelPanel.setMaximumSize(new Dimension(200, 50));
+        labelPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        labelPanel.add(roomLbl, BorderLayout.CENTER);
+        
+        container.add(labelPanel);
+        container.add(Box.createRigidArea(new Dimension(0, 10))); //this is used for spacing 
+        
+        //the time table of the schedule, not including the panels 
+        timeSched = new JPanel(new GridBagLayout());
+        timeSched.setBackground(Color.WHITE);
+        timeSched.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        timeSched.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+        timeSched.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        
+        //Contains the time visible to the users 
+        //FRONTEND TO BACKEND: No need to make this database connected
+        for (int i = 0; i < times.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = i * 2;
+            gbc.gridheight = 2;
+            gbc.weightx = 0.1;
+            gbc.weighty = 2;
+            
+            JLabel timeLbl = new JLabel(times[i], SwingConstants.CENTER);
+            timeLbl.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            timeLbl.setOpaque(true);
+            timeLbl.setBackground(Color.WHITE);
+            timeSched.add(timeLbl, gbc);
+        }
+
+        
+        //creates space for the schedule panels to be added to timeSched 
+        //RFONTEND TO BACKEND: No need to make this database connected 
+        for (int i = 0; i < times.length * 2; i++) {
+            gbc.gridx = 1;
+            gbc.gridy = i;
+            gbc.gridheight = 1;
+            gbc.weightx = 0.9;
+            gbc.weighty = 1;
+            
+            JPanel emptyCell = new JPanel();
+            emptyCell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            emptyCell.setBackground(Color.WHITE);
+            timeSched.add(emptyCell, gbc);
+        }
+
+        //BACKEND TO DO: No need to create this manually, 
+        //make it so that the checkers are working
+        addScheduleBlock(1, "7:00 AM - 10:00 AM", true);
+        addScheduleBlock(1, "11:30 AM - 2:30 PM", false);
+        
+        container.add(timeSched);
+        container.add(Box.createRigidArea(new Dimension(0, 10)));
+        
+        //container panel of the forms below 
+        form = new JPanel();
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
+        form.setBackground(Color.WHITE);
+        form.setAlignmentX(Component.CENTER_ALIGNMENT);
+        form.setMaximumSize(new Dimension(430, Integer.MAX_VALUE));
+        
+        // Course selection
+        JLabel selectCourseLbl = new JLabel("SELECT COURSE");
+        selectCourseLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        
+        JPanel selectCoursePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectCoursePanel.setBackground(Color.WHITE);
+        selectCoursePanel.add(selectCourseLbl);
+        
+        //BACKEND TO DO: Retrieve the items of combo box from the database
+        String[] courses = {"IT203 - Advanced Database", "IT211 Web Systems and Technologies"}; 
+        
+        RoundedComboBox<String> courseCombo = new RoundedComboBox<>(courses,20,1);
+        courseCombo.setBackground(Color.WHITE);
+        courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        courseCombo.setMaximumSize(new Dimension(400, 50));
+        
+        // Lecture/Lab buttons
+        JPanel unitBtnPanel = new JPanel();
+        unitBtnPanel.setLayout(new BoxLayout(unitBtnPanel, BoxLayout.X_AXIS));
+        unitBtnPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        unitBtnPanel.setBackground(Color.WHITE);
+        unitBtnPanel.setAlignmentX(Component.CENTER_ALIGNMENT); //test line
+        
+        //BACKEND TO DO: Make functionalities for lecBtn and labBtn
+        RoundedButton lecBtn = new RoundedButton("LECTURE SCHEDULE", 20, Color.GRAY, 2);
+        lecBtn.setPreferredSize(new Dimension(180, 60));
+        lecBtn.setMaximumSize(new Dimension(180, 60));
+        lecBtn.setForeground(Color.WHITE); 
+        lecBtn.setBackground(new Color(139,0,0));
+        
+        RoundedButton labBtn = new RoundedButton("LABORATORY SCHEDULE", 20, Color.GRAY, 2);
+        labBtn.setPreferredSize(new Dimension(180, 60));
+        labBtn.setMaximumSize(new Dimension(180, 60));
+        labBtn.setForeground(Color.WHITE);
+        labBtn.setBackground(new Color(139,0,0));
+        
+        unitBtnPanel.add(lecBtn);
+        unitBtnPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        unitBtnPanel.add(labBtn);
+        
+        // Time in section
+        JLabel timeinLbl = new JLabel("TIME IN");
+        timeinLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        JPanel timeInPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timeInPanel.setBackground(Color.WHITE);
+        timeInPanel.add(timeinLbl);
+        
+        JPanel spinnerPan = new JPanel(new GridLayout(2, 3, 20, 5));
+        spinnerPan.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        spinnerPan.setBackground(Color.WHITE);
+        spinnerPan.setMaximumSize(new Dimension(400, 80));
+        
+        JLabel hLbl = new JLabel("Hour");
+        SpinnerNumberModel hrsModel = new SpinnerNumberModel(7, 1, 12, 1);
+        JSpinner hrs = new JSpinner(hrsModel);
+        
+        JLabel mLbl = new JLabel("Minute");
+        SpinnerNumberModel minModel = new SpinnerNumberModel(0, 0, 59, 1);
+        JSpinner mins = new JSpinner(minModel);
+        
+        JLabel mrdmLbl = new JLabel("AM/PM");
+        String[] meridiem = {"AM", "PM"};
+        JComboBox<String> mrdm = new JComboBox<>(meridiem);
+        
+        spinnerPan.add(hLbl);
+        spinnerPan.add(mLbl);
+        spinnerPan.add(mrdmLbl);
+        spinnerPan.add(hrs);
+        spinnerPan.add(mins);
+        spinnerPan.add(mrdm);
+        
+        // Time out section
+        JLabel timeoutLbl = new JLabel("TIME OUT");
+        timeoutLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        JPanel timeOutPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timeOutPanel.setBackground(Color.WHITE);
+        timeOutPanel.add(timeoutLbl);
+        
+        //BACKEND TO DO: Make this automatic from the computed time out based on their time in 
+        //and their course lecture or laboratory hour
+        JLabel time = new JLabel("6:00 PM", SwingConstants.CENTER);
+        time.setForeground(Color.GRAY);
+        time.setFont(new Font("Arial", Font.BOLD, 15));
+        
+        RoundedPanel timePanel = new RoundedPanel(10, 1, Color.GRAY);
+        timePanel.setLayout(new GridBagLayout());
+        timePanel.setPreferredSize(new Dimension(365, 60));
+        timePanel.setMaximumSize(new Dimension(365, 60));
+        timePanel.setBackground(Color.WHITE);
+        
+        GridBagConstraints gbcTime = new GridBagConstraints();
+        gbcTime.gridx = 0;
+        gbcTime.gridy = 0;
+        gbcTime.anchor = GridBagConstraints.CENTER;
+        timePanel.add(time, gbcTime);
+        
+        JPanel timeWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timeWrapper.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        timeWrapper.setBackground(Color.WHITE);
+        timeWrapper.add(timePanel);
+        
+        // Add all to form
+        form.add(selectCoursePanel);
+        form.add(courseCombo);
+        form.add(unitBtnPanel);
+        form.add(timeInPanel);
+        form.add(spinnerPan);
+        form.add(timeOutPanel);
+        form.add(timeWrapper);
+        
+        container.add(form);
+        
+        // Scroll pane
+        scrollPanel = new JScrollPane(container);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); //test line
+        scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPanel.setBorder(null);
+        
+        //false: view only 
+        //true: view and click
+        setClick(false); //enables clicking of panels (ONLY) 
+        //BACKEND TO DO: direct to room schedule to modify the room schedule
+        add(scrollPanel, BorderLayout.CENTER);
+
+        JPanel southPanel = new JPanel(new BorderLayout()); 
+        southPanel.setPreferredSize(new Dimension(100,50));
+        southPanel.setBorder(BorderFactory.createEmptyBorder(5,40,0,40));
+        southPanel.setBackground(Color.WHITE);
+        
+        ConfirmPanel confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
+        confirmArea.setBackground(Color.WHITE); 
+        southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
+        container.add(southPanel, BorderLayout.SOUTH); 
+    }
+    
+    //UTILITY
+    public void addScheduleBlock(int column, String timeRange, boolean schedType) {
+        int startRow = getRowFromTime(timeRange.split(" - ")[0]);
+        int rowSpan = getTimeSpan(timeRange);
+        
+        // Remove overlapping components
+        //checks the components of the timeSched if its overlapping with the panel the 
+        //user decided, if the element is a JPanel, it removes the border so the border looks 
+        //like its at the back 
+        
+        for (Component comp : timeSched.getComponents()) {
+            GridBagConstraints c = ((GridBagLayout) timeSched.getLayout()).getConstraints(comp);
+            if (c.gridx == column && c.gridy >= startRow && c.gridy < startRow + rowSpan) {
+                if (comp instanceof JPanel) {
+                    ((JPanel) comp).setBorder(null);
+                }
+            }
+        }
+        
+        gbc.gridx = column;
+        gbc.gridy = startRow;
+        gbc.gridheight = rowSpan;
+        gbc.weighty = rowSpan;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        
+        JPanel schedPanel = new JPanel();
+        schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
+        schedPanel.setBackground(schedType ? Color.YELLOW : new Color(190,190,190));
+        if (!schedType) schedPanel.setForeground(Color.WHITE);
+        
+        schedPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK, 1),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        
+        //TESTING ONLY
+        schedPanel.add(new JLabel("BSIT 2A G2"));
+        schedPanel.add(new JLabel("IT208"));
+        schedPanel.add(new JLabel("Ma'am Lanie"));
+        schedPanel.add(new JLabel(timeRange));
+        
+        timeSched.add(schedPanel, gbc);
+        timeSched.setComponentZOrder(schedPanel, 0);
+        
+        markOccupied(column, startRow, rowSpan);
+        timeSched.revalidate();
+        timeSched.repaint();
+    }
+    
+    //UTILITY
+    public int getRowFromTime(String time) {
+        String[] parts = time.split(" ");
+        String[] hourMin = parts[0].split(":");
+        
+        int hour = Integer.parseInt(hourMin[0]);
+        int minute = Integer.parseInt(hourMin[1]);
+        String period = parts[1];
+        
+        if (period.equals("PM") && hour != 12) hour += 12;
+        if (period.equals("AM") && hour == 12) hour = 0;
+        
+        int startHour = 7;
+        int totalMinutes = ((hour - startHour) * 60) + minute;
+        return totalMinutes / 30;
+    }
+    
+    //UTILITY
+    public int getTimeSpan(String timeRange) {
+        String[] times = timeRange.split(" - ");
+        int start = getRowFromTime(times[0]);
+        int end = getRowFromTime(times[1]);
+        return end - start;
+    }
+    
+    //UTILITY
+    public void markOccupied(int col, int startRow, int rowSpan) {
+        for (int i = startRow; i < startRow + rowSpan; i++) {
+            occupied[i][col] = true;
+        }
+    }
+    
+    //UTILITY 
+    public void setClick(boolean enable) {
+    	//checks the components in the GridBagLayout, treat it as an array  
+    	for(Component c : timeSched.getComponents()) {
+    		//check if the component is a JPanel
+    		if(c instanceof JPanel) {
+    			JPanel panel = (JPanel) c; 
+    			
+    			//for disabling the CLICKABLE feature of panel
+    			//if its not a JPanel, the component should not be CLICKABLE
+    			for(java.awt.event.MouseListener m : panel.getMouseListeners()) {
+    				panel.removeMouseListener(m);
+    			}
+    			
+    			if(enable) {
+    				panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    				panel.addMouseListener(new MouseAdapter() {
+    					public void mouseClicked(MouseEvent e) {
+    						//BACKEND TO DO: Make the ADMIN view and modify the schedule 
+    						panel.setBackground(Color.WHITE); //TEST LINE IF WORKING
+    					}
+    				});
+    				
+    			}else {
+    				//if the component is NOT a JPanel, the cursor should be default arrow
+    				panel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    			}
+    		}
+    	}
+    }
+}
