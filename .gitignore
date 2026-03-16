@@ -23,8 +23,25 @@
 hs_err_pid*
 replay_pid*
 
+# Netbeans
 nbproject/private/
 nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+
+# VS Code
+.vscode/
+
+# bin catches every bin path for IDEs
+**/bin/
