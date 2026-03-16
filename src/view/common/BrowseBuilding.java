@@ -24,10 +24,11 @@ import model.Building;
 import view.components.RoundedButton;
 
 @SuppressWarnings("serial")
-public class BrowseBuilding extends JPanel implements ActionListener {
+public class BrowseBuilding extends JPanel  {
 
     private JPanel wrapper;
     private JPanel bldgContent;
+
     private List<RoundedButton> buildingButtons = new ArrayList<>();
 
     Consumer<Building> onBuildingClicked;
@@ -41,7 +42,7 @@ public class BrowseBuilding extends JPanel implements ActionListener {
         bldgContent.setBackground(Color.WHITE);
 
         for (Building building : buildings) {
-            RoundedButton btn = createBldgBtn(building.getName(), building.getName());
+            RoundedButton btn = createBldgBtn(building.getName(), ""); //registering the button to the model
             btn.addActionListener(e ->{
                 onBuildingClicked.accept(building);
             });
@@ -77,7 +78,6 @@ public class BrowseBuilding extends JPanel implements ActionListener {
 
         wrapper.add(headerPanel);
 
-        
 
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -91,7 +91,6 @@ public class BrowseBuilding extends JPanel implements ActionListener {
 
     private RoundedButton createBldgBtn(String bldgName, String imgPath) {
         RoundedButton btn = new RoundedButton(bldgName, 25, new Color(139,0,0),2);
-        btn.addActionListener(this);
         btn.setForeground(new Color(139,0,0));
         btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
         btn.setPreferredSize(new Dimension(120,120));
@@ -104,14 +103,14 @@ public class BrowseBuilding extends JPanel implements ActionListener {
         return btn;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        RoundedButton source = (RoundedButton) e.getSource();
-        String buildingName = source.getText();
+    // @Override
+    // public void actionPerformed(ActionEvent e) {
+    //     RoundedButton source = (RoundedButton) e.getSource();
+    //     String buildingName = source.getText();
 
-        MainFrame.setNavBarVisible(true);
-        RoomBrowser roomPanel = new RoomBrowser(buildingName);
-        MainFrame.addContentPanel(roomPanel, "roomBrowser");
-        MainFrame.showPanel("roomBrowser", buildingName);
-    }
+    //     MainFrame.setNavBarVisible(true);
+    //     RoomBrowser roomPanel = new RoomBrowser(buildingName);
+    //     MainFrame.addContentPanel(roomPanel, "roomBrowser");
+    //     MainFrame.showPanel("roomBrowser", buildingName);
+    // }
 }

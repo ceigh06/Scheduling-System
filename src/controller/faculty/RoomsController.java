@@ -30,20 +30,22 @@ public class RoomsController {
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
+
+        
 
         MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
         MainFrame.showPanel("BrowseBuilding");
     }
 
     void showRoomBrowser(Building building) throws SQLException {
-        RoomBrowser roomBrowser = new RoomBrowser(building.getName());
+        
         RoomDAO roomDAO = new RoomDAO();
         List<Room> rooms = roomDAO.getAllRooms(building.getCode().trim());
-        roomBrowser.loadRooms(rooms);
+        RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms);
+        
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
         MainFrame.showPanel("RoomBrowser");
     }

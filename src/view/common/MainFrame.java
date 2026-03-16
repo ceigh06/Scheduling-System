@@ -107,8 +107,6 @@ public class MainFrame {
         navBar.setOnBrowsePanel(action);
     }
 
-    
-
 	public static void setOnHomePanel(MouseAdapter action) {
         navBar.setOnHomePanel(action);
 	}

@@ -27,7 +27,7 @@ public class RoomBrowser extends JPanel{
 	JPanel roomCard;
 	private RoundedPanel selectedPanel; 
 	private String selectedRoomCode;
-	int roomCtr = 10; //kunwari lang
+	int roomCtr = 0; //kunwari lang
 	
 	public String selectedRoomCode() {
 		return selectedRoomCode;
@@ -36,17 +36,15 @@ public class RoomBrowser extends JPanel{
 	public void loadRooms(List<Room> rooms) {
 		roomCard.removeAll();
 		for (Room room : rooms) {
-			System.out.println(room.getRoomCode());
+			roomCtr++;
 			roomCard.add(createRoomCards(room.getRoomCode(), room.getStatus(), room.getBuildingCode()));
 		}
-
-		System.out.println("Created");
 		
 		roomCard.revalidate();
 		roomCard.repaint();
 	}
 
-	public RoomBrowser(String bldgName) {
+	public RoomBrowser(String bldgName,List<Room> rooms) {
 		setLayout(new BorderLayout()); 
 		setBackground(new Color(250, 249, 246)); 
 		
@@ -73,6 +71,8 @@ public class RoomBrowser extends JPanel{
 
         roomCard = new JPanel(new GridLayout(roomCtr, 1, 10, 10));
         roomCard.setBorder(new EmptyBorder(10, 0, 10, 0));
+
+		loadRooms(rooms);
 
 		roomPanel.add(roomCard, BorderLayout.CENTER);
 
@@ -134,12 +134,14 @@ public class RoomBrowser extends JPanel{
 
 	        JLabel nameLabel = new JLabel(buildingName);
 	        nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-
-	        if (status.equalsIgnoreCase("Available")) {
+			
+	        if (status.equals("0")) {
+				statusLabel.setText("Available");
 	            description = "Confirm to check room schedule.";
-	        } else if (status.equalsIgnoreCase("Occupied")) {
-	            description = "This room is fully occupied today.";
-	        } else if (status.equalsIgnoreCase("Under maintenance")) {
+	        // } else if (status.equalsIgnoreCase("Occupied")) { // this is not in the database only available and under maintenance
+	        //     description = "This room is fully occupied today.";
+	        } else if (status.equals("1")) {
+				statusLabel.setText("Under Maintenance");
 	            description = "This room cannot be used until further notice.";
 	        } else {
 	            description = "Error occurred. Please try again.";

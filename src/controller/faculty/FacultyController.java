@@ -17,7 +17,6 @@ public class FacultyController {
                 try {
                     onBrowseClicked();
                 } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
             }
@@ -46,7 +45,7 @@ public class FacultyController {
     }
 
     public void onBrowseClicked() throws SQLException {
-        RoomsController roomsController = new RoomsController(frame);
+        new RoomsController(frame);
     }
 
     public void onHomeClicked() {
@@ -58,6 +57,6 @@ public class FacultyController {
     }
 
     public void onProfileClicked() {
-
+        new ProfileController(frame);
     }
 }

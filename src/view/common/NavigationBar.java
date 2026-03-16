@@ -47,13 +47,13 @@ public class NavigationBar {
         navPanel.setBorder(BorderFactory.createEmptyBorder(-10,1,-10,1));
         navPanel.setBackground(Color.WHITE);
         
-        browsePanel = createOption("B","Browse");
         homePanel = createOption("H","Home");
+        browsePanel = createOption("B","Browse");
         reqPanel = createOption("R","Requests");
         pfPanel = createOption("P","Profile");
         
-        addPanel(browsePanel,0);
-        addPanel(homePanel,1);
+        addPanel(homePanel,0);
+        addPanel(browsePanel,1);
         addPanel(reqPanel,2);
         addPanel(pfPanel,3);
     }
