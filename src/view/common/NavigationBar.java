@@ -26,7 +26,6 @@ public class NavigationBar {
 
 	public void setOnBrowsePanel(MouseAdapter action) {
         browsePanel.addMouseListener(action);
-		
 	}
 
 	public void setOnHomePanel(MouseAdapter action) {
