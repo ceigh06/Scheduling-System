@@ -50,4 +50,5 @@ public class RoomsController {
         MainFrame.showPanel("RoomBrowser");
     }
     
+    
 }
