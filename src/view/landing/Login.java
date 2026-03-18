@@ -25,7 +25,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 @SuppressWarnings("serial")
-public class Login extends JPanel implements ActionListener {
+public class Login extends JPanel {
     
     private RoundedTextField userText; 
     private RoundedPasswordField passwordText;
