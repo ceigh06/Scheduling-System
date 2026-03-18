@@ -40,9 +40,10 @@ public class Login extends JPanel implements ActionListener {
         return new String(passwordText.getPassword());
     }
     
-    public RoundedButton getLoginButton() {
-        return loginBtn;
+    public void setOnLoginButton(ActionListener action) {
+        loginBtn.addActionListener(action);
     }
+
     
     public Login(){
         setLayout(new BorderLayout());
@@ -115,7 +116,6 @@ public class Login extends JPanel implements ActionListener {
         loginBtn.setMaximumSize(new Dimension(260, 40));
         loginBtn.setBackground(new Color(139,0,0));
         loginBtn.setAlignmentX(LEFT_ALIGNMENT);
-        loginBtn.addActionListener(this);
         
         card.add(loginBtn);
         wrapper.add(card);
@@ -129,12 +129,6 @@ public class Login extends JPanel implements ActionListener {
         return label;
     }
     
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    	MainFrame.setNavBarVisible(true);
-        MainFrame.addContentPanel(new Landing(), "Landing"); 
-        MainFrame.showPanel("Landing", "RoomFindr");
-    }
     
     //for background image
     @Override
