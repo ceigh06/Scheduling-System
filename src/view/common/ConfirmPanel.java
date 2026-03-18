@@ -69,4 +69,8 @@ public class ConfirmPanel {
 	public JPanel getConfirmPanel() {
 		return confirmPanel;
 	}
+
+    public void setBackground(Color color) {
+        confirmPanel.setBackground(color);
+    }
 }
