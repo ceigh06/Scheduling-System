@@ -98,7 +98,7 @@ public class MainFrame {
         return frame;
     }
 
-
+    
 
 
     // NAV BAR REGISTRATION METHODS
