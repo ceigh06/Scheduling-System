@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MainFrame {
@@ -98,7 +99,9 @@ public class MainFrame {
         return frame;
     }
 
-    
+    public static void setNotification(String message) {
+        JOptionPane.showMessageDialog(frame, message);
+    }
 
 
     // NAV BAR REGISTRATION METHODS
