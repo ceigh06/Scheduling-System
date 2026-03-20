@@ -14,7 +14,7 @@ import utilities.DBConnection;
 public class BuildingDAO {
     private static Connection connection;
     public BuildingDAO() throws SQLException {
-        this.connection = new DBConnection("LAPTOP-81CGQV8U\\SQLEXPRESS", "SchedulingSystem", "sa", "a").connect();
+        this.connection = DBConnection.getConnection(); // shared connection
     }
     Building get(String buildingCode) throws SQLException{
         
