@@ -13,9 +13,11 @@ public class Main {
 //		MainFrame.showPanel("Login", "RoomFindr");
 //		
 		
-// //		button1 master controller 
+// //	button1 master controller 
 // 		MainFrame.addContentPanel(new BldgBrowser(), "browseBuilding");
 // 		MainFrame.showPanel("browseBuilding","Browse Buildings");
+
+		
 	}
 
 }
