@@ -2,10 +2,15 @@ package controller.login;
 
 import java.awt.Desktop.Action;
 
+import controller.admin.AdminController;
+import controller.faculty.FacultyController;
+import model.user.User;
+import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.landing.Login;
 
 public class LoginController {
+    User authenticatedUser;
     //switch method to determine which login page to show
         // user -> create controller pass the frame.
     public LoginController() {
@@ -20,18 +25,28 @@ public class LoginController {
 
     void attachLoginListener(Login view) {
         view.setOnLoginButton(e -> {
-            validateUser(view.getUsername(), view.getPassword());
+            if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
+                authenticatedUser = LoginValidator.getAuthenticatedUser();
+
+                createUserDashBoard(); //redirect to dashboard
+
+            } else {
+                MainFrame.setNotification(LoginValidator.getErrorMessage());
+            }
         });
     }
 
-    void validateUser(String userName, String password) {
-
-        if (userName.isEmpty() || password.isEmpty()) {
-            MainFrame.setNotification("Please fill in all fields.");
-            return;
+    void createUserDashBoard() {
+        if (authenticatedUser.getUserType().equals("Student")) {
+            System.out.println("Student");
+            //faculty controller here
+        } else if (authenticatedUser.getUserType().equals("Faculty")) {
+            System.out.println("Faculty");
+            // new FacultyController(authenticatedUser);
+        } else{ // admin
+            System.out.println("Admin");
+            // new AdminController(authenticatedUser);
         }
-
-        
-
     }
+
 }
