@@ -16,7 +16,7 @@ public class RoomDAO {
     private static Connection connection;
 
     public RoomDAO() throws SQLException  {
-        this.connection = DBConnection.connect(); // shared connection
+        this.connection = DBConnection.getConnection(); // shared connection
     }
     Room get(String roomCode) throws SQLException{
 
