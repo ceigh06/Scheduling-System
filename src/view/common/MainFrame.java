@@ -26,7 +26,7 @@ public class MainFrame {
         frame = new JFrame("Student App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setSize(500, 700);
+        frame.setSize(450, 700);
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(Color.WHITE);
