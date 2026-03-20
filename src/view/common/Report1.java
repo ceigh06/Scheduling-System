@@ -185,6 +185,13 @@ public class Report1 extends JPanel implements ItemListener {
         contentWrapper.setLayout(new BoxLayout(contentWrapper, BoxLayout.Y_AXIS));
         contentWrapper.setBackground(Color.WHITE);
 
+        //test line
+        JLabel weekSpan = new JLabel("March 16 - March 21");
+        weekSpan.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        weekSpan.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(weekSpan);
+        contentWrapper.add(Box.createVerticalStrut(3));
+
         JPanel statsCard = createStatsCard("Weekly Room Schedule Requests", approved, denied, voided);
         statsCard.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentWrapper.add(statsCard);
@@ -400,6 +407,7 @@ public class Report1 extends JPanel implements ItemListener {
         JLabel statsTitle = new JLabel(title);
         statsTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         statsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
 
         int total = approvedCount + deniedCount + voidCount;
         JLabel totalStatsLbl = new JLabel(String.valueOf(total));
@@ -438,7 +446,7 @@ public class Report1 extends JPanel implements ItemListener {
         breakdownWrapper.add(breakdownPanel);
 
         statsPanel.add(statsTitle);
-        statsPanel.add(Box.createVerticalStrut(5));
+        statsPanel.add(Box.createVerticalStrut(2));
         statsPanel.add(totalStatsLbl);
         statsPanel.add(Box.createVerticalStrut(5));
         statsPanel.add(breakdownWrapper);
