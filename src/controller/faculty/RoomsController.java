@@ -5,17 +5,21 @@ import java.util.List;
 
 import dao.BuildingDAO;
 import dao.RoomDAO;
+
 import model.Building;
 import model.Room;
+import model.user.User;
+
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 
 public class RoomsController {
-    MainFrame frame;
+    
+    User user;
 
-    RoomsController(MainFrame frame) throws SQLException {
-        this.frame = frame;
+    RoomsController(User user) throws SQLException {
+        this.user = user;
         showBrowseBuilding();
     }
 
