@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,7 +22,6 @@ import javax.swing.border.EmptyBorder;
 import model.Room;
 import view.components.RoundedPanel;
 
-@SuppressWarnings("serial")
 public class RoomBrowser extends JPanel{
 	JPanel roomPanel;
 	JPanel roomCard;
@@ -38,6 +38,7 @@ public class RoomBrowser extends JPanel{
 		for (Room room : rooms) {
 			roomCtr++;
 			roomCard.add(createRoomCards(room.getRoomCode(), room.getStatus(), room.getBuildingCode()));
+			roomCard.add(Box.createVerticalStrut(5));
 		}
 		
 		roomCard.revalidate();
@@ -69,7 +70,8 @@ public class RoomBrowser extends JPanel{
         roomTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
         roomPanel.add(roomTitle, BorderLayout.NORTH);
 
-        roomCard = new JPanel(new GridLayout(roomCtr, 1, 10, 10));
+        roomCard = new JPanel();
+		roomCard.setLayout(new BoxLayout(roomCard, BoxLayout.Y_AXIS));
         roomCard.setBorder(new EmptyBorder(10, 0, 10, 0));
 
 		loadRooms(rooms);
@@ -105,7 +107,7 @@ public class RoomBrowser extends JPanel{
         
 	}
 	
-	 RoundedPanel createRoomCards(String roomCode, String status, String buildingName) {
+	RoundedPanel createRoomCards(String roomCode, String status, String buildingName) {
 	        String description;
 
 	        RoundedPanel roomCard = new RoundedPanel(20,0);
