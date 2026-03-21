@@ -23,11 +23,13 @@ public class LoginController {
         attachLoginListener(view);
     }
 
+
     void attachLoginListener(Login view) {
         view.setOnLoginButton(e -> {
             if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
                 authenticatedUser = LoginValidator.getAuthenticatedUser();
-
+                
+                view.clearFields();
                 createUserDashBoard(); //redirect to dashboard
 
             } else {
@@ -42,7 +44,7 @@ public class LoginController {
             //faculty controller here
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             System.out.println("Faculty");
-            // new FacultyController(authenticatedUser);
+            new FacultyController(authenticatedUser);
         } else{ // admin
             System.out.println("Admin");
             // new AdminController(authenticatedUser);

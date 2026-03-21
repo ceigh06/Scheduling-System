@@ -1,6 +1,7 @@
 package model.user;
 
 public class User {
+    
     String userID;
     String firstName;
     String middleName;

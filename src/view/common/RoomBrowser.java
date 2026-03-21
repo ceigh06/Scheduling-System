@@ -25,9 +25,12 @@ import view.components.RoundedPanel;
 public class RoomBrowser extends JPanel{
 	JPanel roomPanel;
 	JPanel roomCard;
+
 	private RoundedPanel selectedPanel; 
+	
 	private String selectedRoomCode;
-	int roomCtr = 0; //kunwari lang
+
+	int roomCtr = 0; 
 	
 	public String selectedRoomCode() {
 		return selectedRoomCode;
