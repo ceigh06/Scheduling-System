@@ -67,8 +67,6 @@ public class MainFrame {
         leftSpacer.setOpaque(false);
         leftSpacer.setPreferredSize(new Dimension(50, 50));
 
-        topPanel.add(leftSpacer, BorderLayout.WEST);
-
         //ito yung section 
         headerTitle = new JLabel(title, JLabel.CENTER);
         headerTitle.setForeground(Color.WHITE);
@@ -80,7 +78,7 @@ public class MainFrame {
         requestPanel.setPreferredSize(new Dimension(50,50));
         requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); 
 
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/Home.png"));
+        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/Home.png")); //sample only
         Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         requestPanel.add(reqHistoryIcon); 
