@@ -5,9 +5,12 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,13 +20,14 @@ public class MainFrame {
     
     private static JFrame frame;
     private static JPanel contentPanel;
+    private static JPanel requestPanel;
     private static CardLayout cardLayout;
     private static JLabel headerTitle;
     private static NavigationBar navBar;
     private static JPanel navPanel; 
     
     public static void init() {
-        frame = new JFrame("Student App");
+        frame = new JFrame("Scheduling System"); 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setSize(450, 700);
@@ -33,7 +37,7 @@ public class MainFrame {
         
         //top panel, fixed lang din sya 
         //kumabaga ito yung default header
-        JPanel topPanel = createHeader("RoomFindr");
+        JPanel topPanel = createHeader("RoomMate");
         
         //swapping of contents here, JPanel only
         cardLayout = new CardLayout();
@@ -58,14 +62,39 @@ public class MainFrame {
         topPanel.setPreferredSize(new Dimension(500, 50));
         topPanel.setBackground(new Color(139, 0, 0));
         
+        // this is to balance the space added from the button on the east side
+        JPanel leftSpacer = new JPanel();
+        leftSpacer.setOpaque(false);
+        leftSpacer.setPreferredSize(new Dimension(50, 50));
+
+        topPanel.add(leftSpacer, BorderLayout.WEST);
+
         //ito yung section 
         headerTitle = new JLabel(title, JLabel.CENTER);
         headerTitle.setForeground(Color.WHITE);
         headerTitle.setFont(new Font("Georgia", Font.BOLD, 26));
-        headerTitle.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
-        
+        headerTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        requestPanel = new JPanel(); 
+        requestPanel.setOpaque(false);
+        requestPanel.setPreferredSize(new Dimension(50,50));
+        requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); 
+
+        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/Home.png"));
+        Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+        JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
+        requestPanel.add(reqHistoryIcon); 
+
+        requestPanel.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e){
+                //insert logic here 
+                System.out.println("Request History: Im working.");
+            }
+        });
+
+        topPanel.add(leftSpacer, BorderLayout.WEST); 
         topPanel.add(headerTitle, BorderLayout.CENTER);
-        
+        topPanel.add(requestPanel, BorderLayout.EAST);
         return topPanel;
     }
     
