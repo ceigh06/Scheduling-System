@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Desktop.Action;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -24,34 +26,44 @@ import view.components.RoundedPanel;
 
 @SuppressWarnings("serial")
 public class RoomBrowser extends JPanel{
-	JPanel roomPanel;
-	JPanel roomCard;
+	private JPanel roomPanel;
+	private JPanel roomCard;
+
+	private ConfirmPanel confirmArea;
 
 	private RoundedPanel selectedPanel; 
 	
 	private Room selectedRoom;
 
 
-	Consumer<Room> onRoomClicked;
+	private Consumer<Room> onRoomClicked;
 	
 	public void setOnRoomClicked(Consumer<Room> action){
 		this.onRoomClicked = action;
+	}
+
+	public void setOnBackButton(ActionListener action){
+		confirmArea.setBtn1Action(action);
+	}
+
+	public void setOnConfirmButton(ActionListener action){
+		confirmArea.setBtn2Action(action);
+	}
+
+	public Room getSelectedRoom(){
+		return selectedRoom;
 	}
 	
 	public void loadRooms(List<Room> rooms) {
 		roomCard.removeAll();
 		for (Room room : rooms) {
 			roomCard.add(createRoomCards(room, room.getStatus(), room.getBuildingCode()));
-		
 		}
 		
 		roomCard.revalidate();
 		roomCard.repaint();
 	}
 
-	// public String selectedRoomCode() {
-	// 	return selectedRoomCode;
-	// }
 
 	public RoomBrowser(String bldgName,List<Room> rooms) {
 		setLayout(new BorderLayout()); 
@@ -85,11 +97,9 @@ public class RoomBrowser extends JPanel{
 
 		roomPanel.add(roomCard, BorderLayout.CENTER);
 
-        ConfirmPanel confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
         roomPanel.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
         wrapper.add(roomPanel);
-        
-		attachButtonListener(confirmArea);
         
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -98,28 +108,6 @@ public class RoomBrowser extends JPanel{
         
 	}
 
-	void attachButtonListener(ConfirmPanel confirmArea){
-		confirmArea.setBtn1Action(e -> {
-        	MainFrame.showPanel("browseBuilding", "Browse Buildings"); 
-        	clearSelection();
-        });
-        
-        confirmArea.setBtn2Action(e ->{
-        	if(selectedRoom == null) {
-        		JOptionPane.showMessageDialog(null, "Please selected a room first", "Empty selection", JOptionPane.WARNING_MESSAGE);
-        		return; 
-        	}
-			System.out.println(selectedRoom.getRoomCode() + " " +  selectedRoom.getBuildingCode());
-        	
-        	// ViewSchedule sched = new ViewSchedule(selectedRoom); 
-        	// MainFrame.setNavBarVisible(true); 
-        	// MainFrame.addContentPanel(sched, "viewSched"); 
-        	// MainFrame.showPanel("viewSched", "View Schedule");
-        	// clearSelection(); 
-        });
-        
-	}
-	
 	RoundedPanel createRoomCards(Room room, String status, String buildingName) {
 
 	        String description;
