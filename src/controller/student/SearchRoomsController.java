@@ -19,7 +19,6 @@ public class SearchRoomsController {
         try {
             showSearch();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -32,6 +31,8 @@ public class SearchRoomsController {
         searchRooms.loadBuilding(buildings);
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms");
+
+        
     }
 
 }
