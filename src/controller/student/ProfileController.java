@@ -1,5 +1,8 @@
 package controller.student;
 
+import java.sql.SQLException;
+
+import controller.faculty.FacultyController;
 import dao.StudentDAO;
 import model.user.Student;
 import model.user.User;
@@ -17,11 +20,30 @@ public class ProfileController {
        Student student = new StudentDAO().get(user.getUserID());
        viewProfile.loadUser(student);
        showProfile();
+
+       viewProfile.setOnBackClicked(e -> onBackClicked());
+    viewProfile.setOnLogoutClicked(e -> onLogoutClicked());
     }
 
     void showProfile() {
         MainFrame.addContentPanel(viewProfile, "Profile");
         MainFrame.showPanel("Profile");
     }
+
+    private void onLogoutClicked() {
+        user = null;
+        MainFrame.setNavBarVisible(false);
+        MainFrame.showPanel("login");
+    }
+
+    private void onBackClicked(){
+        try {
+            new StudentController(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        };
+    }
+
+
     
 }
