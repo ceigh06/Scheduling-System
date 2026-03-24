@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -130,5 +131,13 @@ public class ViewProfile extends JPanel {
 		for (int i = 0; i < dataset.length; i++) {
 			contentLbl(dataset[i][0], dataset[i][1]);
 		}
+	}
+
+	public void setOnBackClicked(ActionListener action) {
+		btns.setBtn1Action(action);
+	}
+
+	public void setOnLogoutClicked(ActionListener action) {
+		btns.setBtn2Action(action);
 	}
 }
