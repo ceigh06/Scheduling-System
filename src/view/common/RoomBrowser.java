@@ -5,9 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Desktop.Action;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -23,29 +26,44 @@ import view.components.RoundedPanel;
 
 @SuppressWarnings("serial")
 public class RoomBrowser extends JPanel{
-	JPanel roomPanel;
-	JPanel roomCard;
+	private JPanel roomPanel;
+	private JPanel roomCard;
+
+	private ConfirmPanel confirmArea;
 
 	private RoundedPanel selectedPanel; 
 	
-	private String selectedRoomCode;
+	private Room selectedRoom;
 
-	int roomCtr = 0; 
+
+	private Consumer<Room> onRoomClicked;
 	
-	public String selectedRoomCode() {
-		return selectedRoomCode;
+	public void setOnRoomClicked(Consumer<Room> action){
+		this.onRoomClicked = action;
+	}
+
+	public void setOnBackButton(ActionListener action){
+		confirmArea.setBtn1Action(action);
+	}
+
+	public void setOnConfirmButton(ActionListener action){
+		confirmArea.setBtn2Action(action);
+	}
+
+	public Room getSelectedRoom(){
+		return selectedRoom;
 	}
 	
 	public void loadRooms(List<Room> rooms) {
 		roomCard.removeAll();
 		for (Room room : rooms) {
-			roomCtr++;
-			roomCard.add(createRoomCards(room.getRoomCode(), room.getStatus(), room.getBuildingCode()));
+			roomCard.add(createRoomCards(room, room.getStatus(), room.getBuildingCode()));
 		}
 		
 		roomCard.revalidate();
 		roomCard.repaint();
 	}
+
 
 	public RoomBrowser(String bldgName,List<Room> rooms) {
 		setLayout(new BorderLayout()); 
@@ -72,34 +90,16 @@ public class RoomBrowser extends JPanel{
         roomTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
         roomPanel.add(roomTitle, BorderLayout.NORTH);
 
-        roomCard = new JPanel(new GridLayout(roomCtr, 1, 10, 10));
+        roomCard = new JPanel(new GridLayout(rooms.size(), 1, 10, 10));
         roomCard.setBorder(new EmptyBorder(10, 0, 10, 0));
 
 		loadRooms(rooms);
 
 		roomPanel.add(roomCard, BorderLayout.CENTER);
 
-        ConfirmPanel confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
         roomPanel.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
         wrapper.add(roomPanel);
-        
-        confirmArea.setBtn1Action(e -> {
-        	MainFrame.showPanel("browseBuilding", "Browse Buildings"); 
-        	clearSelection();
-        });
-        
-        confirmArea.setBtn2Action(e ->{
-        	if(selectedRoomCode == null) {
-        		JOptionPane.showMessageDialog(null, "Please selected a room first", "Empty selection", JOptionPane.WARNING_MESSAGE);
-        		return; 
-        	}
-        	
-        	ViewSchedule sched = new ViewSchedule(selectedRoomCode); 
-        	MainFrame.setNavBarVisible(true); 
-        	MainFrame.addContentPanel(sched, "viewSched"); 
-        	MainFrame.showPanel("viewSched", "View Schedule");
-        	clearSelection(); 
-        });
         
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -107,8 +107,9 @@ public class RoomBrowser extends JPanel{
         add(scrollPanel, BorderLayout.CENTER);
         
 	}
-	
-	 RoundedPanel createRoomCards(String roomCode, String status, String buildingName) {
+
+	RoundedPanel createRoomCards(Room room, String status, String buildingName) {
+
 	        String description;
 
 	        RoundedPanel roomCard = new RoundedPanel(20,0);
@@ -121,7 +122,7 @@ public class RoomBrowser extends JPanel{
 	        codePanel.setMaximumSize(new Dimension(90,60));
 	        roomCard.setLayout(new BorderLayout(7, 0));
 
-	        JLabel codeLabel = new JLabel(roomCode, SwingConstants.CENTER);
+	        JLabel codeLabel = new JLabel(room.getRoomCode(), SwingConstants.CENTER);
 	        codeLabel.setFont(new Font("Segoe UI", Font.BOLD, 17));
 	        codeLabel.setForeground(Color.WHITE);
 	        codeLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -165,12 +166,17 @@ public class RoomBrowser extends JPanel{
 	        roomCard.addMouseListener(new MouseAdapter(){
 	            @Override
 	            public void mouseClicked(MouseEvent e) {
+
+					if (onRoomClicked != null){ // passing back of model if clicked
+						selectedRoom = room;
+					}
+
 	            	//de-selecting so only one panel is selected 
 	            	//selecting again means removing the selection 
 	                if(selectedPanel == infoPanel) {
 	                    infoPanel.setBorderThickness(0);
 	                    selectedPanel = null;
-	                    selectedRoomCode = null;
+	                    selectedRoom = null;
 	                } else {
 	                	//de-selecting the previous
 	                    if(selectedPanel != null) {
@@ -181,7 +187,7 @@ public class RoomBrowser extends JPanel{
 	                    infoPanel.setBorderColor(new Color(139,0,0));
 	                    infoPanel.setBorderThickness(2);
 	                    selectedPanel = infoPanel;
-	                    selectedRoomCode = roomCode;
+	                    selectedRoom = room;
 	                }
 	                //"repaint" is remodeling the rounded panel because 
 	                //rounded panel is different from normal panels 
@@ -197,7 +203,7 @@ public class RoomBrowser extends JPanel{
 	public void clearSelection() {
 		 if(selectedPanel != null) {
 			 selectedPanel = null;
-			 selectedRoomCode = null;
+			 selectedRoom = null;
 		 }
 	 }
 }

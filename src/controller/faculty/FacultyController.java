@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 import view.common.BrowseBuilding;
-import view.common.Main;
 import view.common.MainFrame;
 import view.landing.Landing;
 import model.user.User;
