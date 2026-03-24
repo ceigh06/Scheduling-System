@@ -1,9 +1,11 @@
 package controller.login;
 
 import java.awt.Desktop.Action;
+import java.sql.SQLException;
 
 import controller.admin.AdminController;
 import controller.faculty.FacultyController;
+import controller.student.StudentController;
 import model.user.User;
 import utilities.LoginValidator;
 import view.common.MainFrame;
@@ -41,7 +43,12 @@ public class LoginController {
     void createUserDashBoard() {
         if (authenticatedUser.getUserType().equals("Student")) {
             System.out.println("Student");
-            //faculty controller here
+            try {
+                new StudentController(authenticatedUser);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             System.out.println("Faculty");
             new FacultyController(authenticatedUser);

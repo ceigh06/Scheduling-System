@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -28,6 +29,7 @@ import javax.swing.SpinnerNumberModel;
 
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
+import model.Building;
 
 public class SearchRooms1 extends JPanel {
 	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel;
@@ -61,24 +63,6 @@ public class SearchRooms1 extends JPanel {
 		buildingContainer.setLayout(new GridLayout(0, 1, 5, 5));
 		buildingContainer.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		buildingContainer.setOpaque(false);
-
-		String[] bldg = { "Pimentel Hall", "Alvarado Hall", "Natividad Hall", "Law Building", "CHTM Building",
-				"Roxas Hall", "SRLC Building", "Federizo Hall", "Mendoza Hall", "NSTP Building" };
-
-		for (String b : bldg) {
-			// rounded panel for each choice
-			RoundedPanel choice = new RoundedPanel(20, 1, Color.BLACK, new BorderLayout());
-			choice.setBackground(new Color(221, 221, 219));
-			// choices
-			check = new JCheckBox(b);
-			check.setFont(new Font("Arial", Font.PLAIN, 16));
-			check.setMargin(new Insets(3, 10, 2, 10));
-			check.setOpaque(false);
-			// adds the choices to a rounded panel
-			choice.add(check, BorderLayout.CENTER);
-			// add it on the container
-			buildingContainer.add(choice);
-		}
 
 		// scrollpane for buildings
 		selectBuilding = new JScrollPane(buildingContainer);
@@ -266,5 +250,22 @@ public class SearchRooms1 extends JPanel {
 		container.add(inputs);
 
 		return container;
+	}
+
+	public void loadBuilding(List<Building> buildings) {
+		for (Building building : buildings) {
+			// rounded panel for each choice
+			RoundedPanel choice = new RoundedPanel(20, 1, Color.BLACK, new BorderLayout());
+			choice.setBackground(new Color(221, 221, 219));
+			// choices
+			check = new JCheckBox(building.getName());
+			check.setFont(new Font("Arial", Font.PLAIN, 16));
+			check.setMargin(new Insets(3, 10, 2, 10));
+			check.setOpaque(false);
+			// adds the choices to a rounded panel
+			choice.add(check, BorderLayout.CENTER);
+			// add it on the container
+			buildingContainer.add(choice);
+		}
 	}
 }
