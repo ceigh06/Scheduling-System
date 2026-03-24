@@ -27,7 +27,6 @@ public class StudentController {
         landing.setOnSearchAction(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
-                    MainFrame.setNavBarVisible(false);
                     onSearchClicked();
                 } catch (SQLException e1) {
                     e1.printStackTrace();

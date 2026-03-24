@@ -1,11 +1,20 @@
 package controller.student;
 
 import model.user.User;
+import view.common.MainFrame;
 
 public class RequestsController {
 
+    User user;
+
     public RequestsController(User user) {
-        //TODO Auto-generated constructor stub
+        this.user = user;
     }
-    
+
+    void showRequestStatus() {
+        
+    }
+
+
+
 }

@@ -32,11 +32,6 @@ public class ProfileController {
     
     private void createProfile() {
         viewProfile = new ViewProfile();
-        // if (user.getUserType() == "Student") {
-        //     viewProfile = new ViewProfile(new StudentDAO().get(user.getUserID()));
-        // } else if (user.getUserType() == "Faculty") {
-        //     viewProfile = new ViewProfile(new FacultyDAO().get(user.getUserID()));
-        // }
         
         
     }

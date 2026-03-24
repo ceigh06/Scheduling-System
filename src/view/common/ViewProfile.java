@@ -20,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import model.user.Faculty;
+import model.user.Student;
 import view.common.ConfirmPanel;
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;
@@ -64,10 +66,6 @@ public class ViewProfile extends JPanel {
 	    			{"College","College of Information and Communications Technology (CICT)"},
 	    			{"Program","Bachelor of Science in Information Technology (BSIT)"},
 	    			{"Section","BSIT 2A G2"}};
-
-	    	for(int i = 0; i < dataset.length; i++) {
-	    		
-	    	}
 	    	
 	    }else if(userType == "faculty") {
 	    	String[][] dataset = {{"Employee Num","2024100944"},
@@ -123,5 +121,21 @@ public class ViewProfile extends JPanel {
 	    info.add(Box.createRigidArea(new Dimension(0, 10)));
 	    info.revalidate();
 	    info.repaint();
+	}
+
+	public void loadUser(Student user) {
+		String[][] dataset = {{"Student Number",user.getUserID()},
+	    			{"Full Name", user.getFirstName() + " " + user.getMiddleName() + " " + user.getLastName()},
+	    			{"College", "N/A"},
+	    			{"Program", "N/A"},
+	    			{"Section", String.valueOf(user.getSectionKey())}};
+
+		for(int i = 0; i < dataset.length; i++) {
+	    		contentLbl(dataset[i][0],dataset[i][1]);
+	    	}
+	}
+
+	public void loadUser(Faculty user) {
+		
 	}
 }
