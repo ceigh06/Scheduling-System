@@ -9,6 +9,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Desktop.Action;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -26,7 +28,9 @@ public class ViewProfile extends JPanel {
 	JPanel picPanel, info, btnPanel;
 	String header, content;
 	String userType;//if student or faculty
-	
+	ConfirmPanel btns = new ConfirmPanel(this, "GO BACK", "LOG OUT");
+
+
 	public ViewProfile(){
 	    setLayout(new BorderLayout());
 	    //profile pic panel
@@ -62,7 +66,7 @@ public class ViewProfile extends JPanel {
 	    			{"Section","BSIT 2A G2"}};
 
 	    	for(int i = 0; i < dataset.length; i++) {
-	    		contentLbl(dataset[i][0],dataset[i][1]);
+	    		
 	    	}
 	    	
 	    }else if(userType == "faculty") {
@@ -75,12 +79,21 @@ public class ViewProfile extends JPanel {
 	    		contentLbl(dataset[i][0],dataset[i][1]);
 	    	}
 	    }
+		
 	    btnPanel = new JPanel();
-	    ConfirmPanel btns = new ConfirmPanel(this, "GO BACK", "LOG OUT");
+	    
 	    btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 	    btnPanel.add(btns.getConfirmPanel(), BorderLayout.CENTER); 
 	    
 	    add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void setOnBackClicked(ActionListener action) {
+		btns.setBtn1Action(action);
+	}
+
+	public void setOnLogoutClicked(ActionListener action) {
+		btns.setBtn2Action(action);
 	}
 
 	public void contentLbl(String header, String content){

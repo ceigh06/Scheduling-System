@@ -4,18 +4,26 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.BuildingDAO;
+import dao.EnrolledCoursesDAO;
 import dao.RoomDAO;
+
 import model.Building;
+import model.Course;
 import model.Room;
+import model.user.Student;
+import model.user.User;
+
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
+import view.common.ViewSchedule;
 
 public class RoomsController {
-    MainFrame frame;
+    
+    User user;
 
-    RoomsController(MainFrame frame) throws SQLException {
-        this.frame = frame;
+    RoomsController(User user) throws SQLException {
+        this.user = user;
         showBrowseBuilding();
     }
 
@@ -48,6 +56,35 @@ public class RoomsController {
         
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
         MainFrame.showPanel("RoomBrowser");
+
+        roomBrowser.setOnBackButton(e -> {
+            MainFrame.showPanel("BrowseBuilding");
+        });
+
+        roomBrowser.setOnConfirmButton(e -> {
+            Room selectedRoom = roomBrowser.getSelectedRoom();
+            if (selectedRoom == null){
+                MainFrame.setNotification("Please Choose a Room First");
+                roomBrowser.clearSelection();
+            }
+            showRoomSchedule(selectedRoom);
+        });
+
+    }
+
+    void showRoomSchedule(Room selectedRoom){
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom.getRoomCode());
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
+
+    
+        viewSchedule.setOnBackClicked(e ->{
+            MainFrame.showPanel("RoomBrowser");
+        });
+
+        viewSchedule.setOnConfirmClicked(e ->{
+
+        });
     }
     
     

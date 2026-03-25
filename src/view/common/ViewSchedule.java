@@ -5,15 +5,22 @@ import view.components.RoundedButton;
 import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class ViewSchedule extends JPanel {
-    JLabel roomLbl;
-    JPanel timeSched, form;
-    JScrollPane scrollPanel;
-    GridBagConstraints gbc;
+
+    //field components
+    RoundedComboBox<String> courseCombo;
+
+    private ConfirmPanel confirmArea;
+    private JLabel roomLbl;
+    private JPanel timeSched, form;
+    private JScrollPane scrollPanel;
+    private GridBagConstraints gbc;
+
     private boolean[][] occupied = new boolean[28][2];
 //    BACKEND TO DO: checker if the time has overlapping schedule 'markOccupied()'
     
@@ -23,6 +30,16 @@ public class ViewSchedule extends JPanel {
     		"12:00 PM", "1:00 PM", "2:00 PM",
             "3:00 PM", "4:00 PM", "5:00 PM", 
             "6:00 PM", "7:00 PM", "8:00 PM" };
+
+
+    // register of listeners        
+    public void setOnBackClicked(ActionListener action){
+        confirmArea.setBtn1Action(action);
+    }
+
+    public void setOnConfirmClicked(ActionListener action){
+        confirmArea.setBtn2Action(action);
+    }
     
     public ViewSchedule(String roomCode) {
         setLayout(new BorderLayout());
@@ -122,10 +139,7 @@ public class ViewSchedule extends JPanel {
         //BACKEND TO DO: Retrieve the items of combo box from the database
         String[] courses = {"IT203 - Advanced Database", "IT211 Web Systems and Technologies"}; 
         
-        RoundedComboBox<String> courseCombo = new RoundedComboBox<>(courses,20,1);
-        courseCombo.setBackground(Color.WHITE);
-        courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        courseCombo.setMaximumSize(new Dimension(400, 50));
+        initializeCourseSection();
         
         // Lecture/Lab buttons
         JPanel unitBtnPanel = new JPanel();
@@ -241,7 +255,7 @@ public class ViewSchedule extends JPanel {
         southPanel.setBorder(BorderFactory.createEmptyBorder(5,40,0,40));
         southPanel.setBackground(Color.WHITE);
         
-        ConfirmPanel confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
         confirmArea.setBackground(Color.WHITE); 
         southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
         container.add(southPanel, BorderLayout.SOUTH); 
@@ -294,6 +308,13 @@ public class ViewSchedule extends JPanel {
         markOccupied(column, startRow, rowSpan);
         timeSched.revalidate();
         timeSched.repaint();
+    }
+
+    void initializeCourseSection(){
+        courseCombo = new RoundedComboBox<>(courses,20,1);
+        courseCombo.setBackground(Color.WHITE);
+        courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        courseCombo.setMaximumSize(new Dimension(400, 50));
     }
     
     //UTILITY

@@ -1,9 +1,13 @@
 package model.user;
 
+import java.util.List;
+
+import model.Course;
+
 public class Student extends User {
        
     int sectionKey;
-   
+    List<Course> courses;
     
     public void load(String studentID, String firstName, String middleName, String lastName, int sectionKey, String password) {
         this.userID = studentID;
@@ -14,6 +18,13 @@ public class Student extends User {
         this.sectionKey = sectionKey;
     }
 
+    public List<Course> getCourses(){
+        return courses;
+    }
+
+    public void loadCourses(List<Course> courses){
+        this.courses = courses;
+    }
 
     public String getStudentID() {
         return userID;

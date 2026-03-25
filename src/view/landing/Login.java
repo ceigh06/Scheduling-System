@@ -44,6 +44,11 @@ public class Login extends JPanel {
         loginBtn.addActionListener(action);
     }
 
+    public void clearFields() {
+        userText.setText("");
+        passwordText.setText("");
+    }
+
     
     public Login(){
         setLayout(new BorderLayout());
