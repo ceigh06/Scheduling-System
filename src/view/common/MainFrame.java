@@ -25,6 +25,7 @@ public class MainFrame {
     private static JLabel headerTitle;
     private static NavigationBar navBar;
     private static JPanel navPanel; 
+    private static ImageIcon img;
     
     public static void init() {
         frame = new JFrame("Scheduling System"); 
@@ -78,7 +79,7 @@ public class MainFrame {
         requestPanel.setPreferredSize(new Dimension(50,50));
         requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); 
 
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/Home.png")); //sample only
+        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/RequestHistory.png"));
         Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         requestPanel.add(reqHistoryIcon); 

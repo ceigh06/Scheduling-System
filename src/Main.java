@@ -1,6 +1,7 @@
 import controller.faculty.FacultyController;
 import view.common.MainFrame;
 import view.common.Report1;
+import view.common.Report3;
 import view.landing.Landing;
 import view.landing.Login;
 
@@ -15,5 +16,6 @@ public class Main {
         MainFrame.addContentPanel(new Report1(), "report1"); 
 		MainFrame.showPanel("report1", "Admin Reports");
 
+        //TEST NEW NAV BAR
     }
 }

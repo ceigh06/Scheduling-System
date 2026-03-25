@@ -2,13 +2,16 @@ package view.common;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,10 +49,10 @@ public class NavigationBar {
         navPanel.setBorder(BorderFactory.createEmptyBorder(-10,1,-10,1));
         navPanel.setBackground(Color.WHITE);
         
-        homePanel = createOption("H","Home");
-        browsePanel = createOption("B","Browse");
-        reqPanel = createOption("R","Requests");
-        pfPanel = createOption("P","Profile");
+        homePanel = createOption("/images/Home.png","Home");
+        browsePanel = createOption("/images/Rooms.png","Browse");
+        reqPanel = createOption("/images/Notification.png","Requests");
+        pfPanel = createOption("/images/Profile.png","Profile");
         
         addPanel(homePanel,0);
         addPanel(browsePanel,1);
@@ -68,13 +71,25 @@ public class NavigationBar {
         navPanel.add(panel,gbc);
     }
 
-    private RoundedPanel createOption(String letter,String text){
+    private RoundedPanel createOption(String imgPath,String text){
         RoundedPanel panel = new RoundedPanel(20,0);
+        panel.setLayout(new GridBagLayout());
         panel.setBackground(new Color(139,0,0));
+        panel.setPreferredSize(new Dimension(80,25));
+        panel.setMaximumSize(new Dimension(80,25));
 
-        JLabel label = new JLabel(letter, JLabel.CENTER);
-        label.setForeground(Color.WHITE);
+        ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
+        Image imgIcon = new ImageIcon(getClass().getResource(imgPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        Image scaledImg = imgIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        JLabel label = new JLabel(new ImageIcon(scaledImg));
         panel.add(label);
+
+        JLabel textLbl = new JLabel(text);
+        textLbl.setForeground(Color.WHITE);
+        textLbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        textLbl.setVisible(false);
+        textLbl.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+        panel.add(textLbl);
 
         //BACKEND TO DO: Make it so that when I click the button item, it will go to the frames
         panel.addMouseListener(new MouseAdapter() {
@@ -82,21 +97,20 @@ public class NavigationBar {
             public void mouseClicked(MouseEvent e) {
                 GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
                 if(selectedPanel != null){
-                    JLabel inactiveLbl = (JLabel) selectedPanel.getComponent(0);
-                    inactiveLbl.setText(inactiveLbl.getText().substring(0,1));
-                    inactiveLbl.setForeground(Color.WHITE);
-                    selectedPanel.setBackground(new Color(139,0,0));
+                    selectedPanel.getComponent(1).setVisible(false); //hides the text of the previously selected panel
+                    selectedPanel.setBackground(new Color(139,0,0)); //goes back to the original color of the previously selected panel
 
                     GridBagConstraints old = layout.getConstraints(selectedPanel);
                     old.weightx = 1;
                     layout.setConstraints(selectedPanel, old); //Goes back to the old positions 
                 }
 
-                selectedPanel = panel;
-                label.setText(text);
-                GridBagConstraints gbc = layout.getConstraints(panel);
-                gbc.weightx = 2; //magiging two grids yung makukuha nya 
-                layout.setConstraints(panel, gbc);
+                    textLbl.setVisible(true); //shows the text of the currently selected panel
+                    selectedPanel = panel;
+
+                    GridBagConstraints gbc = layout.getConstraints(panel);
+                    gbc.weightx = 3;
+                    layout.setConstraints(panel, gbc);
 
                 //so it will go back to the previous looks
                 navPanel.revalidate();
