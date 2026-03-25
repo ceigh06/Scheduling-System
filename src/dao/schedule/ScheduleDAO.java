@@ -14,7 +14,7 @@ import utilities.DBConnection;
 public class ScheduleDAO {
     Connection connection;
 
-    ScheduleDAO(){
+    public ScheduleDAO(){
         try {
             this.connection = DBConnection.getConnection();
         } catch (SQLException e) {

@@ -27,7 +27,11 @@ public class ViewSchedule extends JPanel {
 
     private boolean[][] occupied = new boolean[28][2];
 //    BACKEND TO DO: checker if the time has overlapping schedule 'markOccupied()'
-    
+    String[] times = { "7:00 AM", "8:00 AM", 
+    		"9:00 AM", "10:00 AM", "11:00 AM", 
+    		"12:00 PM", "1:00 PM", "2:00 PM",
+            "3:00 PM", "4:00 PM", "5:00 PM", 
+            "6:00 PM", "7:00 PM", "8:00 PM" };
 
 
     // register of listeners        
@@ -44,7 +48,7 @@ public class ViewSchedule extends JPanel {
         
         //Contains the time visible to the users 
         //FRONTEND TO BACKEND: No need to make this database connected
-        loadScheduleLayout(room);
+        loadScheduleLayout();
 
         
         //creates space for the schedule panels to be added to timeSched 
@@ -200,13 +204,35 @@ public class ViewSchedule extends JPanel {
     }
 
     void loadClassSchedule(Room room){
-        for (Schedule schedule : )
-        addScheduleBlock(1, "7:00 AM - 10:00 AM", true);
-        addScheduleBlock(1, "11:30 AM - 2:30 PM", false);
+        for (Schedule schedule : room.getSchedules() ){
+            String formattedTimeIn = formatTime(schedule.getTimeIn());
+            String formattedTimeOut = formatTime(schedule.getTimeOut());
+            String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+            
+            boolean isMasterSchedule = true;
+            if (schedule.getStatus().trim().equals("3")) isMasterSchedule = false;
+            
+            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+        }
+    }
+
+    private String formatTime(String sqlTime) {
+    // sqlTime comes in as "07:00:00" or "HH:mm:ss"
+    String[] parts = sqlTime.split(":");
+    int hour = Integer.parseInt(parts[0]);
+    int minute = Integer.parseInt(parts[1]);
+
+    String suffix = hour >= 12 ? "PM" : "AM";
+    int displayHour = hour > 12 ? hour - 12 : hour;  // convert 13 → 1, 14 → 2
+    if (displayHour == 0) displayHour = 12;           // convert 0 → 12 for midnight
+
+    String displayMinute = String.format("%02d", minute); // keep leading zero
+
+    return displayHour + ":" + displayMinute + " " + suffix;
     }
 
     //initilization of the whole page 
-    void loadScheduleLayout(Room room){
+    void loadScheduleLayout(){
         // get the times array in the room
 
         for (int i = 0; i < times.length; i++) {
@@ -279,7 +305,7 @@ public class ViewSchedule extends JPanel {
     }
     
     //UTILITY
-    public void addScheduleBlock(int column, String timeRange, boolean schedType) {
+    public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
         int startRow = getRowFromTime(timeRange.split(" - ")[0]);
         int rowSpan = getTimeSpan(timeRange);
         
@@ -314,9 +340,9 @@ public class ViewSchedule extends JPanel {
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         
         //TESTING ONLY
-        schedPanel.add(new JLabel("BSIT 2A G2"));
-        schedPanel.add(new JLabel("IT208"));
-        schedPanel.add(new JLabel("Ma'am Lanie"));
+        schedPanel.add(new JLabel(schedule.getSectionKey()));
+        schedPanel.add(new JLabel(schedule.getCourseCode()));
+        schedPanel.add(new JLabel(schedule.getFacultyID()));
         schedPanel.add(new JLabel(timeRange));
         
         timeSched.add(schedPanel, gbc);
@@ -328,6 +354,7 @@ public class ViewSchedule extends JPanel {
     }
 
     void initializeCourseSection(){
+          String[] courses = {"IT203 - Advanced Database", "IT211 Web Systems and Technologies"}; 
         courseCombo = new RoundedComboBox<>(courses,20,1);
         courseCombo.setBackground(Color.WHITE);
         courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
