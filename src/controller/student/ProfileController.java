@@ -31,6 +31,7 @@ public class ProfileController {
     }
 
     private void onLogoutClicked() {
+        MainFrame.restoreNavBarDefaultState();
         user = null;
         MainFrame.setNavBarVisible(false);
         MainFrame.showPanel("login");

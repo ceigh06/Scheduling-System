@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import controller.student.SearchRoomsController;
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
+import view.common.NavigationBar;
 import view.landing.Landing;
 
 import model.user.User;
@@ -27,6 +28,7 @@ public class StudentController {
         landing.setOnSearchAction(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
+                    MainFrame.restoreNavBarDefaultState();
                     onSearchClicked();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
