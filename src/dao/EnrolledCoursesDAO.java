@@ -24,12 +24,12 @@ public class EnrolledCoursesDAO {
     public List<Course> getStudentCourse(String studentNumber){
         List<Course> courses = new ArrayList<>();
         try {
-            Course course = new Course();
             PreparedStatement stmt = connection.prepareStatement("SELECT c.CourseCode, c.ProgramCode, c.CourseDescription, c.Units,c.IsMajor,IsArchived, ec.SectionKey FROM Course c "
             + "JOIN EnrolledCourses ec ON c.CourseCode = ec.CourseCode  WHERE ec.StudentNumber = ?");
             stmt.setString(1, studentNumber);
             ResultSet set = stmt.executeQuery();
             while (set.next()){
+                Course course = new Course();
                 course.setCode(set.getString("CourseCode"));
                 course.setProgramCode(set.getString("ProgramCode"));
                 course.setDescription(set.getString("CourseDescription"));

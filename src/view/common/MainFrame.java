@@ -81,7 +81,7 @@ public class MainFrame {
         requestPanel.setPreferredSize(new Dimension(50,50));
         requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); 
 
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/Home.png")); //sample only
+        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/resources/Home.png")); //sample only
         Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         requestPanel.add(reqHistoryIcon); 
