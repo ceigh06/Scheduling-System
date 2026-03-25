@@ -14,7 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
-
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import dao.BuildingDAO;
 import dao.EnrolledCoursesDAO;
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
@@ -43,7 +45,7 @@ public class SearchRooms1 extends JPanel {
 	JScrollPane selectBuilding;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
-	JComboBox<String> courseCombo;
+	JComboBox<Course> courseCombo;
 	private ConfirmPanel confirmArea;
 
 	public SearchRooms1() {
@@ -263,8 +265,7 @@ public class SearchRooms1 extends JPanel {
 	public void loadCourse(List<Course> courses) {
 		
 		for(Course course : courses) {
-			courseCombo.addItem(course.getCode() + " - " + course.getDescription() + " | " + course.getUnits() );
-			courseCombo.
+			courseCombo.addItem(course);
 		}
 	}
 
@@ -275,6 +276,7 @@ public class SearchRooms1 extends JPanel {
 			choice.setBackground(new Color(221, 221, 219));
 			// choices
 			check = new JCheckBox(building.getName());
+			check.setName(building.getCode());
 			check.setFont(new Font("Arial", Font.PLAIN, 16));
 			check.setMargin(new Insets(3, 10, 2, 10));
 			check.setOpaque(false);
@@ -285,12 +287,20 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	public void setOnClearButton(ActionListener action) {
-		confirmArea.setBtn1Action(action);
+	public List<Building> getChosenBuildings() throws SQLException{
+		return loadChosenBuildings(buildingContainer);
 	}
 
-	public void setOnConfirmButton(ActionListener action) {
-		confirmArea.setBtn2Action(action);
+	public String getTimeIn() {
+		List<String> time = new ArrayList<>();
+		loadTime(timeInPanel, time);
+		return time.get(0) + ":" + time.get(1) + " " + time.get(2);
+	}
+
+	public String getTimeOut() {
+		List<String> time = new ArrayList<>();
+		loadTime(timeOutPanel, time);
+		return time.get(0) + ":" + time.get(1) + " " + time.get(2);
 	}
 
 	public void clearAll() {
@@ -327,5 +337,43 @@ public class SearchRooms1 extends JPanel {
 				clearCheckBoxes((Container) comp);
 			}
 		}
+	}
+
+	private List<Building> loadChosenBuildings(Container container) throws SQLException{
+		List<Building> buildings = new ArrayList<>();
+		BuildingDAO buildingDao = new BuildingDAO();
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JCheckBox && ((JCheckBox) comp).isSelected()) {
+				String buildingCode = ((JCheckBox) comp).getName();
+				buildings.add(buildingDao.get(buildingCode));
+			} else if (comp instanceof Container) {
+				loadChosenBuildings((Container) comp);
+			}
+		}
+		return buildings;
+	}
+
+	private void loadTime(Container container, List<String> time) {
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JSpinner) {
+				time.add(((JSpinner) comp).getValue().toString());
+				System.out.println(((JSpinner) comp).getValue().toString());
+			}
+			else if(comp instanceof JComboBox) {
+				time.add(((JComboBox) comp).getSelectedItem().toString());
+				System.out.println(((JComboBox) comp).getSelectedItem().toString());
+			}
+			else if (comp instanceof Container) {
+				loadTime((Container) comp, time);
+			}
+		}
+	}
+
+	public void setOnClearButton(ActionListener action) {
+		confirmArea.setBtn1Action(action);
+	}
+
+	public void setOnConfirmButton(ActionListener action) {
+		confirmArea.setBtn2Action(action);
 	}
 }
