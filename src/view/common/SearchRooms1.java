@@ -30,9 +30,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import dao.EnrolledCoursesDAO;
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
 import model.Building;
+import model.Course;
 
 public class SearchRooms1 extends JPanel {
 	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel, timeInPanel,
@@ -41,6 +43,7 @@ public class SearchRooms1 extends JPanel {
 	JScrollPane selectBuilding;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
+	JComboBox<String> courseCombo;
 	private ConfirmPanel confirmArea;
 
 	public SearchRooms1() {
@@ -118,8 +121,7 @@ public class SearchRooms1 extends JPanel {
 		comboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		comboPanel.setAlignmentX(LEFT_ALIGNMENT);
 
-		JComboBox<String> courseCombo = new JComboBox<>();
-		courseCombo.addItem("IT203 - ADVANCED DATABASE | 3.0 UNITS");
+		courseCombo = new JComboBox<>();
 		courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
 		courseCombo.setPreferredSize(new Dimension(372, 25));
 
@@ -256,6 +258,14 @@ public class SearchRooms1 extends JPanel {
 		container.add(inputs);
 
 		return container;
+	}
+
+	public void loadCourse(List<Course> courses) {
+		
+		for(Course course : courses) {
+			courseCombo.addItem(course.getCode() + " - " + course.getDescription() + " | " + course.getUnits() );
+			courseCombo.
+		}
 	}
 
 	public void loadBuilding(List<Building> buildings) {

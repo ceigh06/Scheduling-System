@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.BuildingDAO;
+import dao.EnrolledCoursesDAO;
 import model.Building;
+import model.Course;
 import model.user.User;
 import view.common.MainFrame;
 import view.common.SearchRooms1;
@@ -32,10 +34,21 @@ public class SearchRoomsController {
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms");
 
+        EnrolledCoursesDAO enrolledCoursesDAO = new EnrolledCoursesDAO();
+        List<Course> courses = enrolledCoursesDAO.getStudentCourse(user.getUserID());
+        
+
         searchRooms.setOnClearButton(e -> {
             searchRooms.clearAll();
         });
+
+        searchRooms.setOnConfirmButton(e ->{
+
+        });
     }
+
+
+
 
    
 

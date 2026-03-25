@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,7 +25,6 @@ import javax.swing.border.EmptyBorder;
 import model.Room;
 import view.components.RoundedPanel;
 
-@SuppressWarnings("serial")
 public class RoomBrowser extends JPanel{
 	private JPanel roomPanel;
 	private JPanel roomCard;
