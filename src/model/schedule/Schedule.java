@@ -12,7 +12,7 @@ public class Schedule {
 	private String scheduledDay;
 	private int isArchived;
 	
-	public void load(int ID, String roomCode, String sectionKey, String courseCode, String facultyID, String timeIn, String timeOut, String scheduledDay,String status, int isArchived) {
+	public void load(int ID, String roomCode,  String courseCode, String sectionKey, String facultyID, String timeIn, String timeOut, String scheduledDay,String status, int isArchived) {
 		this.ID = ID;
 		this.roomCode = roomCode;
 		this.sectionKey = sectionKey;
