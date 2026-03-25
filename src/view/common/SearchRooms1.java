@@ -2,12 +2,15 @@ package view.common;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -32,11 +35,13 @@ import view.components.RoundedPanel;
 import model.Building;
 
 public class SearchRooms1 extends JPanel {
-	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel;
+	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel, timeInPanel,
+			timeOutPanel;
 	JLabel select, timeIn, timeOut, timeInLbl, timeOutLbl, selectCourseLbl, clickFilter, floorLbl, capLbl;
 	JScrollPane selectBuilding;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
+	private ConfirmPanel confirmArea;
 
 	public SearchRooms1() {
 
@@ -83,31 +88,33 @@ public class SearchRooms1 extends JPanel {
 		form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 		form.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
 
-		//time in
+		// time in
 		timeInLbl = new JLabel("TIME IN");
 		timeInLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		timeInLbl.setAlignmentX(LEFT_ALIGNMENT);
 
 		form.add(timeInLbl);
-		form.add(timePanel());
+		timeInPanel = timePanel();
+		form.add(timeInPanel);
 		form.add(Box.createVerticalStrut(10));// add space/padding
 
-		//timeout
+		// timeout
 		timeOutLbl = new JLabel("TIME OUT");
 		timeOutLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		timeOutLbl.setAlignmentX(LEFT_ALIGNMENT);
 
 		form.add(timeOutLbl);
-		form.add(timePanel());
+		timeOutPanel = timePanel();
+		form.add(timeOutPanel);
 		form.add(Box.createVerticalStrut(10));
 
-		//select course
+		// select course
 		selectCourseLbl = new JLabel("SELECT COURSE");
 		selectCourseLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		selectCourseLbl.setAlignmentX(LEFT_ALIGNMENT);
 
 		form.add(selectCourseLbl);
-		//wrapper panel for combo box
+		// wrapper panel for combo box
 		comboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		comboPanel.setAlignmentX(LEFT_ALIGNMENT);
 
@@ -117,11 +124,11 @@ public class SearchRooms1 extends JPanel {
 		courseCombo.setPreferredSize(new Dimension(372, 25));
 
 		comboPanel.add(courseCombo);
-		
-		//more filters clickable label
+
+		// more filters clickable label
 		clickFilter = new JLabel("More Filters");
 		clickFilter.setFont(new Font("Arial", Font.PLAIN, 13));
-		clickFilter.setCursor(new Cursor(Cursor.HAND_CURSOR)); 
+		clickFilter.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		// get current font
 		Font font = clickFilter.getFont();
 		// copy attributes
@@ -130,20 +137,19 @@ public class SearchRooms1 extends JPanel {
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		// apply new font
 		clickFilter.setFont(font.deriveFont(attributes));
-		
+
 		form.add(comboPanel);
-		//i added the click filter here 
+		// i added the click filter here
 		form.add(clickFilter);
 		// add it to the center of the main panel
 		add(form, BorderLayout.CENTER);
-		//end of default look--------------------------------------------------
-		
+		// end of default look--------------------------------------------------
+
 		// more filters panel wiwth buttons
 		moreFilter = new JPanel(new BorderLayout());
 		moreFilter.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 		moreFilter.setPreferredSize(new Dimension(450, 190));
-		
-		
+
 		// container for the components
 		clicked = new JPanel();
 		clicked.setLayout(new BoxLayout(clicked, BoxLayout.Y_AXIS));
@@ -179,43 +185,43 @@ public class SearchRooms1 extends JPanel {
 		clicked.add(Box.createVerticalStrut(5));
 		clicked.add(input);
 
-		clicked.add(Box.createVerticalStrut(5));//PADDING
+		clicked.add(Box.createVerticalStrut(5));// PADDING
 
 		clicked.add(capLbl);
 		clicked.add(Box.createVerticalStrut(5));
 		clicked.add(cap);
 
-    	moreFilter.add(clicked, BorderLayout.NORTH);
-    	
-    	//buttons below
-    	btnPanel = new JPanel();
-	    ConfirmPanel btns = new ConfirmPanel(this, "CLEAR", "SEARCH"); 
-	    btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-	    btnPanel.add(btns.getConfirmPanel(), BorderLayout.CENTER); 
-	    
-	    moreFilter.add(btnPanel, BorderLayout.SOUTH);
-		//when "more filters"is clicked
+		moreFilter.add(clicked, BorderLayout.NORTH);
+
+		// buttons below
+		btnPanel = new JPanel();
+		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search");
+		btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+		btnPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
+
+		moreFilter.add(btnPanel, BorderLayout.SOUTH);
+		// when "more filters"is clicked
 		clickFilter.addMouseListener(new MouseAdapter() {
-		    @Override
-		    public void mouseClicked(MouseEvent e) {
-		        // toggle visibility
-		        clicked.setVisible(!clicked.isVisible());
-		        //re do
-		        moreFilter.revalidate();
-		        moreFilter.repaint();
-		    }
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// toggle visibility
+				clicked.setVisible(!clicked.isVisible());
+				// re do
+				moreFilter.revalidate();
+				moreFilter.repaint();
+			}
 		});
-		
+
 		add(moreFilter, BorderLayout.SOUTH);
 
 	}
 
 	private JPanel timePanel() {
-		//container ni extended form
+		// container ni extended form
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 		container.setAlignmentX(LEFT_ALIGNMENT);
-		
+
 		JPanel labels = new JPanel(new GridLayout(1, 3, 15, 10));
 		labels.setMaximumSize(new Dimension(330, 20));
 
@@ -266,6 +272,50 @@ public class SearchRooms1 extends JPanel {
 			choice.add(check, BorderLayout.CENTER);
 			// add it on the container
 			buildingContainer.add(choice);
+		}
+	}
+
+	public void setOnClearButton(ActionListener action) {
+		confirmArea.setBtn1Action(action);
+	}
+
+	public void setOnConfirmButton(ActionListener action) {
+		confirmArea.setBtn2Action(action);
+	}
+
+	public void clearAll() {
+		clearCheckBoxes(buildingContainer);
+		clearPanel(timeInPanel);
+		clearPanel(timeOutPanel);
+		clearPanel(comboPanel);
+		clearPanel(clicked);
+		clicked.setVisible(false);
+	}
+
+	private void clearPanel(Container container) {
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JSpinner) {
+				SpinnerNumberModel model = (SpinnerNumberModel) ((JSpinner) comp).getModel();
+				((JSpinner) comp).setValue(model.getMinimum());
+			}
+
+			else if (comp instanceof JComboBox) {
+				((JComboBox) comp).setSelectedIndex(0);
+			}
+
+			else if (comp instanceof Container) {
+				clearPanel((Container) comp);
+			}
+		}
+	}
+
+	private void clearCheckBoxes(Container container) {
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JCheckBox) {
+				((JCheckBox) comp).setSelected(false);
+			} else if (comp instanceof Container) {
+				clearCheckBoxes((Container) comp);
+			}
 		}
 	}
 }

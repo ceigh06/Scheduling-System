@@ -32,7 +32,11 @@ public class SearchRoomsController {
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms");
 
-        
+        searchRooms.setOnClearButton(e -> {
+            searchRooms.clearAll();
+        });
     }
+
+   
 
 }
