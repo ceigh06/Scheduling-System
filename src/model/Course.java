@@ -51,4 +51,9 @@ public class Course {
         return isMajor;
     }
 
+    @Override
+    public String toString() {
+        return code + " - " + description + " | " + units + " Units";
+    }
+
 }
