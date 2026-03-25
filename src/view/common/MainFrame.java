@@ -43,14 +43,17 @@ public class MainFrame {
         //bottom panel, always has navigation bar unless wants to hide
         navBar = new NavigationBar(frame);
         navPanel = navBar.getNavBar();
-        frame.add(navPanel, BorderLayout.SOUTH);
         
         // Assemble frame
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(contentPanel, BorderLayout.CENTER);
-        frame.add(navBar.getNavBar(), BorderLayout.SOUTH);
+        frame.add(navPanel, BorderLayout.SOUTH);
         
         frame.setVisible(true);
+    }
+
+    public static void restoreNavBarDefaultState() {
+        navBar.resetToDefault();
     }
     
     private static JPanel createHeader(String title) {
