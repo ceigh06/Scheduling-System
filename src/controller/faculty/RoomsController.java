@@ -27,6 +27,8 @@ public class RoomsController {
         showBrowseBuilding();
     }
 
+
+    //1.1
     void showBrowseBuilding() throws SQLException {
         BrowseBuilding browseBuilding = new BrowseBuilding(); //view
         BuildingDAO buildingDAO = new BuildingDAO();// dao
@@ -42,12 +44,12 @@ public class RoomsController {
             }
         });
 
-        
-
         MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
         MainFrame.showPanel("BrowseBuilding");
     }
 
+
+    //1.2
     void showRoomBrowser(Building building) throws SQLException {
         
         RoomDAO roomDAO = new RoomDAO();
@@ -72,8 +74,9 @@ public class RoomsController {
 
     }
 
+    //1.3
     void showRoomSchedule(Room selectedRoom){
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom.getRoomCode());
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
 
