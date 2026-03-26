@@ -50,9 +50,9 @@ public class SearchRoomsController {
                 List<Building> checkedBuildings = searchRooms.getChosenBuildings();
                 String timeIn = searchRooms.getTimeIn();
                 String timeOut = searchRooms.getTimeOut();
-                String courseCode;
-                String floor = null;
-                String capacity = null;
+                String courseCode = searchRooms.getCourse();
+                String floor = searchRooms.getFloorLevel();
+                String capacity = searchRooms.getCapacity();
             } catch (SQLException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
