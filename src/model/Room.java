@@ -12,13 +12,16 @@ public class Room {
     private String status = "";
     private List<Schedule> schedules;
 
-    public void load(String roomCode, String buildingCode, int floor, int capacity, String status,List<Schedule> schedules){
+    public void loadSchedules(List<Schedule> schedules){
+        this.schedules = schedules;
+    }
+
+    public void load(String roomCode, String buildingCode, int floor, int capacity, String status){
         this.roomCode = roomCode;
         this.buildingCode = buildingCode;
         this.floor = floor;
         this.capacity = capacity;
         this.status = status;
-        this.schedules = schedules;
     }
     
     public List<Schedule> getSchedules(){
