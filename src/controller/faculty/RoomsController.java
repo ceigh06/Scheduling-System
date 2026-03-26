@@ -6,7 +6,7 @@ import java.util.List;
 import dao.BuildingDAO;
 import dao.EnrolledCoursesDAO;
 import dao.RoomDAO;
-
+import dao.schedule.ScheduleDAO;
 import model.Building;
 import model.Course;
 import model.Room;
@@ -27,6 +27,8 @@ public class RoomsController {
         showBrowseBuilding();
     }
 
+
+    //1.1
     void showBrowseBuilding() throws SQLException {
         BrowseBuilding browseBuilding = new BrowseBuilding(); //view
         BuildingDAO buildingDAO = new BuildingDAO();// dao
@@ -42,12 +44,12 @@ public class RoomsController {
             }
         });
 
-        
-
         MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
         MainFrame.showPanel("BrowseBuilding");
     }
 
+
+    //1.2
     void showRoomBrowser(Building building) throws SQLException {
         
         RoomDAO roomDAO = new RoomDAO();
@@ -72,11 +74,14 @@ public class RoomsController {
 
     }
 
+    //1.3
     void showRoomSchedule(Room selectedRoom){
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom.getRoomCode());
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
-
     
         viewSchedule.setOnBackClicked(e ->{
             MainFrame.showPanel("RoomBrowser");
