@@ -81,7 +81,7 @@ public class ViewSchedule extends JPanel {
         //BACKEND TO DO: Retrieve the items of combo box from the database
         String[] courses = {"IT203 - Advanced Database", "IT211 Web Systems and Technologies"}; 
         
-        initializeCourseSection();
+        initializeCourseSection();  
         
         // Lecture/Lab buttons
         JPanel unitBtnPanel = new JPanel();
