@@ -16,7 +16,7 @@ public class BuildingDAO {
     public BuildingDAO() throws SQLException {
         this.connection = DBConnection.getConnection(); // shared connection
     }
-    Building get(String buildingCode) throws SQLException{
+    public Building get(String buildingCode) throws SQLException{
         
 
         PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Building WHERE BuildingCode = ?");

@@ -14,7 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
-
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import dao.BuildingDAO;
 import dao.EnrolledCoursesDAO;
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
@@ -43,8 +45,10 @@ public class SearchRooms1 extends JPanel {
 	JScrollPane selectBuilding;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
-	JComboBox<String> courseCombo;
+	JComboBox<Course> courseCombo;
 	private ConfirmPanel confirmArea;
+	JComboBox<String> input;
+	boolean toggle = false;
 
 	public SearchRooms1() {
 
@@ -164,7 +168,7 @@ public class SearchRooms1 extends JPanel {
 		floorLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		floorLbl.setAlignmentX(LEFT_ALIGNMENT);
 
-		JComboBox<String> input = new JComboBox<>();
+		input = new JComboBox<>();
 		input.addItem("1st Floor");
 		input.addItem("2nd Floor");
 		input.addItem("3rd Floor");
@@ -208,6 +212,7 @@ public class SearchRooms1 extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				// toggle visibility
 				clicked.setVisible(!clicked.isVisible());
+				toggle = toggleFilters();
 				// re do
 				moreFilter.revalidate();
 				moreFilter.repaint();
@@ -260,11 +265,18 @@ public class SearchRooms1 extends JPanel {
 		return container;
 	}
 
+	private boolean toggleFilters(){
+		if(toggle == false) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public void loadCourse(List<Course> courses) {
-		
-		for(Course course : courses) {
-			courseCombo.addItem(course.getCode() + " - " + course.getDescription() + " | " + course.getUnits() );
-			courseCombo.
+		for (Course course : courses) {
+			courseCombo.addItem(course);
 		}
 	}
 
@@ -275,6 +287,7 @@ public class SearchRooms1 extends JPanel {
 			choice.setBackground(new Color(221, 221, 219));
 			// choices
 			check = new JCheckBox(building.getName());
+			check.setName(building.getCode());
 			check.setFont(new Font("Arial", Font.PLAIN, 16));
 			check.setMargin(new Insets(3, 10, 2, 10));
 			check.setOpaque(false);
@@ -285,12 +298,48 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	public void setOnClearButton(ActionListener action) {
-		confirmArea.setBtn1Action(action);
+	public List<Building> getChosenBuildings() throws SQLException {
+		return fetchChosenBuildings(buildingContainer);
 	}
 
-	public void setOnConfirmButton(ActionListener action) {
-		confirmArea.setBtn2Action(action);
+	public String getTimeIn() {
+		List<String> time = new ArrayList<>();
+		fetchTime(timeInPanel, time);
+		String mins = time.get(1);
+		if(time.get(1).length() == 1) {
+			mins = "0" + mins;
+		}
+		return time.get(0) + ":" + mins + " " + time.get(2);
+	}
+
+	public String getTimeOut() {
+		List<String> time = new ArrayList<>();
+		fetchTime(timeOutPanel, time);
+		String mins = time.get(1);
+		if(time.get(1).length() == 1) {
+			mins = "0" + mins;
+		}
+		return time.get(0) + ":" + mins + " " + time.get(2);
+	}
+
+	public String getCourse() {
+		return fetchCourse(comboPanel);
+	}
+
+	public String getFloorLevel() {
+		if(toggle == false) {
+			return null;
+		}
+
+		return fetchFloor();
+	}
+
+	public String getCapacity() {
+		if(toggle == false) {
+			return null;
+		}
+		
+		return fetchCapacity();
 	}
 
 	public void clearAll() {
@@ -308,11 +357,9 @@ public class SearchRooms1 extends JPanel {
 				SpinnerNumberModel model = (SpinnerNumberModel) ((JSpinner) comp).getModel();
 				((JSpinner) comp).setValue(model.getMinimum());
 			}
-
 			else if (comp instanceof JComboBox) {
 				((JComboBox) comp).setSelectedIndex(0);
 			}
-
 			else if (comp instanceof Container) {
 				clearPanel((Container) comp);
 			}
@@ -327,5 +374,61 @@ public class SearchRooms1 extends JPanel {
 				clearCheckBoxes((Container) comp);
 			}
 		}
+	}
+
+	private List<Building> fetchChosenBuildings(Container container) throws SQLException {
+		List<Building> buildings = new ArrayList<>();
+		BuildingDAO buildingDao = new BuildingDAO();
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JCheckBox && ((JCheckBox) comp).isSelected()) {
+				String buildingCode = ((JCheckBox) comp).getName();
+				buildings.add(buildingDao.get(buildingCode));
+			} else if (comp instanceof Container) {
+				fetchChosenBuildings((Container) comp);
+			}
+		}
+		return buildings;
+	}
+
+	private void fetchTime(Container container, List<String> time) {
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JSpinner) {
+				time.add(((JSpinner) comp).getValue().toString());
+			} else if (comp instanceof JComboBox) {
+				time.add(((JComboBox) comp).getSelectedItem().toString());
+			} else if (comp instanceof Container) {
+				fetchTime((Container) comp, time);
+			}
+		}
+	}
+
+	private String fetchCourse(Container container) {
+		String course = "";
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JComboBox) {
+				Course courseObject = (Course) ((JComboBox) comp).getSelectedItem();
+				course = courseObject.getCode();
+			} else if (comp instanceof Container) {
+				fetchCourse((Container) comp);
+			}
+		}
+
+		return course;
+	}
+
+	private String fetchFloor() {
+		return input.getSelectedItem().toString().substring(0,1);
+	}
+
+	private String fetchCapacity() {
+		return cap.getValue().toString();
+	}
+
+	public void setOnClearButton(ActionListener action) {
+		confirmArea.setBtn1Action(action);
+	}
+
+	public void setOnConfirmButton(ActionListener action) {
+		confirmArea.setBtn2Action(action);
 	}
 }
