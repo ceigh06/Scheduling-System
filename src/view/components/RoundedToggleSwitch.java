@@ -35,6 +35,13 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
         listeners.add(listener);
     }
 
+    public void setToggleTexts(String left, String right) {
+        this.leftText = left;
+        this.rightText = right;
+        repaint();
+    }
+    
+
     private List<ItemListener> listeners = new ArrayList<>();
 
     public RoundedToggleSwitch(int radius, int border) {
