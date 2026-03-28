@@ -274,6 +274,34 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
+	//fetch input data from input components
+	private List<Building> fetchChosenBuildings(Container container) throws SQLException {
+		List<Building> buildings = new ArrayList<>();
+		BuildingDAO buildingDao = new BuildingDAO();
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JCheckBox && ((JCheckBox) comp).isSelected()) {
+				String buildingCode = ((JCheckBox) comp).getName();
+				buildings.add(buildingDao.get(buildingCode));
+			} else if (comp instanceof Container) {
+				fetchChosenBuildings((Container) comp);
+			}
+		}
+		return buildings;
+	}
+
+	private void fetchTime(Container container, List<String> time) {
+		for (Component comp : container.getComponents()) {
+			if (comp instanceof JSpinner) {
+				time.add(((JSpinner) comp).getValue().toString());
+			} else if (comp instanceof JComboBox) {
+				time.add(((JComboBox) comp).getSelectedItem().toString());
+			} else if (comp instanceof Container) {
+				fetchTime((Container) comp, time);
+			}
+		}
+	}
+
+	//load data from database to components
 	public void loadCourse(List<Course> courses) {
 		for (Course course : courses) {
 			courseCombo.addItem(course);
@@ -298,6 +326,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
+	//returns the input data to main controller
 	public List<Building> getChosenBuildings() throws SQLException {
 		return fetchChosenBuildings(buildingContainer);
 	}
@@ -322,8 +351,8 @@ public class SearchRooms1 extends JPanel {
 		return time.get(0) + ":" + mins + " " + time.get(2);
 	}
 
-	public String getCourse() {
-		return fetchCourse(comboPanel);
+	public Course getCourse() {
+		return (Course) courseCombo.getSelectedItem();
 	}
 
 	public String getFloorLevel() {
@@ -331,7 +360,7 @@ public class SearchRooms1 extends JPanel {
 			return null;
 		}
 
-		return fetchFloor();
+		return input.getSelectedItem().toString().substring(0,1);
 	}
 
 	public String getCapacity() {
@@ -339,9 +368,10 @@ public class SearchRooms1 extends JPanel {
 			return null;
 		}
 		
-		return fetchCapacity();
+		return cap.getValue().toString();
 	}
 
+	//clear input components
 	public void clearAll() {
 		clearCheckBoxes(buildingContainer);
 		clearPanel(timeInPanel);
@@ -376,54 +406,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	private List<Building> fetchChosenBuildings(Container container) throws SQLException {
-		List<Building> buildings = new ArrayList<>();
-		BuildingDAO buildingDao = new BuildingDAO();
-		for (Component comp : container.getComponents()) {
-			if (comp instanceof JCheckBox && ((JCheckBox) comp).isSelected()) {
-				String buildingCode = ((JCheckBox) comp).getName();
-				buildings.add(buildingDao.get(buildingCode));
-			} else if (comp instanceof Container) {
-				fetchChosenBuildings((Container) comp);
-			}
-		}
-		return buildings;
-	}
-
-	private void fetchTime(Container container, List<String> time) {
-		for (Component comp : container.getComponents()) {
-			if (comp instanceof JSpinner) {
-				time.add(((JSpinner) comp).getValue().toString());
-			} else if (comp instanceof JComboBox) {
-				time.add(((JComboBox) comp).getSelectedItem().toString());
-			} else if (comp instanceof Container) {
-				fetchTime((Container) comp, time);
-			}
-		}
-	}
-
-	private String fetchCourse(Container container) {
-		String course = "";
-		for (Component comp : container.getComponents()) {
-			if (comp instanceof JComboBox) {
-				Course courseObject = (Course) ((JComboBox) comp).getSelectedItem();
-				course = courseObject.getCode();
-			} else if (comp instanceof Container) {
-				fetchCourse((Container) comp);
-			}
-		}
-
-		return course;
-	}
-
-	private String fetchFloor() {
-		return input.getSelectedItem().toString().substring(0,1);
-	}
-
-	private String fetchCapacity() {
-		return cap.getValue().toString();
-	}
-
+	//set actions to button listeners
 	public void setOnClearButton(ActionListener action) {
 		confirmArea.setBtn1Action(action);
 	}
