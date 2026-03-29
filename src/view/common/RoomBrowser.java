@@ -76,7 +76,13 @@ public class RoomBrowser extends JPanel{
         JPanel welcomePanel = new JPanel();
         welcomePanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 5, 10));
 
-        JLabel selectedBldg = new JLabel("Welcome to " + bldgName, JLabel.CENTER);
+		String header = "Welcome to " + bldgName;
+		
+		if(bldgName == null){
+			header = "Showing Available Rooms";
+		}
+
+        JLabel selectedBldg = new JLabel(header , JLabel.CENTER);
         selectedBldg.setForeground(Color.BLACK);
         selectedBldg.setFont(new Font("Georgia", Font.BOLD, 23));
         welcomePanel.add(selectedBldg);
