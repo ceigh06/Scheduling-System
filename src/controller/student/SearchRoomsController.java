@@ -7,16 +7,17 @@ import java.util.List;
 import dao.BuildingDAO;
 import dao.EnrolledCoursesDAO;
 import dao.RoomDAO;
+import dao.schedule.ScheduleDAO;
 import model.Building;
 import model.Course;
 import model.Room;
-import model.RoomFilter;
 import model.schedule.Schedule;
 import model.user.User;
 import service.ScheduleValidator;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 import view.common.SearchRooms1;
+import view.common.ViewSchedule;
 import dao.BuildingDAO;
 
 public class SearchRoomsController {
@@ -90,5 +91,22 @@ public class SearchRoomsController {
         RoomBrowser roomBrowser = new RoomBrowser(null, availableRooms);
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
         MainFrame.showPanel("RoomBrowser");
+
+        roomBrowser.setOnBackButton(e -> {
+            MainFrame.showPanel("SearchRooms");
+        });
+
+        roomBrowser.setOnConfirmButton(e -> {
+            Room selectedRoom = roomBrowser.getSelectedRoom();
+            if (selectedRoom == null){
+                MainFrame.setNotification("Please Choose a Room First");
+                roomBrowser.clearSelection();
+            }
+            showRoomSchedule(selectedRoom);
+        });
+    }
+
+    void showRoomSchedule(Room selectedRoom){
+        
     }
 }
