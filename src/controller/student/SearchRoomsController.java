@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.BuildingDAO;
-import dao.EnrolledCoursesDAO;
+import dao.CourseDAO;
 import dao.RoomDAO;
 import dao.schedule.ScheduleDAO;
 import model.Building;
@@ -40,7 +40,7 @@ public class SearchRoomsController {
         List<Building> buildings = buildingDAO.getAllBuilding(); // model
         searchRooms.loadBuilding(buildings);
 
-        EnrolledCoursesDAO enrolledCoursesDAO = new EnrolledCoursesDAO();
+        CourseDAO enrolledCoursesDAO = new CourseDAO();
         List<Course> courses = enrolledCoursesDAO.getStudentCourse(user.getUserID());
         searchRooms.loadCourse(courses);
 

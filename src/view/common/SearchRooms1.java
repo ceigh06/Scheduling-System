@@ -32,7 +32,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import dao.BuildingDAO;
-import dao.EnrolledCoursesDAO;
+import dao.CourseDAO;
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
 import model.Building;
