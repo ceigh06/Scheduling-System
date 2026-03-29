@@ -265,16 +265,15 @@ public class SearchRooms1 extends JPanel {
 		return container;
 	}
 
-	private boolean toggleFilters(){
-		if(toggle == false) {
+	private boolean toggleFilters() {
+		if (toggle == false) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
 
-	//fetch input data from input components
+	// fetch input data from input components
 	private List<Building> fetchChosenBuildings(Container container) throws SQLException {
 		List<Building> buildings = new ArrayList<>();
 		BuildingDAO buildingDao = new BuildingDAO();
@@ -283,7 +282,7 @@ public class SearchRooms1 extends JPanel {
 				String buildingCode = ((JCheckBox) comp).getName();
 				buildings.add(buildingDao.get(buildingCode));
 			} else if (comp instanceof Container) {
-				fetchChosenBuildings((Container) comp);
+				buildings.addAll(fetchChosenBuildings((Container) comp));
 			}
 		}
 		return buildings;
@@ -301,7 +300,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	//load data from database to components
+	// load data from database to components
 	public void loadCourse(List<Course> courses) {
 		for (Course course : courses) {
 			courseCombo.addItem(course);
@@ -326,7 +325,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	//returns the input data to main controller
+	// returns the input data to main controller
 	public List<Building> getChosenBuildings() throws SQLException {
 		return fetchChosenBuildings(buildingContainer);
 	}
@@ -335,7 +334,7 @@ public class SearchRooms1 extends JPanel {
 		List<String> time = new ArrayList<>();
 		fetchTime(timeInPanel, time);
 		String mins = time.get(1);
-		if(time.get(1).length() == 1) {
+		if (time.get(1).length() == 1) {
 			mins = "0" + mins;
 		}
 		return time.get(0) + ":" + mins + " " + time.get(2);
@@ -345,7 +344,7 @@ public class SearchRooms1 extends JPanel {
 		List<String> time = new ArrayList<>();
 		fetchTime(timeOutPanel, time);
 		String mins = time.get(1);
-		if(time.get(1).length() == 1) {
+		if (time.get(1).length() == 1) {
 			mins = "0" + mins;
 		}
 		return time.get(0) + ":" + mins + " " + time.get(2);
@@ -355,23 +354,23 @@ public class SearchRooms1 extends JPanel {
 		return (Course) courseCombo.getSelectedItem();
 	}
 
-	public String getFloorLevel() {
-		if(toggle == false) {
-			return null;
+	public int getFloorLevel() {
+		if (toggle == false) {
+			return 0;
 		}
 
-		return input.getSelectedItem().toString().substring(0,1);
+		return Integer.parseInt(input.getSelectedItem().toString().substring(0, 1));
 	}
 
-	public String getCapacity() {
-		if(toggle == false) {
-			return null;
+	public int getCapacity() {
+		if (toggle == false) {
+			return 0;
 		}
-		
-		return cap.getValue().toString();
+
+		return Integer.parseInt(cap.getValue().toString());
 	}
 
-	//clear input components
+	// clear input components
 	public void clearAll() {
 		clearCheckBoxes(buildingContainer);
 		clearPanel(timeInPanel);
@@ -386,11 +385,9 @@ public class SearchRooms1 extends JPanel {
 			if (comp instanceof JSpinner) {
 				SpinnerNumberModel model = (SpinnerNumberModel) ((JSpinner) comp).getModel();
 				((JSpinner) comp).setValue(model.getMinimum());
-			}
-			else if (comp instanceof JComboBox) {
+			} else if (comp instanceof JComboBox) {
 				((JComboBox) comp).setSelectedIndex(0);
-			}
-			else if (comp instanceof Container) {
+			} else if (comp instanceof Container) {
 				clearPanel((Container) comp);
 			}
 		}
@@ -406,7 +403,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	//set actions to button listeners
+	// set actions to button listeners
 	public void setOnClearButton(ActionListener action) {
 		confirmArea.setBtn1Action(action);
 	}

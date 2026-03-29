@@ -10,8 +10,10 @@ import dao.RoomDAO;
 import model.Building;
 import model.Course;
 import model.Room;
+import model.RoomFilter;
 import model.schedule.Schedule;
 import model.user.User;
+import service.ScheduleValidator;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 import view.common.SearchRooms1;
@@ -50,25 +52,43 @@ public class SearchRoomsController {
 
         searchRooms.setOnConfirmButton(e -> {
             try {
-                Schedule requestSchedule = new Schedule();
+                RoomDAO roomDAO = new RoomDAO();
                 List<Building> checkedBuildings = searchRooms.getChosenBuildings();
                 String timeIn = searchRooms.getTimeIn();
                 String timeOut = searchRooms.getTimeOut();
-                Course courseCode = searchRooms.getCourse();
-                String floor = searchRooms.getFloorLevel();
-                String capacity = searchRooms.getCapacity();
+                Course course = searchRooms.getCourse();
+                int capacity = searchRooms.getCapacity();
+                int floor = searchRooms.getFloorLevel();
 
-                showRoomBrowser();
+                List<Room> availableRooms = new ArrayList<>();
+                for (Building building : checkedBuildings) {
+                    List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
+                    for (Room room : roomsToCheck) {
+                        List<Schedule> schedules = room.getSchedules();
+                        if (schedules == null) {
+                            schedules = new ArrayList<>();
+                        }
+
+                        boolean isValidCapacity = room.getCapacity() >= capacity;
+                        boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
+                        boolean isOverlap = !ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
+
+                        if (isValidCapacity && isValidFloor && isOverlap) {
+                            availableRooms.add(room);
+                        }
+                    }
+                }
+                showRoomBrowser(availableRooms, course);
 
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
     }
 
-    void showRoomBrowser() {
-
+    void showRoomBrowser(List<Room> availableRooms, Course course) throws SQLException {
+        RoomBrowser roomBrowser = new RoomBrowser(null, availableRooms);
+        MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
+        MainFrame.showPanel("RoomBrowser");
     }
-
 }
