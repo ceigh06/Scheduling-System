@@ -32,7 +32,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import dao.BuildingDAO;
-import dao.CourseDAO;
+import dao.EnrolledCoursesDAO;
 import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
 import model.Building;
@@ -154,7 +154,7 @@ public class SearchRooms1 extends JPanel {
 		// more filters panel wiwth buttons
 		moreFilter = new JPanel(new BorderLayout());
 		moreFilter.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-		moreFilter.setPreferredSize(new Dimension(450, 190));
+		// moreFilter.setPreferredSize(new Dimension(450, 190));
 
 		// container for the components
 		clicked = new JPanel();
@@ -323,6 +323,7 @@ public class SearchRooms1 extends JPanel {
 			// add it on the container
 			buildingContainer.add(choice);
 		}
+		
 	}
 
 	// returns the input data to main controller
