@@ -13,12 +13,17 @@ public class ScheduleValidator {
         LocalTime timeStop = LocalTime.parse(timeOut, format);
 
         for (Schedule sched : schedules) {
-            LocalTime schedTimeIn = LocalTime.parse(sched.getTimeIn(), format);
-            LocalTime schedTimeOut = LocalTime.parse(sched.getTimeOut(), format);
+            // Strip nanoseconds if present (e.g., "07:00:00.0000000" -> "07:00:00")
+            String timeInStr = sched.getTimeIn().split("\\.")[0];
+            String timeOutStr = sched.getTimeOut().split("\\.")[0];
+
+            LocalTime schedTimeIn = LocalTime.parse(timeInStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalTime schedTimeOut = LocalTime.parse(timeOutStr, DateTimeFormatter.ofPattern("HH:mm:ss"));
 
             boolean overlaps = timeStart.isBefore(schedTimeOut) && timeStop.isAfter(schedTimeIn);
-            
-            if (overlaps) return true;
+
+            if (overlaps)
+                return true;
         }
         return false;
     }
