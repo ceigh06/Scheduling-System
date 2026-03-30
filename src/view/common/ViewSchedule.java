@@ -348,6 +348,7 @@ public class ViewSchedule extends JPanel {
             timeLbl.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             timeLbl.setOpaque(true);
             timeLbl.setBackground(Color.WHITE);
+            timeLbl.setPreferredSize(new Dimension(60, 30)); 
             timeSched.add(timeLbl, gbc);
         }
 
@@ -361,6 +362,9 @@ public class ViewSchedule extends JPanel {
             JPanel emptyCell = new JPanel();
             emptyCell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             emptyCell.setBackground(Color.WHITE);
+            emptyCell.setPreferredSize(new Dimension(200, 30));
+            
+
             timeSched.add(emptyCell, gbc);
         }
     }
@@ -409,6 +413,9 @@ public class ViewSchedule extends JPanel {
 
     // UTILITY
     public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
+        System.out.println("Adding block: " + timeRange);
+    String[] times = timeRange.split(" - ");
+    System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
         int startRow = getRowFromTime(timeRange.split(" - ")[0]);
         int rowSpan = getTimeSpan(timeRange);
 
@@ -430,7 +437,7 @@ public class ViewSchedule extends JPanel {
         gbc.gridx = column;
         gbc.gridy = startRow;
         gbc.gridheight = rowSpan;
-        gbc.weighty = rowSpan;
+        gbc.weighty = 0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 0, 0, 0);
 
@@ -479,11 +486,11 @@ public class ViewSchedule extends JPanel {
 
     // UTILITY
     public int getTimeSpan(String timeRange) {
-        String[] times = timeRange.split(" - ");
-        int start = getRowFromTime(times[0]);
-        int end = getRowFromTime(times[1]);
-        return end - start;
-    }
+    String[] times = timeRange.split(" - ");
+    int start = getRowFromTime(times[0]);
+    int end = getRowFromTime(times[1]);
+    return end - start;
+}
 
     // UTILITY
     public void markOccupied(int col, int startRow, int rowSpan) {
