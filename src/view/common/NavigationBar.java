@@ -121,6 +121,26 @@ public class NavigationBar {
         return panel;
     }
 
+    public void resetToDefault() {
+    GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
+
+    if (selectedPanel != null) {
+        JLabel lbl = (JLabel) selectedPanel.getComponent(0);
+        lbl.setText(lbl.getText().substring(0,1));
+        lbl.setForeground(Color.WHITE);
+        selectedPanel.setBackground(new Color(139,0,0));
+
+        GridBagConstraints gbc = layout.getConstraints(selectedPanel);
+        gbc.weightx = 1;
+        layout.setConstraints(selectedPanel, gbc);
+
+        selectedPanel = null;
+    }
+
+    navPanel.revalidate();
+    navPanel.repaint();
+}
+
     public JPanel getNavBar(){
         return navPanel;
     }

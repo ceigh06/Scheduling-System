@@ -1,11 +1,20 @@
 package model;
 
+import java.util.List;
+
+import model.schedule.Schedule;
+
 public class Room {
     private String roomCode = "";
     private String buildingCode = "";
     private int floor = 0;
     private int capacity = 0;
     private String status = "";
+    private List<Schedule> schedules;
+
+    public void loadSchedules(List<Schedule> schedules){
+        this.schedules = schedules;
+    }
 
     public void load(String roomCode, String buildingCode, int floor, int capacity, String status){
         this.roomCode = roomCode;
@@ -13,6 +22,10 @@ public class Room {
         this.floor = floor;
         this.capacity = capacity;
         this.status = status;
+    }
+    
+    public List<Schedule> getSchedules(){
+        return schedules;
     }
 
     public String getRoomCode() {

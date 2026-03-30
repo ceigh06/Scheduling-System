@@ -1,4 +1,4 @@
-package dao;
+package dao.schedule;
 
 public class RequestScheduleDAO {
     

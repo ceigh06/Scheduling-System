@@ -1,27 +1,53 @@
 package controller.faculty;
 
+import dao.FacultyDAO;
+import dao.StudentDAO;
+
+import model.user.User;
+
 import view.common.MainFrame;
 import view.common.ViewProfile;
 
 public class ProfileController {
 
-    MainFrame frame;
+    User user;
+    ViewProfile viewProfile;
 
-    public ProfileController(MainFrame frame) {
+    public ProfileController(User user) {
         
-        this.frame = frame;
+        this.user = user;
+        createProfile();
         showProfile();
+
+        viewProfile.setOnBackClicked(e -> onBackClicked());
+        viewProfile.setOnLogoutClicked(e -> onLogoutClicked());
+    }
+
+    
+
+    void showProfile() {
+        MainFrame.addContentPanel(viewProfile, "Profile");
+        MainFrame.showPanel("Profile");
     }
     
-    private void showProfile() {
-        ViewProfile viewProfile = new ViewProfile();
-
-        frame.addContentPanel(viewProfile, "ViewProfile");
-        frame.showPanel("ViewProfile");
+    private void createProfile() {
+        viewProfile = new ViewProfile();
+        
+        
     }
 
-    public void onBackClicked(){
-        
+    private void onLogoutClicked() {
+        user = null;
+        MainFrame.setNavBarVisible(false);
+        MainFrame.showPanel("login");
+    }
+
+    private void onBackClicked(){
+        if (user.getUserType() == "Student") {
+            // new StudentController(user);
+        } else if (user.getUserType() == "Faculty") {
+            new FacultyController(user);
+        }
     }
 
 }

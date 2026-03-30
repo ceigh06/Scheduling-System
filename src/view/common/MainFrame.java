@@ -25,7 +25,6 @@ public class MainFrame {
     private static JLabel headerTitle;
     private static NavigationBar navBar;
     private static JPanel navPanel; 
-    private static ImageIcon img;
     
     public static void init() {
         frame = new JFrame("Scheduling System"); 
@@ -48,14 +47,17 @@ public class MainFrame {
         //bottom panel, always has navigation bar unless wants to hide
         navBar = new NavigationBar(frame);
         navPanel = navBar.getNavBar();
-        frame.add(navPanel, BorderLayout.SOUTH);
         
         // Assemble frame
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(contentPanel, BorderLayout.CENTER);
-        frame.add(navBar.getNavBar(), BorderLayout.SOUTH);
+        frame.add(navPanel, BorderLayout.SOUTH);
         
         frame.setVisible(true);
+    }
+
+    public static void restoreNavBarDefaultState() {
+        navBar.resetToDefault();
     }
     
     private static JPanel createHeader(String title) {
@@ -79,7 +81,7 @@ public class MainFrame {
         requestPanel.setPreferredSize(new Dimension(50,50));
         requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); 
 
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/images/RequestHistory.png"));
+        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/resources/Home.png")); //sample only
         Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         requestPanel.add(reqHistoryIcon); 

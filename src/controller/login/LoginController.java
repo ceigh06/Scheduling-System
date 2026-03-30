@@ -1,11 +1,18 @@
 package controller.login;
 
 import java.awt.Desktop.Action;
+import java.sql.SQLException;
 
+import controller.admin.AdminController;
+import controller.faculty.FacultyController;
+import controller.student.StudentController;
+import model.user.User;
+import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.landing.Login;
 
 public class LoginController {
+    User authenticatedUser;
     //switch method to determine which login page to show
         // user -> create controller pass the frame.
     public LoginController() {
@@ -18,20 +25,37 @@ public class LoginController {
         attachLoginListener(view);
     }
 
+
     void attachLoginListener(Login view) {
         view.setOnLoginButton(e -> {
-            validateUser(view.getUsername(), view.getPassword());
+            if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
+                authenticatedUser = LoginValidator.getAuthenticatedUser();
+                
+                view.clearFields();
+                createUserDashBoard(); //redirect to dashboard
+
+            } else {
+                MainFrame.setNotification(LoginValidator.getErrorMessage());
+            }
         });
     }
 
-    void validateUser(String userName, String password) {
-
-        if (userName.isEmpty() || password.isEmpty()) {
-            MainFrame.setNotification("Please fill in all fields.");
-            return;
+    void createUserDashBoard() {
+        if (authenticatedUser.getUserType().equals("Student")) {
+            System.out.println("Student");
+            try {
+                new StudentController(authenticatedUser);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else if (authenticatedUser.getUserType().equals("Faculty")) {
+            System.out.println("Faculty");
+            new FacultyController(authenticatedUser);
+        } else{ // admin
+            System.out.println("Admin");
+            // new AdminController(authenticatedUser);
         }
-
-        
-
     }
+
 }
