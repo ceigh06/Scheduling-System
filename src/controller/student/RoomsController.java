@@ -1,10 +1,9 @@
 package controller.student;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import dao.BuildingDAO;
 import dao.RoomDAO;
+import java.sql.SQLException;
+import java.util.List;
 import model.Building;
 import model.Room;
 import model.user.User;

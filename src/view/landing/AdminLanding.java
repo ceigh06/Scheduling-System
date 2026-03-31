@@ -27,7 +27,7 @@ public class AdminLanding extends JPanel {
     private RoundedTextField searchBar;
     private ActionListener onSearchAction;
     private ActionListener onRoomViewAction;
-    
+
     // Store buttons to identify which report they belong to
     private RoundedButton totalBtn, mostBtn, peakBtn;
 
@@ -62,26 +62,26 @@ public class AdminLanding extends JPanel {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(OFF_WHITE);
-        
+
         contentPanel.add(createSearchSection());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Create buttons for side by side reports
         totalBtn = new RoundedButton("View Report", 20);
         mostBtn = new RoundedButton("View Report", 20);
-        
+
         // Pass buttons through parameters
         contentPanel.add(createSideBySideReportsSection(
-            "Total Room Requests", 187, 187, totalBtn,
-            "Most Requested Room", 187, 187, mostBtn
+                "Total Room Requests", 187, 187, totalBtn,
+                "Most Requested Room", 187, 187, mostBtn
         ));
-        
+
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        
+
         // Create button for most vacancies report
         peakBtn = new RoundedButton("View Report", 20);
         contentPanel.add(createReportSection("Most Vacancies Today", 387, 187, peakBtn));
-        
+
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
         JScrollPane mainScroll = new JScrollPane(contentPanel);
@@ -97,7 +97,7 @@ public class AdminLanding extends JPanel {
     private JPanel createSideBySideReportsSection(
             String title1, int width1, int height1, RoundedButton btn1,
             String title2, int width2, int height2, RoundedButton btn2) {
-        
+
         // Reduced gap from 15 to 5 pixels
         JPanel sectionPanel = new JPanel(new GridLayout(1, 2, 5, 0));
         sectionPanel.setOpaque(false);
@@ -106,7 +106,7 @@ public class AdminLanding extends JPanel {
 
         // Left report with its specific button
         sectionPanel.add(createReportSection(title1, width1, height1, btn1));
-        
+
         // Right report with its specific button
         sectionPanel.add(createReportSection(title2, width2, height2, btn2));
 
@@ -203,7 +203,6 @@ public class AdminLanding extends JPanel {
         return sectionPanel;
     }
 
-    // Takes button as parameter - simplified without identity check
     private RoundedPanel createCard(String roomName, int width, int height, RoundedButton viewBtn) {
         RoundedPanel roomCard = new RoundedPanel(25, 2, Color.LIGHT_GRAY, new BorderLayout());
         roomCard.setPreferredSize(new Dimension(width, height));
@@ -215,7 +214,6 @@ public class AdminLanding extends JPanel {
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         nameLabel.setForeground(new Color(139, 0, 0));
 
-        // Configure the passed button
         viewBtn.setForeground(Color.WHITE);
         viewBtn.setBackground(new Color(139, 0, 0));
         viewBtn.setPreferredSize(new Dimension(120, 35));

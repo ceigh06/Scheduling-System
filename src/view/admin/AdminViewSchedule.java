@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import model.Room;
@@ -31,7 +32,6 @@ public class AdminViewSchedule extends JPanel {
     private JLabel mLbl;
     private JLabel mrdmLbl;
 
-
     private boolean onTimeChangedCallBack = false;
 
     private AdminConfirmPanel confirmArea;
@@ -42,15 +42,22 @@ public class AdminViewSchedule extends JPanel {
     private JPanel container;
 
     private boolean[][] occupied = new boolean[28][2];
-    // BACKEND TO DO: checker if the time has overlapping schedule 'markOccupied()'
+    
     String[] times = { "7:00 AM", "8:00 AM",
             "9:00 AM", "10:00 AM", "11:00 AM",
             "12:00 PM", "1:00 PM", "2:00 PM",
             "3:00 PM", "4:00 PM", "5:00 PM",
             "6:00 PM", "7:00 PM", "8:00 PM" };
 
-    // register of listeners
+    // Consumer callback for schedule click
+    private Consumer<Schedule> onScheduleClicked;
 
+    // Register method for schedule click callback
+    public void setOnScheduleClicked(Consumer<Schedule> action) {
+        this.onScheduleClicked = action;
+    }
+
+    // register of listeners
     public void setOnHourChanged(ChangeListener action) {
         hrsSpinner.addChangeListener(action);
     }
@@ -95,31 +102,19 @@ public class AdminViewSchedule extends JPanel {
         initializePage(room);
 
         // Contains the time visible to the users
-        // FRONTEND TO BACKEND: No need to make this database connected
         loadScheduleLayout();
-
-        // creates space for the schedule panels to be added to timeSched
-        // RFONTEND TO BACKEND: No need to make this database connected
-
-        // BACKEND TO DO: No need to create this manually,
-        // make it so that the checkers are working
 
         container.add(timeSched);
         container.add(Box.createRigidArea(new Dimension(0, 10)));
 
-    
-
         // Scroll pane
         scrollPanel = new JScrollPane(container);
         scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // test line
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
         scrollPanel.setBorder(null);
 
-        // false: view only
-        // true: view and click
-        setClick(false); // enables clicking of panels (ONLY)
-        // BACKEND TO DO: direct to room schedule to modify the room schedule
+        // Don't call setClick here - schedule panels add their own listeners in addScheduleBlock
         add(scrollPanel, BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new BorderLayout());
@@ -133,8 +128,7 @@ public class AdminViewSchedule extends JPanel {
         container.add(southPanel, BorderLayout.SOUTH);
     }
 
-        private void createTimeInSection() {
-
+    private void createTimeInSection() {
         // Time in label
         timeinLbl = new JLabel("TIME IN");
         timeinLbl.setFont(new Font("Arial", Font.BOLD, 20));
@@ -203,25 +197,21 @@ public class AdminViewSchedule extends JPanel {
     }
 
     private String formatTime(String sqlTime) {
-        // sqlTime comes in as "07:00:00" or "HH:mm:ss"
         String[] parts = sqlTime.split(":");
         int hour = Integer.parseInt(parts[0]);
         int minute = Integer.parseInt(parts[1]);
 
         String suffix = hour >= 12 ? "PM" : "AM";
-        int displayHour = hour > 12 ? hour - 12 : hour; // convert 13 → 1, 14 → 2
+        int displayHour = hour > 12 ? hour - 12 : hour;
         if (displayHour == 0)
-            displayHour = 12; // convert 0 → 12 for midnight
+            displayHour = 12;
 
-        String displayMinute = String.format("%02d", minute); // keep leading zero
+        String displayMinute = String.format("%02d", minute);
 
         return displayHour + ":" + displayMinute + " " + suffix;
     }
 
-    // initilization of the whole page
     void loadScheduleLayout() {
-        // get the times array in the room
-
         for (int i = 0; i < times.length; i++) {
             gbc.gridx = 0;
             gbc.gridy = i * 2;
@@ -248,7 +238,6 @@ public class AdminViewSchedule extends JPanel {
             emptyCell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             emptyCell.setBackground(Color.WHITE);
             emptyCell.setPreferredSize(new Dimension(200, 30));
-            
 
             timeSched.add(emptyCell, gbc);
         }
@@ -258,17 +247,12 @@ public class AdminViewSchedule extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // contains all the components of the view schedule frame
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.setAlignmentX(Component.CENTER_ALIGNMENT);
-        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0)); // test line
+        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0));
         container.setBackground(Color.WHITE);
 
-        // contains the information of the panel
-        // BACKEND TO DO: Make it so that the database is automatically giving the
-        // information
-        // of the class to this panel
         RoundedPanel labelPanel = new RoundedPanel(25, 0, new BorderLayout());
         roomLbl = new JLabel(room.getRoomCode(), SwingConstants.CENTER);
         roomLbl.setForeground(Color.WHITE);
@@ -282,9 +266,8 @@ public class AdminViewSchedule extends JPanel {
         labelPanel.add(roomLbl, BorderLayout.CENTER);
 
         container.add(labelPanel);
-        container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
+        container.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // the time table of the schedule, not including the panels
         timeSched = new JPanel(new GridBagLayout());
         timeSched.setBackground(Color.WHITE);
         timeSched.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -293,23 +276,17 @@ public class AdminViewSchedule extends JPanel {
 
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-
     }
 
-    // UTILITY
+    // Only schedule panels (yellow/gray) are clickable - empty cells are not
     public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
-    String[] times = timeRange.split(" - ");
-    System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
+        String[] times = timeRange.split(" - ");
+        System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
         int startRow = getRowFromTime(timeRange.split(" - ")[0]);
         int rowSpan = getTimeSpan(timeRange);
 
         // Remove overlapping components
-        // checks the components of the timeSched if its overlapping with the panel the
-        // user decided, if the element is a JPanel, it removes the border so the border
-        // looks
-        // like its at the back
-
         for (Component comp : timeSched.getComponents()) {
             GridBagConstraints c = ((GridBagLayout) timeSched.getLayout()).getConstraints(comp);
             if (c.gridx == column && c.gridy >= startRow && c.gridy < startRow + rowSpan) {
@@ -336,11 +313,21 @@ public class AdminViewSchedule extends JPanel {
                 BorderFactory.createLineBorder(Color.BLACK, 1),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
-        // TESTING ONLY
+        // Add schedule info
         schedPanel.add(new JLabel(schedule.getSectionKey()));
         schedPanel.add(new JLabel(schedule.getCourseCode()));
         schedPanel.add(new JLabel(schedule.getFacultyID()));
         schedPanel.add(new JLabel(timeRange));
+
+        // Only schedule panels (yellow/gray) get click listener - empty cells don't have this
+        schedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        schedPanel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (onScheduleClicked != null) {
+                    onScheduleClicked.accept(schedule);
+                }
+            }
+        });
 
         timeSched.add(schedPanel, gbc);
         timeSched.setComponentZOrder(schedPanel, 0);
@@ -350,7 +337,6 @@ public class AdminViewSchedule extends JPanel {
         timeSched.repaint();
     }
 
-    // UTILITY
     public int getRowFromTime(String time) {
         String[] parts = time.split(" ");
         String[] hourMin = parts[0].split(":");
@@ -369,49 +355,19 @@ public class AdminViewSchedule extends JPanel {
         return totalMinutes / 30;
     }
 
-    // UTILITY
     public int getTimeSpan(String timeRange) {
-    String[] times = timeRange.split(" - ");
-    int start = getRowFromTime(times[0]);
-    int end = getRowFromTime(times[1]);
-    return end - start;
-}
+        String[] times = timeRange.split(" - ");
+        int start = getRowFromTime(times[0]);
+        int end = getRowFromTime(times[1]);
+        return end - start;
+    }
 
-    // UTILITY
     public void markOccupied(int col, int startRow, int rowSpan) {
         for (int i = startRow; i < startRow + rowSpan; i++) {
             occupied[i][col] = true;
         }
     }
 
-    // UTILITY
-    public void setClick(boolean enable) {
-        // checks the components in the GridBagLayout, treat it as an array
-        for (Component c : timeSched.getComponents()) {
-            // check if the component is a JPanel
-            if (c instanceof JPanel) {
-                JPanel panel = (JPanel) c;
-
-                // for disabling the CLICKABLE feature of panel
-                // if its not a JPanel, the component should not be CLICKABLE
-                for (java.awt.event.MouseListener m : panel.getMouseListeners()) {
-                    panel.removeMouseListener(m);
-                }
-
-                if (enable) {
-                    panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    panel.addMouseListener(new MouseAdapter() {
-                        public void mouseClicked(MouseEvent e) {
-                            // BACKEND TO DO: Make the ADMIN view and modify the schedule
-                            panel.setBackground(Color.WHITE); // TEST LINE IF WORKING
-                        }
-                    });
-
-                } else {
-                    // if the component is NOT a JPanel, the cursor should be default arrow
-                    panel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                }
-            }
-        }
-    }
+    // REMOVED: No longer needed - only schedule panels are clickable
+    // Empty cells (white) don't have click listeners
 }

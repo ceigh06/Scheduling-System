@@ -13,9 +13,12 @@ import view.landing.AdminLanding;
 public class AdminController {
 
     User user;
+    // Store report panels to avoid recreating them
+    private Report1 report1;
+    private Report2 report2;
+    private Report3 report3;
 
     public AdminController(User user) {
-
         this.user = user;
 
         AdminLanding adminLanding = new AdminLanding();
@@ -23,9 +26,20 @@ public class AdminController {
         AdminMainframe.showPanel("AdminLanding");
         AdminMainframe.setNavBarVisible(true);
 
-        adminLanding.setOnTotalBtn(e -> onTotalReportClicked());
-        adminLanding.setOnMostBtn(e -> onMostReportClicked());
-        adminLanding.setOnPeakBtn(e -> onPeakReportClicked());
+        adminLanding.setOnTotalBtn(e -> {
+
+            onTotalReportClicked();
+        });
+
+        adminLanding.setOnMostBtn(e -> {
+
+            onMostReportClicked();
+        });
+
+        adminLanding.setOnPeakBtn(e -> {
+
+            onPeakReportClicked();
+        });
 
         AdminMainframe.setOnBrowsePanel(new MouseAdapter() {
             @Override
@@ -54,16 +68,27 @@ public class AdminController {
     }
 
     public void onTotalReportClicked() {
-        new Report1();
+        if (report1 == null) {
+            report1 = new Report1();
+            AdminMainframe.addContentPanel(report1, "Report1");
+        }
+        AdminMainframe.showPanel("Report1", "Total Room Requests");
     }
 
     public void onMostReportClicked() {
-        new Report2();
-
+        if (report2 == null) {
+            report2 = new Report2();
+            AdminMainframe.addContentPanel(report2, "Report2");
+        }
+        AdminMainframe.showPanel("Report2", "Most Requested Room");
     }
 
     public void onPeakReportClicked() {
-        new Report3();
+        if (report3 == null) {
+            report3 = new Report3();
+            AdminMainframe.addContentPanel(report3, "Report3");
+        }
+        AdminMainframe.showPanel("Report3", "Peak Scheduling Hours");
     }
 
     public void onBrowseClicked() throws SQLException {
@@ -77,5 +102,4 @@ public class AdminController {
     public void onProfileClicked() {
         new ProfileController(user);
     }
-
 }

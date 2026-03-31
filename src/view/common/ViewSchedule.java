@@ -124,7 +124,7 @@ public class ViewSchedule extends JPanel {
         }
     }
 
-    public ViewSchedule(Room room) {
+    public ViewSchedule(String room) {
         initializePage(room);
 
         // Contains the time visible to the users

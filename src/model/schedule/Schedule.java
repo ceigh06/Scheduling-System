@@ -65,5 +65,5 @@ public class Schedule {
     public int getIsArchived() {
         return isArchived;
     }
-	
+
 }

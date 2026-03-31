@@ -9,6 +9,7 @@ import java.util.List;
 import model.Building;
 import model.Course;
 import model.Room;
+import model.schedule.Schedule;
 import model.user.User;
 import view.admin.AdminMainframe;
 import view.admin.AdminViewSchedule;
@@ -24,15 +25,16 @@ public class RoomsController {
         showBrowseBuilding();
     }
 
-    // 1.1
+    // 1.1 - BrowseBuilding pattern (already correct)
     void showBrowseBuilding() throws SQLException {
-        BrowseBuilding browseBuilding = new BrowseBuilding(); // view
-        BuildingDAO buildingDAO = new BuildingDAO();// dao
-        List<Building> buildings = buildingDAO.getAllBuilding(); // model
+        BrowseBuilding browseBuilding = new BrowseBuilding();
+        BuildingDAO buildingDAO = new BuildingDAO();
+        List<Building> buildings = buildingDAO.getAllBuilding();
 
         browseBuilding.loadBuilding(buildings);
 
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
+        // Pattern: Click immediately navigates
+        browseBuilding.setOnBuildingClicked(building -> {
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
@@ -44,16 +46,21 @@ public class RoomsController {
         AdminMainframe.showPanel("BrowseBuilding");
     }
 
-    // 1.2
+    // 1.2 - RoomBrowser now follows BrowseBuilding pattern
     void showRoomBrowser(Building building) throws SQLException {
-
         RoomDAO roomDAO = new RoomDAO();
         List<Room> rooms = roomDAO.getAllRooms(building.getCode().trim());
+        
+        // Create RoomBrowser with rooms
         RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms);
 
-        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
-        AdminMainframe.showPanel("RoomBrowser");
+        // NEW: Follow BrowseBuilding pattern - click room immediately navigates
+        // (Assuming RoomBrowser has setOnRoomClicked like BrowseBuilding has setOnBuildingClicked)
+        roomBrowser.setOnRoomClicked(room -> {
+            showRoomSchedule(room);
+        });
 
+        // Back button still needed for navigation
         roomBrowser.setOnBackButton(e -> {
             AdminMainframe.showPanel("BrowseBuilding");
         });
@@ -67,40 +74,42 @@ public class RoomsController {
             showRoomSchedule(selectedRoom);
         });
 
+        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
+        AdminMainframe.showPanel("RoomBrowser");
     }
 
-    // 1.3
-    private String timeIn = "";
-    private String timeOut = "";
-
+    // 1.3 - AdminViewSchedule also follows same pattern
     void showRoomSchedule(Room selectedRoom) {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
-        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-        // doesnt catch if the courses is null.
+        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID());
 
-        AdminViewSchedule viewSchedule = new AdminViewSchedule(selectedRoom); // load the view with the room and its schedules
+        AdminViewSchedule viewSchedule = new AdminViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
 
-        attachShowRoomScheduleListeners(viewSchedule);
+        // Pattern: Click schedule immediately navigates to edit
+        viewSchedule.setOnScheduleClicked(schedule -> {
+            onScheduleEditClicked(schedule, selectedRoom);
+        });
 
-        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
-        AdminMainframe.showPanel("Schedule");
-
-    }
-
-
-
-    void attachShowRoomScheduleListeners(AdminViewSchedule viewSchedule) {
+        // Back button
         viewSchedule.setOnBackClicked(e -> {
             AdminMainframe.showPanel("RoomBrowser");
         });
 
+        // Remove or keep confirm based on your needs
         viewSchedule.setOnConfirmClicked(e -> {
-
+            // Optional: handle confirm action
         });
 
+        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
+        AdminMainframe.showPanel("Schedule");
+    }
+
+    // Schedule edit handler
+    public void onScheduleEditClicked(Schedule schedule, Room room) {
+        new EditRoomScheduleController(schedule, room, user);
     }
 }
