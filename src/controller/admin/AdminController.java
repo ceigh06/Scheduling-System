@@ -5,6 +5,9 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import model.user.User;
 import view.admin.AdminMainframe;
+import view.admin.Report1;
+import view.admin.Report2;
+import view.admin.Report3;
 import view.landing.AdminLanding;
 
 public class AdminController {
@@ -15,13 +18,18 @@ public class AdminController {
 
         this.user = user;
 
-        AdminMainframe.addContentPanel(new AdminLanding(), "AdminLanding");
+        AdminLanding adminLanding = new AdminLanding();
+        AdminMainframe.addContentPanel(adminLanding, "AdminLanding");
         AdminMainframe.showPanel("AdminLanding");
         AdminMainframe.setNavBarVisible(true);
 
+        adminLanding.setOnTotalBtn(e -> onTotalReportClicked());
+        adminLanding.setOnMostBtn(e -> onMostReportClicked());
+        adminLanding.setOnPeakBtn(e -> onPeakReportClicked());
+
         AdminMainframe.setOnBrowsePanel(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) { 
+            public void mouseClicked(MouseEvent e) {
                 try {
                     onBrowseClicked();
                 } catch (SQLException ex) {
@@ -45,6 +53,19 @@ public class AdminController {
         });
     }
 
+    public void onTotalReportClicked() {
+        new Report1();
+    }
+
+    public void onMostReportClicked() {
+        new Report2();
+
+    }
+
+    public void onPeakReportClicked() {
+        new Report3();
+    }
+
     public void onBrowseClicked() throws SQLException {
         new RoomsController(user);
     }
@@ -56,4 +77,5 @@ public class AdminController {
     public void onProfileClicked() {
         new ProfileController(user);
     }
+
 }
