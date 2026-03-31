@@ -15,47 +15,42 @@ public class ConfirmPanel {
 	public JPanel confirmPanel; 
 	private RoundedButton button1, button2; 
 	 //BYE HELLO 
-	ConfirmPanel(JFrame frame, String btn1, String btn2){
-		confirmPanel = new JPanel(new GridLayout(1, 2, 40, 20)); 
+	 // Constructor with JFrame (unchanged, but now accepts border args)
+    public ConfirmPanel(JFrame frame, String btn1, String btn2, Color border1, int thickness1, Color border2, int thickness2){
+        initPanel(btn1, btn2, border1, thickness1, border2, thickness2);
+    }
 
-        button1 = new RoundedButton(btn1, 25); 
+    // Constructor with JPanel (unchanged, but now accepts border args)
+    public ConfirmPanel(JPanel panel, String btn1, String btn2, Color border1, int thickness1, Color border2, int thickness2){
+        initPanel(btn1, btn2, border1, thickness1, border2, thickness2);
+    }
+
+
+    private void initPanel(String btn1, String btn2, Color border1, int thickness1, Color border2, int thickness2){
+        confirmPanel = new JPanel(new GridLayout(1, 2, 40, 20)); 
+
+        button1 = new RoundedButton(btn1, 25, border1, thickness1); 
         button1.setForeground(Color.WHITE);
         button1.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button1.setBackground(new Color(139, 0, 0));
+        button1.setBackground(new Color(117, 144, 156));
         button1.setFocusPainted(false);
-        button1.setBorderPainted(false);
-        
-        button2 = new RoundedButton(btn2,25); 
-        button2.setForeground(Color.WHITE);
-        button2.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button2.setBackground(new Color(139, 0, 0));
-        button2.setFocusPainted(false);
-        button2.setBorderPainted(false);
-        
-        confirmPanel.add(button1); 
-        confirmPanel.add(button2); 
-	}
-	
-	public ConfirmPanel(JPanel panel, String btn1, String btn2){
-		confirmPanel = new JPanel(new GridLayout(1, 2, 40, 20)); 
 
-        button1 = new RoundedButton(btn1, 25); 
-        button1.setForeground(Color.WHITE);
-        button1.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button1.setBackground(new Color(139, 0, 0));
-        button1.setFocusPainted(false);
-        button1.setBorderPainted(false);
-        
-        button2 = new RoundedButton(btn2,25); 
+        button2 = new RoundedButton(btn2, 25, border2, thickness2); 
         button2.setForeground(Color.WHITE);
         button2.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button2.setBackground(new Color(139, 0, 0));
+        button2.setBackground(new Color(117, 144, 156)); 
         button2.setFocusPainted(false);
-        button2.setBorderPainted(false);
-        
+
         confirmPanel.add(button1); 
         confirmPanel.add(button2); 
-	}
+    }
+     public void setBtn1Color(Color color) {
+        button1.setBackground(color);
+    }
+
+    public void setBtn2Color(Color color) {
+        button2.setBackground(color);
+    }
 	
 	//parameter 'action' is the one to execute upon click
 	public void setBtn1Action(ActionListener action) {

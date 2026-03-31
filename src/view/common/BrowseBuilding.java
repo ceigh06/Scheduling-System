@@ -128,10 +128,12 @@ public class BrowseBuilding extends JPanel {
         // Added text area so the building name can be displayed completely even when
         // long
         JTextArea nameArea = new JTextArea(bldgName);
-        nameArea.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        nameArea.setFont(new Font("Segoe UI", Font.BOLD, 15));
         nameArea.setForeground(new Color(139, 0, 0));
         nameArea.setEditable(false);
         nameArea.setOpaque(false);
+        nameArea.setFocusable(false);     
+        nameArea.setHighlighter(null);
         nameArea.setLineWrap(true);
         nameArea.setWrapStyleWord(true);
         nameArea.setColumns(10); // if 10 characters fit in one line, adjust as needed
