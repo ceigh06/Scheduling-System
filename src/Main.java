@@ -11,5 +11,6 @@ public class Main {
        
         new LoginController();
         // FacultyController facultyController = new FacultyController(frame);
+        
     }
 }

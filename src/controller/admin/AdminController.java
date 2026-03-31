@@ -21,7 +21,7 @@ public class AdminController {
 
         AdminMainframe.setOnBrowsePanel(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) { // FIXED: Correct event type
+            public void mouseClicked(MouseEvent e) { 
                 try {
                     onBrowseClicked();
                 } catch (SQLException ex) {
