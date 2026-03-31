@@ -34,9 +34,11 @@ public class RequestScheduleDAO {
 
             while (set.next()) {
                 RequestSchedule requestSchedule = new RequestSchedule();
-                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"), String.valueOf(sectionKey),
-                        set.getString("CourseCode"), set.getString("FacultyID"), set.getString("TimeIn"),
-                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"), set.getInt("isArchived"),
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("CourseCode"), String.valueOf(sectionKey), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
                         set.getString("DateRequested"), set.getString("StudentNumber"));
                 sectionRequests.add(requestSchedule);
             }
