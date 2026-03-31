@@ -41,9 +41,14 @@ public class ControlNotifs extends JPanel {
                 formsPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
                 formsPanel.setBackground(Color.WHITE);
 
-                JPanel headerPanel = addHeaderPanel(reqStatus);
-                formsPanel.add(headerPanel);
-                formsPanel.add(Box.createVerticalStrut(15));
+        // Confirm buttons
+        ConfirmPanel confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+		"GO BACK", "SUBMIT",
+		new Color(227,75,75), 2, 
+		new Color(77,139, 78),2);
+	confirmArea.setBtn1Color(new Color(255, 100, 100));
+	confirmArea.setBtn2Color(new Color(63, 193, 127));
+        formsPanel.add(confirmArea.getConfirmPanel()); 
 
                 // Top section - Student info (4 rows, tighter spacing)
                 JPanel formsTop = new JPanel(new GridLayout(4, 1, 0, 12));

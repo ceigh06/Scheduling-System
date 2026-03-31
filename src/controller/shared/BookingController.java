@@ -1,80 +1,53 @@
-package controller.admin;
+package controller.shared;
 
-import dao.BuildingDAO;
-import dao.CourseDAO;
-import dao.RoomDAO;
-import dao.schedule.ScheduleDAO;
-import java.sql.SQLException;
 import java.util.List;
-import model.Building;
+
+import dao.CourseDAO;
+import dao.schedule.ScheduleDAO;
 import model.Course;
 import model.Room;
+import model.schedule.RequestSchedule;
 import model.user.User;
 import service.ScheduleValidator;
-import view.admin.AdminMainframe;
-import view.common.BrowseBuilding;
-import view.common.RoomBrowser;
+import view.common.MainFrame;
 import view.common.ViewSchedule;
 
-public class RoomsController {
-
-    User user;
-
-    RoomsController(User user) throws SQLException {
-        this.user = user;
-        showBrowseBuilding();
-    }
-
-    // 1.1
-    void showBrowseBuilding() throws SQLException {
-        BrowseBuilding browseBuilding = new BrowseBuilding(); // view
-        BuildingDAO buildingDAO = new BuildingDAO();// dao
-        List<Building> buildings = buildingDAO.getAllBuilding(); // model
-
-        browseBuilding.loadBuilding(buildings);
-
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
-            try {
-                showRoomBrowser(building);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-
-        AdminMainframe.addContentPanel(browseBuilding, "BrowseBuilding");
-        AdminMainframe.showPanel("BrowseBuilding");
-    }
-
-    // 1.2
-    void showRoomBrowser(Building building) throws SQLException {
-
-        RoomDAO roomDAO = new RoomDAO();
-        List<Room> rooms = roomDAO.getAllRooms(building.getCode().trim());
-        RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms);
-
-        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
-        AdminMainframe.showPanel("RoomBrowser");
-
-        roomBrowser.setOnBackButton(e -> {
-            AdminMainframe.showPanel("BrowseBuilding");
-        });
-
-        roomBrowser.setOnConfirmButton(e -> {
-            Room selectedRoom = roomBrowser.getSelectedRoom();
-            if (selectedRoom == null) {
-                AdminMainframe.setNotification("Please Choose a Room First");
-                roomBrowser.clearSelection();
-            }
-            showRoomSchedule(selectedRoom);
-        });
-
-    }
-
+public class BookingController {
     // 1.3
     private String timeIn = "";
     private String timeOut = "";
 
-    void showRoomSchedule(Room selectedRoom) {
+    // constructor for browse workflow.
+    // needs to build a request schedule through the forms
+    public BookingController(User user, Room selectedRoom) {
+        showRoomSchedule(user, selectedRoom);
+    }
+
+    // Overloaded constructor for student
+    // fields are filled already and we just need to show the schedule and load the
+    // data.
+    public BookingController(User user, Room selectedRoom, RequestSchedule requestSchedule) {
+        showRoomSchedule(user, selectedRoom, requestSchedule);
+    }
+
+    void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        CourseDAO courseDAO = new CourseDAO();
+
+        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
+
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
+        viewSchedule.loadClassSchedule(selectedRoom);
+        viewSchedule.loadConfirmationPanel();
+
+        attachShowRoomScheduleListeners(viewSchedule);
+
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
+
+    }
+
+    void showRoomSchedule(User user, Room selectedRoom) {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
@@ -84,6 +57,8 @@ public class RoomsController {
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
+        viewSchedule.loadFormPanel();
+        viewSchedule.loadConfirmationPanel();
 
         viewSchedule.loadCourse(facultyCourses);
         attachShowRoomScheduleListeners(viewSchedule);
@@ -109,8 +84,8 @@ public class RoomsController {
             }
         });
 
-        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
-        AdminMainframe.showPanel("Schedule");
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
 
     }
 
@@ -144,7 +119,7 @@ public class RoomsController {
 
     void attachShowRoomScheduleListeners(ViewSchedule viewSchedule) {
         viewSchedule.setOnBackClicked(e -> {
-            AdminMainframe.showPanel("RoomBrowser");
+            MainFrame.showPanel("RoomBrowser");
         });
 
         viewSchedule.setOnConfirmClicked(e -> {

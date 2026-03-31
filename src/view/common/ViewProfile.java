@@ -46,11 +46,10 @@ public class ViewProfile extends JPanel {
 	    gbcPfp.anchor = GridBagConstraints.CENTER;
 	    gbcPfp.insets = new Insets(20, 0, 10, 0);
 
-	    rawIcon = new ImageIcon("pfp.png");
+		rawIcon = new ImageIcon("pfp.png");
 	    scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-	    pfp = new RoundedLabel(new ImageIcon(scaledImg), 2,new Color(139, 0, 0), 100);
+	    pfp = new RoundedLabel(new ImageIcon(scaledImg), 2,new Color(117, 144, 156), 100);
 	    
-
 	    picPanel.add(pfp, gbcPfp);
 	    //personal information panel
 	    
@@ -62,15 +61,18 @@ public class ViewProfile extends JPanel {
 	    add(picPanel, BorderLayout.NORTH);
 	    
 	    
-        container = new RoundedPanel(30, 5, new Color(139, 0, 0));
+        container = new RoundedPanel(30, 2, new Color(117, 144, 156));
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        container.setBackground(new Color(221, 221, 219));
+        container.setBackground(new Color(243, 244, 247));
 
         info.add(container);
         add(info, BorderLayout.CENTER);
 	    
 	    btnPanel = new JPanel();
-	    btns = new ConfirmPanel(this, "GO BACK", "LOG OUT");
+	    btns = new ConfirmPanel(this, 
+	    		"GO BACK", "LOG OUT",
+	    		new Color(91, 112 ,121), 2,
+	    		new Color(91, 112 ,121), 2);
 	    btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 	    btnPanel.add(btns.getConfirmPanel(), BorderLayout.CENTER); 
 	    
@@ -87,6 +89,7 @@ public class ViewProfile extends JPanel {
 
 	    JLabel head = new JLabel(header);
 	    head.setFont(new Font("Arial", Font.BOLD, 13));
+		head.setForeground(new Color(91, 112 ,121));
 	    head.setAlignmentX(Component.LEFT_ALIGNMENT);
 	    
 	    //text area para keri makuha yung info if mahaba and automatic na bumababa yung contents if mag ooverflow sha sa size

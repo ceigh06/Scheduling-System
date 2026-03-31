@@ -1,8 +1,9 @@
-package controller.student;
+package controller.shared;
 
 import java.sql.SQLException;
 
 import controller.faculty.FacultyController;
+import controller.student.StudentController;
 import dao.StudentDAO;
 import model.user.Student;
 import model.user.User;
@@ -22,7 +23,7 @@ public class ProfileController {
        showProfile();
 
        viewProfile.setOnBackClicked(e -> onBackClicked());
-    viewProfile.setOnLogoutClicked(e -> onLogoutClicked());
+       viewProfile.setOnLogoutClicked(e -> onLogoutClicked());
     }
 
     void showProfile() {
