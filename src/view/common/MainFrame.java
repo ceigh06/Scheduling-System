@@ -63,7 +63,7 @@ public class MainFrame {
     private static JPanel createHeader(String title) {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setPreferredSize(new Dimension(500, 50));
-        topPanel.setBackground(new Color(139, 0, 0));
+        topPanel.setBackground(new Color(91, 112 ,121));
 
         // this is to balance the space added from the button on the east side
         JPanel leftSpacer = new JPanel();

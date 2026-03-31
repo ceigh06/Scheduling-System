@@ -32,13 +32,13 @@ public class ConfirmPanel {
         button1 = new RoundedButton(btn1, 25, border1, thickness1); 
         button1.setForeground(Color.WHITE);
         button1.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button1.setBackground(new Color(27, 94, 60)); // default green
+        button1.setBackground(new Color(117, 144, 156));
         button1.setFocusPainted(false);
 
         button2 = new RoundedButton(btn2, 25, border2, thickness2); 
         button2.setForeground(Color.WHITE);
         button2.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        button2.setBackground(new Color(27, 94, 60)); // default green
+        button2.setBackground(new Color(117, 144, 156)); 
         button2.setFocusPainted(false);
 
         confirmPanel.add(button1); 
