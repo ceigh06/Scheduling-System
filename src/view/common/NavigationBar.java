@@ -127,7 +127,12 @@ public class NavigationBar {
 
         if (selectedPanel != null) {
             JLabel lbl = (JLabel) selectedPanel.getComponent(0);
-            lbl.setText(lbl.getText().substring(0, 1));
+
+            String text = lbl.getText();
+            if (text != null && text.length() > 0) {
+                lbl.setText(text.substring(0, 1));
+            }
+            
             lbl.setForeground(Color.WHITE);
             selectedPanel.setBackground(new Color(139, 0, 0));
 
