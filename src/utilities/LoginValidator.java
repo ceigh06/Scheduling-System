@@ -6,6 +6,10 @@ import model.user.User;
 
 public class LoginValidator {
 
+    private static String adminUN = "admin";
+    private static String adminPW = "1234";
+    private static boolean isAdmin = false;
+
     private static User authenticatedUser;
     private static String errorMessage;
 
@@ -59,12 +63,23 @@ public class LoginValidator {
             authenticatedUser = user; 
             return true;
         }
+        user = new User();
+        if (username.equals(adminUN)) {
+            user.setUserType("Admin");
+            user.setPassword(adminPW);
+            authenticatedUser = user;
+            isAdmin = true;
+            return true;
+        }
 
         return false;
     }
 
     private static boolean isPasswordCorrect(String inputPassword) {
         String decrypted = decrypt(authenticatedUser.getPassword());
+        if(isAdmin) {
+           decrypted = adminPW;
+        }
         return decrypted.equals(inputPassword);
     }
 

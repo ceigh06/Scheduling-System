@@ -1,11 +1,8 @@
 package controller.login;
 
-import java.awt.Desktop.Action;
-import java.sql.SQLException;
-
-import controller.admin.AdminController;
 import controller.faculty.FacultyController;
 import controller.student.StudentController;
+import java.sql.SQLException;
 import model.user.User;
 import utilities.LoginValidator;
 import view.common.MainFrame;
@@ -52,7 +49,7 @@ public class LoginController {
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             System.out.println("Faculty");
             new FacultyController(authenticatedUser);
-        } else{ // admin
+        } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
             System.out.println("Admin");
             // new AdminController(authenticatedUser);
         }
