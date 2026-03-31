@@ -1,9 +1,11 @@
 package controller.student;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import controller.shared.BookingController;
 import dao.BuildingDAO;
 import dao.CourseDAO;
 import dao.RoomDAO;
@@ -17,6 +19,7 @@ import model.schedule.Schedule;
 import model.user.Student;
 import model.user.User;
 import service.ScheduleValidator;
+import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 import view.common.SearchRooms1;
@@ -24,10 +27,11 @@ import view.common.ViewSchedule;
 import dao.BuildingDAO;
 
 public class SearchRoomsController {
-    
+
     User user;
-    RequestSchedule requestSchedule; // since the request schedule is not yet created, we can just initialize it here and load the data later when the user confirms the search.
-    
+    RequestSchedule requestSchedule; // since the request schedule is not yet created, we can just initialize it here
+                                     // and load the data later when the user confirms the search.
+
     public SearchRoomsController(User user) {
         this.user = user;
         try {
@@ -56,46 +60,57 @@ public class SearchRoomsController {
         });
 
         searchRooms.setOnConfirmButton(e -> {
-            try {
-                RoomDAO roomDAO = new RoomDAO();
-                List<Building> checkedBuildings = searchRooms.getChosenBuildings();
-                String timeIn = searchRooms.getTimeIn();
-                String timeOut = searchRooms.getTimeOut();
-                Course course = searchRooms.getCourse();
-                int capacity = searchRooms.getCapacity();
-                int floor = searchRooms.getFloorLevel();
-                
+            onConfirmClicked(searchRooms);
+        });
+    }
 
-                List<Room> availableRooms = new ArrayList<>();
-                for (Building building : checkedBuildings) {
-                    List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
-                    for (Room room : roomsToCheck) {
-                        List<Schedule> schedules = room.getSchedules();
-                        if (schedules == null) {
-                            schedules = new ArrayList<>();
-                        }
+    void onConfirmClicked(SearchRooms1 searchRooms) {
+        try {
+            RoomDAO roomDAO = new RoomDAO();
+            List<Building> checkedBuildings = searchRooms.getChosenBuildings();
+            String timeIn = searchRooms.getTimeIn();
+            String timeOut = searchRooms.getTimeOut();
+            Course course = searchRooms.getCourse();
+            int capacity = searchRooms.getCapacity();
+            int floor = searchRooms.getFloorLevel();
 
-                        boolean isValidCapacity = room.getCapacity() >= capacity;
-                        boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
-                        boolean isOverlap = !ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
+            buildRequestSchedule(timeIn, timeOut, course, capacity, floor);
 
-                        if (isValidCapacity && isValidFloor && isOverlap) {
-                            availableRooms.add(room);
-                        }
+            List<Room> availableRooms = new ArrayList<>();
+            for (Building building : checkedBuildings) {
+                List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
+                for (Room room : roomsToCheck) {
+                    List<Schedule> schedules = room.getSchedules();
+                    if (schedules == null) {
+                        schedules = new ArrayList<>();
+                    }
+
+                    boolean isValidCapacity = room.getCapacity() >= capacity;
+                    boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
+                    boolean isOverlap = !ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
+
+                    if (isValidCapacity && isValidFloor && isOverlap) {
+                        availableRooms.add(room);
                     }
                 }
-
-                requestSchedule = new RequestSchedule();
-                Student student = new StudentDAO().get(user.getUserID()); 
-                ScheduleDAO scheduleDAO = new ScheduleDAO();
-                requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(), scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
-                 timeIn, timeOut, "", "1", 0, "DateRequestedNotInitialized", student.getUserID()); // load the request schedule with the data from the search form. The ID and RoomCode are set to default values since they are not yet created.
-                showRoomBrowser(availableRooms, course);
-
-            } catch (SQLException e1) {
-                e1.printStackTrace();
             }
-        });
+
+            showRoomBrowser(availableRooms, course);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor) {
+        requestSchedule = new RequestSchedule();
+        Student student = new StudentDAO().get(user.getUserID());
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(),
+                scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
+                timeIn, timeOut, DateTimeBuilder.getDayName(), "1", 0, DateTimeBuilder.getCurrentDate(),
+                student.getUserID()); // load the request schedule with the data from the search form. The ID and
+                                      // RoomCode are set to default values since they are not yet created.
     }
 
     void showRoomBrowser(List<Room> availableRooms, Course course) throws SQLException {
@@ -109,7 +124,7 @@ public class SearchRoomsController {
 
         roomBrowser.setOnConfirmButton(e -> {
             Room selectedRoom = roomBrowser.getSelectedRoom();
-            if (selectedRoom == null){
+            if (selectedRoom == null) {
                 MainFrame.setNotification("Please Choose a Room First");
                 roomBrowser.clearSelection();
             }
@@ -117,8 +132,7 @@ public class SearchRoomsController {
         });
     }
 
-
-    void showRoomSchedule(Room selectedRoom){
-        
+    void showRoomSchedule(Room selectedRoom) {
+        new BookingController(user, selectedRoom, requestSchedule);
     }
 }

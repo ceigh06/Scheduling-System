@@ -6,6 +6,7 @@ import dao.CourseDAO;
 import dao.schedule.ScheduleDAO;
 import model.Course;
 import model.Room;
+import model.schedule.RequestSchedule;
 import model.user.User;
 import service.ScheduleValidator;
 import view.common.MainFrame;
@@ -15,9 +16,35 @@ public class BookingController {
     // 1.3
     private String timeIn = "";
     private String timeOut = "";
-    
+
+    // constructor for browse workflow.
+    // needs to build a request schedule through the forms
     public BookingController(User user, Room selectedRoom) {
         showRoomSchedule(user, selectedRoom);
+    }
+
+    // Overloaded constructor for student
+    // fields are filled already and we just need to show the schedule and load the
+    // data.
+    public BookingController(User user, Room selectedRoom, RequestSchedule requestSchedule) {
+        showRoomSchedule(user, selectedRoom, requestSchedule);
+    }
+
+    void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        CourseDAO courseDAO = new CourseDAO();
+
+        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
+
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
+        viewSchedule.loadClassSchedule(selectedRoom);
+        viewSchedule.loadConfirmationPanel();
+
+        attachShowRoomScheduleListeners(viewSchedule);
+
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
+
     }
 
     void showRoomSchedule(User user, Room selectedRoom) {
@@ -30,6 +57,8 @@ public class BookingController {
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
+        viewSchedule.loadFormPanel();
+        viewSchedule.loadConfirmationPanel();
 
         viewSchedule.loadCourse(facultyCourses);
         attachShowRoomScheduleListeners(viewSchedule);
