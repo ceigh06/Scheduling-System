@@ -3,15 +3,11 @@ package view.common;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,7 +21,6 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import model.Building;
-import view.components.RoundedButton;
 import view.components.RoundedPanel;
 
 @SuppressWarnings("serial")
@@ -55,7 +50,11 @@ public class BrowseBuilding extends JPanel {
         bldgContent.setPreferredSize(new Dimension(0, rows * 140)); // 140 = height of each card
 
         for (Building building : buildings) {
-            RoundedPanel buildingPanel = createBldgCard(building.getName(), ""); // registering the button to the model
+            String imagePath = "/resources/images/building/" + building.getName().trim().replace(" ", "_") + ".png";
+            // path builder for getting building resources.
+            System.out.println("Loading image for building: " + building.getName() + " from path: " + imagePath);
+            RoundedPanel buildingPanel = createBldgCard(building.getName(), imagePath); // registering the button to the
+                                                                                        // model
             buildingPanel.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (onBuildingClicked != null) {
@@ -68,23 +67,6 @@ public class BrowseBuilding extends JPanel {
         wrapper.add(bldgContent);
         wrapper.revalidate();
         wrapper.repaint();
-    }
-
-    // lab rat
-    public void testLoadBuilding(List<String> testList) {
-
-        for (String bldgName : testList) {
-            RoundedPanel card = createBldgCard(bldgName, ""); // registering the button to the model
-
-            // testing to see if working, for UI purposes only
-            card.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("Clicked on: " + bldgName);
-                }
-            });
-            bldgContent.add(card);
-        }
-
     }
 
     public BrowseBuilding() {
@@ -124,21 +106,6 @@ public class BrowseBuilding extends JPanel {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-    // private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-    // RoundedButton btn = new RoundedButton(bldgName, 25, new Color(139,0,0),2);
-    // btn.setForeground(new Color(139,0,0));
-    // btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
-    // btn.setPreferredSize(new Dimension(120,120));
-    // btn.setMaximumSize(new Dimension(120,120));
-
-    // // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-    // // Image img = icon.getImage();
-    // // btn.setBackgroundImage(img);
-
-    // return btn;
-    // }
-
-    // lab rat
     private RoundedPanel createBldgCard(String bldgName, String imgPath) {
         RoundedPanel card = new RoundedPanel(20, 2, new Color(139, 0, 0));
         card.setLayout(new BorderLayout());
@@ -150,11 +117,14 @@ public class BrowseBuilding extends JPanel {
         JPanel centerWrapper = new JPanel(new BorderLayout());
         centerWrapper.setOpaque(false);
 
-        // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-        // Image img = icon.getImage();
-        // JLabel imgLabel = new JLabel(new ImageIcon(img));
-        // centerWrapper.add(imgLabel);
-
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
+            Image img = icon.getImage();
+            JLabel imgLabel = new JLabel(new ImageIcon(img));
+            centerWrapper.add(imgLabel);
+        } catch (Exception e) {
+            System.out.println("Image not found for: " + bldgName);
+        }
         // Added text area so the building name can be displayed completely even when
         // long
         JTextArea nameArea = new JTextArea(bldgName);
@@ -173,15 +143,4 @@ public class BrowseBuilding extends JPanel {
         card.add(centerWrapper, BorderLayout.CENTER);
         return card;
     }
-
-    // @Override
-    // public void actionPerformed(ActionEvent e) {
-    // RoundedButton source = (RoundedButton) e.getSource();
-    // String buildingName = source.getText();
-
-    // MainFrame.setNavBarVisible(true);
-    // RoomBrowser roomPanel = new RoomBrowser(buildingName);
-    // MainFrame.addContentPanel(roomPanel, "roomBrowser");
-    // MainFrame.showPanel("roomBrowser", buildingName);
-    // }
 }
