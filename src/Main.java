@@ -10,8 +10,8 @@ import view.landing.Login;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        DBConnection connection = new DBConnection("Zia\\SQLEXPRESS", "SchedulingSystemUPDATED", "sa", "12345");
-   
+        DBConnection connection = new DBConnection("LAPTOP-81CGQV8U\\SQLEXPRESS", "SchedulingSystem", "sa", "a");
+
         MainFrame.init();
         new LoginController();
         // FacultyController facultyController = new FacultyController(frame);

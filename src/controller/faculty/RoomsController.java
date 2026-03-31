@@ -36,8 +36,7 @@ public class RoomsController {
 
         browseBuilding.loadBuilding(buildings);
 
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is
-                                                          // clicked
+        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
