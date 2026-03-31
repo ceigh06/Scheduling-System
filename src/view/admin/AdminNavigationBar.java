@@ -1,4 +1,4 @@
-package view.common;
+package view.admin;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,10 +16,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import view.components.RoundedPanel;
 
-public class NavigationBar {
+public class AdminNavigationBar {
 
     private JPanel navPanel;
-    private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, pfPanel;
+    private RoundedPanel selectedPanel, browsePanel, homePanel, pfPanel;
 
     public RoundedPanel getSelectedPanel() { // still not sure what is the purpose of this
         return selectedPanel;
@@ -33,15 +33,11 @@ public class NavigationBar {
         homePanel.addMouseListener(action);
     }
 
-    public void setOnRequestPanel(MouseAdapter action) {
-        reqPanel.addMouseListener(action);
-    }
-
     public void setOnProfilePanel(MouseAdapter action) {
         pfPanel.addMouseListener(action);
     }
 
-    public NavigationBar(JFrame frame) {
+    public AdminNavigationBar(JFrame frame) {
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
         navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
@@ -49,13 +45,11 @@ public class NavigationBar {
 
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
-        reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
         addPanel(homePanel, 0);
         addPanel(browsePanel, 1);
-        addPanel(reqPanel, 2);
-        addPanel(pfPanel, 3);
+        addPanel(pfPanel, 2);
     }
 
     private void addPanel(RoundedPanel panel, int x) {

@@ -34,6 +34,7 @@ public class LoginValidator {
 
         // find user first
         if (!isExisting(username)) {
+        
             errorMessage = "User does not exist.";
             return false;
         }

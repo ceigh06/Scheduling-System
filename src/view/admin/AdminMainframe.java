@@ -1,4 +1,4 @@
-package view.common;
+package view.admin;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -15,14 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class MainFrame {
+public class AdminMainframe {
 
     private static JFrame frame;
     private static JPanel contentPanel;
     private static JPanel requestPanel;
     private static CardLayout cardLayout;
     private static JLabel headerTitle;
-    private static NavigationBar navBar;
+    private static AdminNavigationBar navBar;
     private static JPanel navPanel;
 
     public static void init() {
@@ -44,7 +44,7 @@ public class MainFrame {
         contentPanel.setBackground(Color.WHITE);
 
         // bottom panel, always has navigation bar unless wants to hide
-        navBar = new NavigationBar(frame);
+        navBar = new AdminNavigationBar(frame);
         navPanel = navBar.getNavBar();
 
         // Assemble frame
@@ -80,7 +80,7 @@ public class MainFrame {
         requestPanel.setPreferredSize(new Dimension(50, 50));
         requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/resources/images/icons/Home.png")); // sample only
+        ImageIcon img = new ImageIcon(AdminMainframe.class.getResource("/resources/images/icons/Home.png")); // sample only
         Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         requestPanel.add(reqHistoryIcon);
@@ -141,19 +141,7 @@ public class MainFrame {
         navBar.setOnHomePanel(action);
     }
 
-    public static void setOnRequestPanel(MouseAdapter action) {
-        navBar.setOnRequestPanel(action);
-    }
-
     public static void setOnProfilePanel(MouseAdapter action) {
         navBar.setOnProfilePanel(action);
     }
-
-
-    // Remove frame to open different frames
-    public static void disposeFrame() {
-    if (frame != null) {
-        frame.dispose();
-    }
-}
 }

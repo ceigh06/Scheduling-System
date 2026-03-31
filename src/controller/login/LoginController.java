@@ -1,10 +1,12 @@
 package controller.login;
 
+import controller.admin.AdminController;
 import controller.faculty.FacultyController;
 import controller.student.StudentController;
 import java.sql.SQLException;
 import model.user.User;
 import utilities.LoginValidator;
+import view.admin.AdminMainframe;
 import view.common.MainFrame;
 import view.landing.Login;
 
@@ -51,7 +53,9 @@ public class LoginController {
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
             System.out.println("Admin");
-            // new AdminController(authenticatedUser);
+            MainFrame.disposeFrame();
+            AdminMainframe.init();
+            new AdminController(authenticatedUser);
         }
     }
 
