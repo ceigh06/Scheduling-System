@@ -148,12 +148,4 @@ public class MainFrame {
     public static void setOnProfilePanel(MouseAdapter action) {
         navBar.setOnProfilePanel(action);
     }
-
-
-    // Remove frame to open different frames
-    public static void disposeFrame() {
-    if (frame != null) {
-        frame.dispose();
-    }
-}
 }

@@ -14,16 +14,26 @@ public class LoginController {
     User authenticatedUser;
     //switch method to determine which login page to show
         // user -> create controller pass the frame.
+
+
+    private static Login loginView; // makes it sure that we can clear the fields from other controllers when logging out
+
     public LoginController() {
         
         MainFrame.setNavBarVisible(false);
-        Login view = new Login();
-        MainFrame.addContentPanel(view, "login");
+        loginView = new Login();
+        MainFrame.addContentPanel(loginView, "login");
         MainFrame.showPanel("login", "Log In");
 
-        attachLoginListener(view);
+        attachLoginListener(loginView);
     }
 
+    //
+     public static void clearLoginFields() {
+        if (loginView != null) {
+            loginView.clearFields();
+        }
+    }
 
     void attachLoginListener(Login view) {
         view.setOnLoginButton(e -> {
@@ -53,7 +63,7 @@ public class LoginController {
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
             System.out.println("Admin");
-            MainFrame.disposeFrame();
+            MainFrame.getFrame().setVisible(false);
             AdminMainframe.init();
             new AdminController(authenticatedUser);
         }

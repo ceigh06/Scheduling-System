@@ -70,14 +70,18 @@ public class AdminNavigationBar {
         panel.setPreferredSize(new Dimension(80, 25));
         panel.setMaximumSize(new Dimension(80, 25));
 
+        // Fix: Only scale once
         ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-        Image imgIcon = new ImageIcon(getClass().getResource(imgPath)).getImage().getScaledInstance(20, 20,
-                Image.SCALE_SMOOTH);
-        Image scaledImg = imgIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        JLabel label = new JLabel(new ImageIcon(scaledImg));
-        panel.add(label);
+        Image scaledImg = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        JLabel iconLbl = new JLabel(new ImageIcon(scaledImg));
+        panel.add(iconLbl); // index 0
 
         JLabel textLbl = new JLabel(text);
+        textLbl.setForeground(Color.WHITE);
+        textLbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        textLbl.setVisible(false);
+        textLbl.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        panel.add(textLbl);
         textLbl.setForeground(Color.WHITE);
         textLbl.setFont(new Font("Segoe UI", Font.BOLD, 12));
         textLbl.setVisible(false);
@@ -93,7 +97,7 @@ public class AdminNavigationBar {
                 if (selectedPanel != null) {
                     selectedPanel.getComponent(1).setVisible(false); // hides the text of the previously selected panel
                     selectedPanel.setBackground(new Color(139, 0, 0)); // goes back to the original color of the
-                                                                       // previously selected panel
+                    // previously selected panel
 
                     GridBagConstraints old = layout.getConstraints(selectedPanel);
                     old.weightx = 1;
@@ -116,25 +120,23 @@ public class AdminNavigationBar {
         return panel;
     }
 
-    public void resetToDefault() {
-        GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
+   public void resetToDefault() {
+    GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
 
-        if (selectedPanel != null) {
-            JLabel lbl = (JLabel) selectedPanel.getComponent(0);
-            lbl.setText(lbl.getText().substring(0, 1));
-            lbl.setForeground(Color.WHITE);
-            selectedPanel.setBackground(new Color(139, 0, 0));
+    if (selectedPanel != null) {
+        JLabel textLbl = (JLabel) selectedPanel.getComponent(1);
+        textLbl.setVisible(false);
+        selectedPanel.setBackground(new Color(139, 0, 0));
+        GridBagConstraints gbc = layout.getConstraints(selectedPanel);
+        gbc.weightx = 1;
+        layout.setConstraints(selectedPanel, gbc);
 
-            GridBagConstraints gbc = layout.getConstraints(selectedPanel);
-            gbc.weightx = 1;
-            layout.setConstraints(selectedPanel, gbc);
-
-            selectedPanel = null;
-        }
-
-        navPanel.revalidate();
-        navPanel.repaint();
+        selectedPanel = null;
     }
+
+    navPanel.revalidate();
+    navPanel.repaint();
+}
 
     public JPanel getNavBar() {
         return navPanel;

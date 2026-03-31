@@ -73,7 +73,7 @@ public class AdminLanding extends JPanel {
         wrapper.setBackground(OFF_WHITE);
         wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("Welcome back, ADMIN");
+        JLabel title = new JLabel("Welcome back, ADMIN!");
         title.setFont(new Font("Segoe UI", Font.BOLD, 23));
         title.setAlignmentX(LEFT_ALIGNMENT);
         wrapper.add(Box.createRigidArea(new Dimension(0, 2)));

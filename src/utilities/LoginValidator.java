@@ -34,13 +34,14 @@ public class LoginValidator {
 
         // find user first
         if (!isExisting(username)) {
-        
+
             errorMessage = "User does not exist.";
             return false;
         }
 
         // then validate password against stored user
         if (!isPasswordCorrect(password)) {
+
             errorMessage = "Incorrect password.";
             return false;
         }
@@ -49,19 +50,18 @@ public class LoginValidator {
     }
 
     private static boolean isExisting(String username) {
-        
+
         User user = studentDAO.get(username);
         if (user != null) {
             user.setUserType("Student");
-            authenticatedUser = user; 
+            authenticatedUser = user;
             return true;
         }
 
-    
         user = facultyDAO.get(username);
         if (user != null) {
             user.setUserType("Faculty");
-            authenticatedUser = user; 
+            authenticatedUser = user;
             return true;
         }
         user = new User();
@@ -78,8 +78,8 @@ public class LoginValidator {
 
     private static boolean isPasswordCorrect(String inputPassword) {
         String decrypted = decrypt(authenticatedUser.getPassword());
-        if(isAdmin) {
-           decrypted = adminPW;
+        if (isAdmin) {
+            decrypted = adminPW;
         }
         return decrypted.equals(inputPassword);
     }
@@ -99,4 +99,11 @@ public class LoginValidator {
     public static String getErrorMessage() {
         return errorMessage;
     }
+
+    public static void clearAuthenticatedUser() {
+        authenticatedUser = null;
+        errorMessage = null;
+        isAdmin = false;
+    }
+
 }
