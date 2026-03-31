@@ -81,7 +81,7 @@ public class CheckRequests extends JPanel{
 		ImageIcon rawIcon = new ImageIcon("pfp.png");
 		Image scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
 
-		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaledImg), 2, Color.GRAY);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaledImg), 2, new Color(117, 144, 156), 100);	
 		requestPanel.add(pfp, gbcPfp);
 
 		// Info labels (name, section, course)
@@ -144,10 +144,17 @@ public class CheckRequests extends JPanel{
 		    setFont(new Font("Courier New", Font.BOLD, 12));
 		}}, gbcTimeData);
 		//delete or confirm buttons
-		ConfirmPanel confirmBtns = new ConfirmPanel(requestPanel, "DELETE", "CONFIRM");
-		RoundedPanel mainPanel = new RoundedPanel(25, 5, new Color(114, 116, 113), new BorderLayout());
+		ConfirmPanel confirmBtns = new ConfirmPanel(
+				requestPanel, 
+				"DELETE", "CONFIRM",
+				new Color(227,75,75), 2, 
+				new Color(77,139, 78),2);
+		confirmBtns.setBtn1Color(new Color(255, 100, 100));
+		confirmBtns.setBtn2Color(new Color(63, 193, 127));
+
+		RoundedPanel mainPanel = new RoundedPanel(50, 10, new Color(117, 144, 156), new BorderLayout());
 		mainPanel.setOpaque(false);
-		mainPanel.setBackground(new Color(221, 221, 219));
+		mainPanel.setBackground(new Color(243, 244, 247));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
 		requestPanel.setOpaque(false);
