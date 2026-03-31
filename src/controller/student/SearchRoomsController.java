@@ -7,11 +7,14 @@ import java.util.List;
 import dao.BuildingDAO;
 import dao.CourseDAO;
 import dao.RoomDAO;
+import dao.StudentDAO;
 import dao.schedule.ScheduleDAO;
 import model.Building;
 import model.Course;
 import model.Room;
+import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
+import model.user.Student;
 import model.user.User;
 import service.ScheduleValidator;
 import view.common.MainFrame;
@@ -21,9 +24,10 @@ import view.common.ViewSchedule;
 import dao.BuildingDAO;
 
 public class SearchRoomsController {
-
+    
     User user;
-
+    RequestSchedule requestSchedule; // since the request schedule is not yet created, we can just initialize it here and load the data later when the user confirms the search.
+    
     public SearchRoomsController(User user) {
         this.user = user;
         try {
@@ -60,6 +64,7 @@ public class SearchRoomsController {
                 Course course = searchRooms.getCourse();
                 int capacity = searchRooms.getCapacity();
                 int floor = searchRooms.getFloorLevel();
+                
 
                 List<Room> availableRooms = new ArrayList<>();
                 for (Building building : checkedBuildings) {
@@ -79,6 +84,12 @@ public class SearchRoomsController {
                         }
                     }
                 }
+
+                requestSchedule = new RequestSchedule();
+                Student student = new StudentDAO().get(user.getUserID()); 
+                ScheduleDAO scheduleDAO = new ScheduleDAO();
+                requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(), scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
+                 timeIn, timeOut, "", "1", 0, "DateRequestedNotInitialized", student.getUserID()); // load the request schedule with the data from the search form. The ID and RoomCode are set to default values since they are not yet created.
                 showRoomBrowser(availableRooms, course);
 
             } catch (SQLException e1) {
@@ -105,6 +116,7 @@ public class SearchRoomsController {
             showRoomSchedule(selectedRoom);
         });
     }
+
 
     void showRoomSchedule(Room selectedRoom){
         

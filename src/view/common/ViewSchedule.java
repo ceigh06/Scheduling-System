@@ -92,7 +92,7 @@ public class ViewSchedule extends JPanel {
 
     public boolean getIsLec() {
         return isLec;
-    }   
+    }
 
     public void setTimeOut(String time) {
         timeOut.setText(time);
@@ -242,13 +242,18 @@ public class ViewSchedule extends JPanel {
         southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
         southPanel.setBackground(Color.WHITE);
 
-        confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Go Back", "Confirm");
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+                "GO BACK", "CONFIRM",
+                new Color(227, 75, 75), 2,
+                new Color(77, 139, 78), 2);
+        confirmArea.setBtn1Color(new Color(255, 100, 100));
+        confirmArea.setBtn2Color(new Color(63, 193, 127));
         confirmArea.setBackground(Color.WHITE);
         southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
         container.add(southPanel, BorderLayout.SOUTH);
     }
 
-        private void createTimeInSection() {
+    private void createTimeInSection() {
 
         // Time in label
         timeinLbl = new JLabel("TIME IN");
@@ -348,7 +353,7 @@ public class ViewSchedule extends JPanel {
             timeLbl.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             timeLbl.setOpaque(true);
             timeLbl.setBackground(Color.WHITE);
-            timeLbl.setPreferredSize(new Dimension(60, 30)); 
+            timeLbl.setPreferredSize(new Dimension(60, 30));
             timeSched.add(timeLbl, gbc);
         }
 
@@ -363,7 +368,6 @@ public class ViewSchedule extends JPanel {
             emptyCell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             emptyCell.setBackground(Color.WHITE);
             emptyCell.setPreferredSize(new Dimension(200, 30));
-            
 
             timeSched.add(emptyCell, gbc);
         }
@@ -414,8 +418,8 @@ public class ViewSchedule extends JPanel {
     // UTILITY
     public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
-    String[] times = timeRange.split(" - ");
-    System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
+        String[] times = timeRange.split(" - ");
+        System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
         int startRow = getRowFromTime(timeRange.split(" - ")[0]);
         int rowSpan = getTimeSpan(timeRange);
 
@@ -486,11 +490,11 @@ public class ViewSchedule extends JPanel {
 
     // UTILITY
     public int getTimeSpan(String timeRange) {
-    String[] times = timeRange.split(" - ");
-    int start = getRowFromTime(times[0]);
-    int end = getRowFromTime(times[1]);
-    return end - start;
-}
+        String[] times = timeRange.split(" - ");
+        int start = getRowFromTime(times[0]);
+        int end = getRowFromTime(times[1]);
+        return end - start;
+    }
 
     // UTILITY
     public void markOccupied(int col, int startRow, int rowSpan) {

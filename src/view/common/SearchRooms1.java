@@ -32,8 +32,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import dao.BuildingDAO;
-import dao.EnrolledCoursesDAO;
-import view.common.ConfirmPanel;
 import view.components.RoundedPanel;
 import model.Building;
 import model.Course;
@@ -201,7 +199,9 @@ public class SearchRooms1 extends JPanel {
 
 		// buttons below
 		btnPanel = new JPanel();
-		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search");
+		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search",
+				new Color(91, 112, 121), 2,
+				new Color(91, 112, 121), 2);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 		btnPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
 
@@ -323,7 +323,7 @@ public class SearchRooms1 extends JPanel {
 			// add it on the container
 			buildingContainer.add(choice);
 		}
-		
+
 	}
 
 	// returns the input data to main controller
