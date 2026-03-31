@@ -84,7 +84,7 @@ public class StudentController {
     }   
 
     public void onRequestClicked() {
-       new RequestsController(user);
+        new RequestsController(user);
     }
 
     public void onProfileClicked() {
