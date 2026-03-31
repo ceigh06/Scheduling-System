@@ -68,18 +68,18 @@ public class RoomsController {
     }
 
     void showRoomSchedule(Room selectedRoom){
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom.getRoomCode());
-        MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule");
+        // ViewSchedule viewSchedule = new ViewSchedule(selectedRoom.getRoomCode());
+        // MainFrame.addContentPanel(viewSchedule, "Schedule");
+        // MainFrame.showPanel("Schedule");
 
     
-        viewSchedule.setOnBackClicked(e ->{
-            MainFrame.showPanel("RoomBrowser");
-        });
+        // viewSchedule.setOnBackClicked(e ->{
+        //     MainFrame.showPanel("RoomBrowser");
+        // });
 
-        viewSchedule.setOnConfirmClicked(e ->{
+        // viewSchedule.setOnConfirmClicked(e ->{
 
-        });
+        // });
     }
     
 }
