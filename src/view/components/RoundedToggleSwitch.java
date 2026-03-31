@@ -16,9 +16,10 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoundedToggleSwitch extends RoundedComponent implements ItemSelectable {
-
-    private boolean selected = false;
+public class RoundedToggleSwitch extends RoundedComponent implements ItemSelectable{
+	
+	
+	private boolean selected = false;
     private String leftText = "Monthly";
     private String rightText = "Weekly";
 
@@ -34,13 +35,12 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
     public void addItemListener(ItemListener listener) {
         listeners.add(listener);
     }
-
+    
     public void setToggleTexts(String left, String right) {
         this.leftText = left;
         this.rightText = right;
         repaint();
     }
-    
 
     private List<ItemListener> listeners = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
         super(radius, border);
 
         setBackground(Color.WHITE);
-        setBorderColor(new Color(139,0,0));
+        setBorderColor(new Color(117, 144, 156));
         setPreferredSize(new Dimension(250,50));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -82,7 +82,7 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
         int h = getHeight();
 
         int half = w / 2;
-        g2.setColor(new Color(139,0,0));
+        g2.setColor(new Color(117, 144, 156));
 
         if(selected) {
             g2.fillRoundRect(half, 0, half, h, getCornerRadius(), getCornerRadius());
@@ -99,7 +99,7 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
         int rightX = half + (half - fm.stringWidth(rightText)) / 2;
 
         if(selected) {
-            g2.setColor(new Color(139,0,0));
+            g2.setColor(new Color(117, 144, 156));
             g2.drawString(leftText, leftX, y);
 
             g2.setColor(Color.WHITE);
@@ -108,7 +108,7 @@ public class RoundedToggleSwitch extends RoundedComponent implements ItemSelecta
             g2.setColor(Color.WHITE);
             g2.drawString(leftText, leftX, y);
 
-            g2.setColor(new Color(139,0,0));
+            g2.setColor(new Color(117, 144, 156));
             g2.drawString(rightText, rightX, y);
         }
 

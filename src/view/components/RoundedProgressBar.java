@@ -34,7 +34,7 @@ public class RoundedProgressBar extends JProgressBar{
 
         // Progress fill
         int progressWidth = (int) ((getPercentComplete()) * width);
-        g2.setColor(new Color(139, 0, 0)); // maroon fill
+        g2.setColor(new Color(91, 112 ,121)); // progressbar fill
         g2.fillRoundRect(0, 0, progressWidth, height, cornerRadius, cornerRadius);
 
         g2.dispose();

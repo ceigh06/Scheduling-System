@@ -61,7 +61,7 @@ public class ViewProfile extends JPanel {
 	    add(picPanel, BorderLayout.NORTH);
 	    
 	    
-        container = new RoundedPanel(30, 5, new Color(117, 144, 156));
+        container = new RoundedPanel(30, 2, new Color(117, 144, 156));
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.setBackground(new Color(243, 244, 247));
 
@@ -89,6 +89,7 @@ public class ViewProfile extends JPanel {
 
 	    JLabel head = new JLabel(header);
 	    head.setFont(new Font("Arial", Font.BOLD, 13));
+		head.setForeground(new Color(91, 112 ,121));
 	    head.setAlignmentX(Component.LEFT_ALIGNMENT);
 	    
 	    //text area para keri makuha yung info if mahaba and automatic na bumababa yung contents if mag ooverflow sha sa size
