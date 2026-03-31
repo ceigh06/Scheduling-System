@@ -55,7 +55,10 @@ public class BrowseBuilding extends JPanel {
         bldgContent.setPreferredSize(new Dimension(0, rows * 140)); // 140 = height of each card
 
         for (Building building : buildings) {
-            RoundedPanel buildingPanel = createBldgCard(building.getName(), ""); // registering the button to the model
+            String imagePath = "/resources/images/building/" + building.getName().trim().replace(" ", "_") + ".png";
+            System.out.println("Loading image for building: " + building.getName() + " from path: " + imagePath);
+            RoundedPanel buildingPanel = createBldgCard(building.getName(), imagePath); // registering the button to the
+                                                                                        // model
             buildingPanel.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (onBuildingClicked != null) {
@@ -68,23 +71,6 @@ public class BrowseBuilding extends JPanel {
         wrapper.add(bldgContent);
         wrapper.revalidate();
         wrapper.repaint();
-    }
-
-    // lab rat
-    public void testLoadBuilding(List<String> testList) {
-
-        for (String bldgName : testList) {
-            RoundedPanel card = createBldgCard(bldgName, ""); // registering the button to the model
-
-            // testing to see if working, for UI purposes only
-            card.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("Clicked on: " + bldgName);
-                }
-            });
-            bldgContent.add(card);
-        }
-
     }
 
     public BrowseBuilding() {
@@ -150,11 +136,14 @@ public class BrowseBuilding extends JPanel {
         JPanel centerWrapper = new JPanel(new BorderLayout());
         centerWrapper.setOpaque(false);
 
-        // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-        // Image img = icon.getImage();
-        // JLabel imgLabel = new JLabel(new ImageIcon(img));
-        // centerWrapper.add(imgLabel);
-
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
+            Image img = icon.getImage();
+            JLabel imgLabel = new JLabel(new ImageIcon(img));
+            centerWrapper.add(imgLabel);
+        } catch (Exception e) {
+            System.out.println("Image not found for: " + bldgName);
+        }
         // Added text area so the building name can be displayed completely even when
         // long
         JTextArea nameArea = new JTextArea(bldgName);
