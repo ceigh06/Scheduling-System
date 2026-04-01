@@ -92,7 +92,7 @@ public class ViewSchedule extends JPanel {
 
     public boolean getIsLec() {
         return isLec;
-    }   
+    }
 
     public void setTimeOut(String time) {
         timeOut.setText(time);
@@ -140,6 +140,44 @@ public class ViewSchedule extends JPanel {
         container.add(timeSched);
         container.add(Box.createRigidArea(new Dimension(0, 10)));
 
+        lecBtn = new RoundedButton("LECTURE SCHEDULE", 20, Color.GRAY, 2);
+        labBtn = new RoundedButton("LABORATORY SCHEDULE", 20, Color.GRAY, 2);
+
+        // Scroll pane
+        scrollPanel = new JScrollPane(container);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // test line
+        scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPanel.setBorder(null);
+
+        // false: view only
+        // true: view and click
+        setClick(false); // enables clicking of panels (ONLY)
+        // BACKEND TO DO: direct to room schedule to modify the room schedule
+        add(scrollPanel, BorderLayout.CENTER);
+
+        
+
+        
+    }
+
+    public void loadConfirmationPanel() {
+        JPanel southPanel = new JPanel(new BorderLayout());
+        southPanel.setPreferredSize(new Dimension(100, 50));
+        southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
+        southPanel.setBackground(Color.WHITE);
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+                "GO BACK", "CONFIRM",
+                new Color(227, 75, 75), 2,
+                new Color(77, 139, 78), 2);
+        confirmArea.setBtn1Color(new Color(255, 100, 100));
+        confirmArea.setBtn2Color(new Color(63, 193, 127));
+        confirmArea.setBackground(Color.WHITE);
+        southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
+        container.add(southPanel, BorderLayout.SOUTH);
+    }
+
+    public void loadFormPanel(){
         // container panel of the forms below
         form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
@@ -164,13 +202,12 @@ public class ViewSchedule extends JPanel {
         unitBtnPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // test line
 
         // BACKEND TO DO: Make functionalities for lecBtn and labBtn
-        lecBtn = new RoundedButton("LECTURE SCHEDULE", 20, Color.GRAY, 2);
+        
         lecBtn.setPreferredSize(new Dimension(180, 60));
         lecBtn.setMaximumSize(new Dimension(180, 60));
         lecBtn.setForeground(Color.WHITE);
         lecBtn.setBackground(new Color(139, 0, 0));
-
-        labBtn = new RoundedButton("LABORATORY SCHEDULE", 20, Color.GRAY, 2);
+        
         labBtn.setPreferredSize(new Dimension(180, 60));
         labBtn.setMaximumSize(new Dimension(180, 60));
         labBtn.setForeground(Color.WHITE);
@@ -223,32 +260,9 @@ public class ViewSchedule extends JPanel {
         form.add(timeWrapper);
 
         container.add(form);
-
-        // Scroll pane
-        scrollPanel = new JScrollPane(container);
-        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // test line
-        scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPanel.setBorder(null);
-
-        // false: view only
-        // true: view and click
-        setClick(false); // enables clicking of panels (ONLY)
-        // BACKEND TO DO: direct to room schedule to modify the room schedule
-        add(scrollPanel, BorderLayout.CENTER);
-
-        JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.setPreferredSize(new Dimension(100, 50));
-        southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
-        southPanel.setBackground(Color.WHITE);
-
-        confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Go Back", "Confirm");
-        confirmArea.setBackground(Color.WHITE);
-        southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
-        container.add(southPanel, BorderLayout.SOUTH);
     }
 
-        private void createTimeInSection() {
+    private void createTimeInSection() {
 
         // Time in label
         timeinLbl = new JLabel("TIME IN");
@@ -348,7 +362,7 @@ public class ViewSchedule extends JPanel {
             timeLbl.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             timeLbl.setOpaque(true);
             timeLbl.setBackground(Color.WHITE);
-            timeLbl.setPreferredSize(new Dimension(60, 30)); 
+            timeLbl.setPreferredSize(new Dimension(60, 30));
             timeSched.add(timeLbl, gbc);
         }
 
@@ -363,7 +377,6 @@ public class ViewSchedule extends JPanel {
             emptyCell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             emptyCell.setBackground(Color.WHITE);
             emptyCell.setPreferredSize(new Dimension(200, 30));
-            
 
             timeSched.add(emptyCell, gbc);
         }
@@ -414,8 +427,8 @@ public class ViewSchedule extends JPanel {
     // UTILITY
     public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
-    String[] times = timeRange.split(" - ");
-    System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
+        String[] times = timeRange.split(" - ");
+        System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
         int startRow = getRowFromTime(timeRange.split(" - ")[0]);
         int rowSpan = getTimeSpan(timeRange);
 
@@ -486,11 +499,11 @@ public class ViewSchedule extends JPanel {
 
     // UTILITY
     public int getTimeSpan(String timeRange) {
-    String[] times = timeRange.split(" - ");
-    int start = getRowFromTime(times[0]);
-    int end = getRowFromTime(times[1]);
-    return end - start;
-}
+        String[] times = timeRange.split(" - ");
+        int start = getRowFromTime(times[0]);
+        int end = getRowFromTime(times[1]);
+        return end - start;
+    }
 
     // UTILITY
     public void markOccupied(int col, int startRow, int rowSpan) {

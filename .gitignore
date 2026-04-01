@@ -42,3 +42,6 @@ bin/
 
 # bin catches every bin path for IDEs
 **/bin/
+
+# Or ignore any Main.java anywhere in project
+**/Main.java
