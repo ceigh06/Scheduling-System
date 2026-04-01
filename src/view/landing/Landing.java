@@ -21,7 +21,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.ActionListener;
 
-@SuppressWarnings("serial")
 public class Landing extends JPanel {
     
     private final Color OFF_WHITE = new Color(250, 249, 246);
@@ -97,8 +96,8 @@ public class Landing extends JPanel {
                 new Color(170,20,20)
         );
 
-        searchBar.setMaximumSize(new Dimension(440,45));
-        searchBar.setPreferredSize(new Dimension(440,45));
+        searchBar.setMaximumSize(new Dimension(400,45)); //test line
+        searchBar.setPreferredSize(new Dimension(400,45));
         searchBar.setBackground(Color.WHITE);
         searchBar.setAlignmentX(LEFT_ALIGNMENT);
         searchBar.setFont(new Font("Segoe UI",Font.PLAIN,16));
@@ -170,7 +169,7 @@ public class Landing extends JPanel {
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
-        scrollPane.setPreferredSize(new Dimension(500,200));
+        scrollPane.setPreferredSize(new Dimension(450,200)); //test line
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setBackground(OFF_WHITE);
 
@@ -188,11 +187,11 @@ public class Landing extends JPanel {
 
         JLabel nameLabel = new JLabel(roomName,JLabel.CENTER);
         nameLabel.setFont(new Font("Segoe UI",Font.BOLD,16));
-        nameLabel.setForeground(new Color(139,0,0));
+        nameLabel.setForeground(new Color(91,112,121));
 
         RoundedButton viewBtn = new RoundedButton("View Room",20);
         viewBtn.setForeground(Color.WHITE);
-        viewBtn.setBackground(new Color(139,0,0));
+        viewBtn.setBackground(new Color(91,112,121));
         viewBtn.setPreferredSize(new Dimension(120,35));
 
         viewBtn.addActionListener(e -> {
