@@ -9,12 +9,12 @@ import java.util.List;
 import model.Building;
 import model.Course;
 import model.Room;
+import model.schedule.Schedule;
 import model.user.User;
-import service.ScheduleValidator;
 import view.admin.AdminMainframe;
+import view.admin.AdminViewSchedule;
 import view.common.BrowseBuilding;
 import view.common.RoomBrowser;
-import view.common.ViewSchedule;
 
 public class RoomsController {
 
@@ -25,15 +25,16 @@ public class RoomsController {
         showBrowseBuilding();
     }
 
-    // 1.1
+    // 1.1 - BrowseBuilding pattern (already correct)
     void showBrowseBuilding() throws SQLException {
-        BrowseBuilding browseBuilding = new BrowseBuilding(); // view
-        BuildingDAO buildingDAO = new BuildingDAO();// dao
-        List<Building> buildings = buildingDAO.getAllBuilding(); // model
+        BrowseBuilding browseBuilding = new BrowseBuilding();
+        BuildingDAO buildingDAO = new BuildingDAO();
+        List<Building> buildings = buildingDAO.getAllBuilding();
 
         browseBuilding.loadBuilding(buildings);
 
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
+        // Pattern: Click immediately navigates
+        browseBuilding.setOnBuildingClicked(building -> {
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
@@ -45,16 +46,21 @@ public class RoomsController {
         AdminMainframe.showPanel("BrowseBuilding");
     }
 
-    // 1.2
+    // 1.2 - RoomBrowser now follows BrowseBuilding pattern
     void showRoomBrowser(Building building) throws SQLException {
-
         RoomDAO roomDAO = new RoomDAO();
         List<Room> rooms = roomDAO.getAllRooms(building.getCode().trim());
+        
+        // Create RoomBrowser with rooms
         RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms);
 
-        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
-        AdminMainframe.showPanel("RoomBrowser");
+        // NEW: Follow BrowseBuilding pattern - click room immediately navigates
+        // (Assuming RoomBrowser has setOnRoomClicked like BrowseBuilding has setOnBuildingClicked)
+        roomBrowser.setOnRoomClicked(room -> {
+            showRoomSchedule(room);
+        });
 
+        // Back button still needed for navigation
         roomBrowser.setOnBackButton(e -> {
             AdminMainframe.showPanel("BrowseBuilding");
         });
@@ -68,97 +74,42 @@ public class RoomsController {
             showRoomSchedule(selectedRoom);
         });
 
+        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
+        AdminMainframe.showPanel("RoomBrowser");
     }
 
-    // 1.3
-    private String timeIn = "";
-    private String timeOut = "";
-
+    // 1.3 - AdminViewSchedule also follows same pattern
     void showRoomSchedule(Room selectedRoom) {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
-        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-        // doesnt catch if the courses is null.
+        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID());
 
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
+        AdminViewSchedule viewSchedule = new AdminViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
 
-        viewSchedule.loadCourse(facultyCourses);
-        attachShowRoomScheduleListeners(viewSchedule);
-
-        viewSchedule.setOnHourChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
-            }
+        // Pattern: Click schedule immediately navigates to edit
+        viewSchedule.setOnScheduleClicked(schedule -> {
+            onScheduleEditClicked(schedule, selectedRoom);
         });
 
-        viewSchedule.setOnMinuteChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at" + timeIn);
-            }
-        });
-
-        viewSchedule.setOnMeridiemChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
-            }
-        });
-
-        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
-        AdminMainframe.showPanel("Schedule");
-
-    }
-
-    void handleTimeChange(ViewSchedule viewSchedule) {
-        int hour = viewSchedule.getHour();
-        int timeOutHour;
-        int minute = viewSchedule.getMinute();
-
-        if (viewSchedule.getMeridiem().equals("PM") && hour != 12) {
-            hour += 12;
-        } else if (viewSchedule.getMeridiem().equals("AM") && hour == 12) {
-            hour = 0;
-        }
-
-        if (viewSchedule.getIsLec() == true) {
-            timeOutHour = hour + 1;
-        } else {
-            timeOutHour = hour + 3;
-        }
-
-        // Convert back to 12-hour format for validator
-        String timeInMeridiem = (hour >= 12) ? "PM" : "AM";
-        int timeIn12Hour = (hour > 12) ? hour - 12 : (hour == 0) ? 12 : hour;
-        timeIn = String.format("%d:%02d %s", timeIn12Hour, minute, timeInMeridiem);
-
-        String timeOutMeridiem = (timeOutHour >= 12) ? "PM" : "AM";
-        int timeOut12Hour = (timeOutHour > 12) ? timeOutHour - 12 : (timeOutHour == 0) ? 12 : timeOutHour;
-        timeOut = String.format("%d:%02d %s", timeOut12Hour, minute, timeOutMeridiem);
-        viewSchedule.setTimeOut(timeOut);
-    }
-
-    void attachShowRoomScheduleListeners(ViewSchedule viewSchedule) {
+        // Back button
         viewSchedule.setOnBackClicked(e -> {
             AdminMainframe.showPanel("RoomBrowser");
         });
 
+        // Remove or keep confirm based on your needs
         viewSchedule.setOnConfirmClicked(e -> {
-
+            // Optional: handle confirm action
         });
 
-        viewSchedule.setOnLabBtn(e -> {
-            viewSchedule.setIsLec(false);
-            handleTimeChange(viewSchedule);
-        });
+        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
+        AdminMainframe.showPanel("Schedule");
+    }
 
-        viewSchedule.setOnLecBtn(e -> {
-            viewSchedule.setIsLec(true);
-            handleTimeChange(viewSchedule);
-        });
+    // Schedule edit handler
+    public void onScheduleEditClicked(Schedule schedule, Room room) {
+        new EditRoomScheduleController(schedule, room, user);
     }
 }

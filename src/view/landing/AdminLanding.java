@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -27,6 +28,22 @@ public class AdminLanding extends JPanel {
     private ActionListener onSearchAction;
     private ActionListener onRoomViewAction;
 
+    // Store buttons to identify which report they belong to
+    private RoundedButton totalBtn, mostBtn, peakBtn;
+
+    // Setter methods for buttons - following AdminNavigationBar pattern
+    public void setOnTotalBtn(ActionListener action) {
+        totalBtn.addActionListener(action);
+    }
+
+    public void setOnMostBtn(ActionListener action) {
+        mostBtn.addActionListener(action);
+    }
+
+    public void setOnPeakBtn(ActionListener action) {
+        peakBtn.addActionListener(action);
+    }
+
     public void setOnRoomViewAction(ActionListener action) {
         this.onRoomViewAction = action;
     }
@@ -45,13 +62,26 @@ public class AdminLanding extends JPanel {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(OFF_WHITE);
+
         contentPanel.add(createSearchSection());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        contentPanel.add(createReportSection("   Total Room Requests        Most Requested Room",2, 187, 187));
+        // Create buttons for side by side reports
+        totalBtn = new RoundedButton("View Report", 20);
+        mostBtn = new RoundedButton("View Report", 20);
+
+        // Pass buttons through parameters
+        contentPanel.add(createSideBySideReportsSection(
+                "Total Room Requests", 187, 187, totalBtn,
+                "Most Requested Room", 187, 187, mostBtn
+        ));
 
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        contentPanel.add(createReportSection("Most Vacancies Today",1, 387, 187));
+
+        // Create button for most vacancies report
+        peakBtn = new RoundedButton("View Report", 20);
+        contentPanel.add(createReportSection("Most Vacancies Today", 387, 187, peakBtn));
+
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
         JScrollPane mainScroll = new JScrollPane(contentPanel);
@@ -61,6 +91,26 @@ public class AdminLanding extends JPanel {
         mainScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         return mainScroll;
+    }
+
+    // Takes buttons as parameters to identify which report they belong to
+    private JPanel createSideBySideReportsSection(
+            String title1, int width1, int height1, RoundedButton btn1,
+            String title2, int width2, int height2, RoundedButton btn2) {
+
+        // Reduced gap from 15 to 5 pixels
+        JPanel sectionPanel = new JPanel(new GridLayout(1, 2, 5, 0));
+        sectionPanel.setOpaque(false);
+        sectionPanel.setBackground(OFF_WHITE);
+        sectionPanel.setBorder(new EmptyBorder(5, 0, 5, 0));
+
+        // Left report with its specific button
+        sectionPanel.add(createReportSection(title1, width1, height1, btn1));
+
+        // Right report with its specific button
+        sectionPanel.add(createReportSection(title2, width2, height2, btn2));
+
+        return sectionPanel;
     }
 
     private RoundedPanel createSearchSection() {
@@ -102,7 +152,6 @@ public class AdminLanding extends JPanel {
         searchBar.setForeground(Color.GRAY);
 
         searchBar.addFocusListener(new FocusListener() {
-
             public void focusGained(FocusEvent e) {
                 if (searchBar.getText().equals(hintText)) {
                     searchBar.setText("");
@@ -118,7 +167,6 @@ public class AdminLanding extends JPanel {
             }
         });
 
-        //BACKEND TO DO: 
         searchBar.addActionListener(e -> {
             if (onSearchAction != null) {
                 onSearchAction.actionPerformed(e);
@@ -130,36 +178,32 @@ public class AdminLanding extends JPanel {
         return searchPanel;
     }
 
-    private JPanel createReportSection(String title, int cardCount, int width, int height) {
+    // Takes button as parameter
+    private JPanel createReportSection(String title, int width, int height, RoundedButton viewBtn) {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setOpaque(false);
         sectionPanel.setBackground(OFF_WHITE);
 
         JLabel sectionTitle = new JLabel(title);
         sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        sectionTitle.setBorder(new EmptyBorder(0, 10, 10, 0));
+        sectionTitle.setBorder(new EmptyBorder(0, 15, 10, 0));
 
         sectionPanel.add(sectionTitle, BorderLayout.NORTH);
 
         JPanel cardsContainer = new JPanel();
         cardsContainer.setLayout(new BoxLayout(cardsContainer, BoxLayout.X_AXIS));
+        cardsContainer.setBorder(new EmptyBorder(0, 15, 0, 0));
         cardsContainer.setOpaque(false);
         cardsContainer.setBackground(OFF_WHITE);
-        cardsContainer.setBorder(new EmptyBorder(5, 15, 5, 30));
 
-
-        for(int i=0;i<cardCount;i++){
-        cardsContainer.add(createCard("Sample Report", width, height));
-        cardsContainer.add(Box.createRigidArea(new Dimension(15, 0)));
-        }
-        
+        cardsContainer.add(createCard("Sample Report", width, height, viewBtn));
 
         sectionPanel.add(cardsContainer, BorderLayout.CENTER);
 
         return sectionPanel;
     }
 
-    private RoundedPanel createCard(String roomName, int width, int height) {
+    private RoundedPanel createCard(String roomName, int width, int height, RoundedButton viewBtn) {
         RoundedPanel roomCard = new RoundedPanel(25, 2, Color.LIGHT_GRAY, new BorderLayout());
         roomCard.setPreferredSize(new Dimension(width, height));
         roomCard.setMaximumSize(new Dimension(width, height));
@@ -170,20 +214,26 @@ public class AdminLanding extends JPanel {
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         nameLabel.setForeground(new Color(139, 0, 0));
 
-        RoundedButton viewBtn = new RoundedButton("View Report", 20);
         viewBtn.setForeground(Color.WHITE);
         viewBtn.setBackground(new Color(139, 0, 0));
         viewBtn.setPreferredSize(new Dimension(120, 35));
 
-        viewBtn.addActionListener(e -> {
-            if (onRoomViewAction != null) {
-                onRoomViewAction.actionPerformed(e);
-            }
-        });
-
         roomCard.add(nameLabel, BorderLayout.CENTER);
         roomCard.add(viewBtn, BorderLayout.SOUTH);
         return roomCard;
+    }
+
+    // Getter methods to access buttons directly if needed
+    public RoundedButton getTotalBtn() {
+        return totalBtn;
+    }
+
+    public RoundedButton getMostBtn() {
+        return mostBtn;
+    }
+
+    public RoundedButton getPeakBtn() {
+        return peakBtn;
     }
 
     public String getSearchText() {

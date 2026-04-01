@@ -1,7 +1,6 @@
 package model;
 
 import java.util.List;
-
 import model.schedule.Schedule;
 
 public class Room {
@@ -46,6 +45,11 @@ public class Room {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 
 

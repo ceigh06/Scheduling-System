@@ -1,9 +1,15 @@
 package controller.shared;
 
+<<<<<<< HEAD
+import dao.CourseDAO;
+import dao.schedule.ScheduleDAO;
+import java.util.List;
+=======
 import java.util.List;
 
 import dao.CourseDAO;
 import dao.schedule.ScheduleDAO;
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
 import model.Course;
 import model.Room;
 import model.schedule.RequestSchedule;

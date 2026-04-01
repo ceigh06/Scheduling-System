@@ -14,7 +14,6 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-
 import view.components.RoundedPanel;
 import view.components.RoundedProgressBar;
 import view.components.RoundedToggleSwitch;
@@ -41,7 +39,7 @@ public class Report2 extends JPanel {
 	GridBagConstraints bname, progBar, totalReq, gbcArrow;
 	CardLayout cardLayout;
 
-	Report2() {
+	public Report2() {
 		setLayout(new BorderLayout());
 		// landing panel = contains yung buong R2.1
 
