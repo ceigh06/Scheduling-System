@@ -12,6 +12,7 @@ import dao.schedule.RequestScheduleDAO;
 import model.schedule.RequestSchedule;
 import model.user.Student;
 import model.user.User;
+import service.RequestValidatorService;
 import service.SectionRequestValidator;
 import view.common.BrowseBuilding;
 import view.common.ControlNotifs;
@@ -48,7 +49,14 @@ public class RequestsController {
             String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
+
             panel = page;
+
+            if(RequestValidatorService.hasExceededMaxRequests(user.getUserID())) {
+                NotificationMessage notifPage = new NotificationMessage("", status);
+                panel = notifPage;
+            }
+            
         } else {
             NotificationMessage page = new NotificationMessage("", status);
             panel = page;
