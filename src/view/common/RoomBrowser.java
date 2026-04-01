@@ -131,7 +131,7 @@ public class RoomBrowser extends JPanel{
 	        roomCard.setMaximumSize(new Dimension(400,100));
 	        
 	        RoundedPanel codePanel = new RoundedPanel(20,1, new Color(130,0,0));
-	        codePanel.setBackground(new Color(139, 0, 0));
+	        codePanel.setBackground(new Color(91,112,121));
 	        codePanel.setPreferredSize(new Dimension(90, 60));
 	        codePanel.setMaximumSize(new Dimension(90,60));
 	        roomCard.setLayout(new BorderLayout(7, 0));
@@ -198,7 +198,7 @@ public class RoomBrowser extends JPanel{
 	                    }
 	                    
 	                    //selecting the room cards users chose 
-	                    infoPanel.setBorderColor(new Color(139,0,0));
+	                    infoPanel.setBorderColor(new Color(91,112,121));
 	                    infoPanel.setBorderThickness(2);
 	                    selectedPanel = infoPanel;
 	                    selectedRoom = room;
