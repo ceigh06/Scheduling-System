@@ -16,7 +16,7 @@ public class SectionRequestValidator {
 
     public String getRequestStatus(List<RequestSchedule> requestSchedule) {
         for (RequestSchedule rs : requestSchedule) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.n]");
             LocalDate dateRequested = LocalDateTime.parse(rs.getDateRequested(), formatter).toLocalDate();
             if (!dateRequested.equals(LocalDate.now())) {
                 continue;
