@@ -6,14 +6,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-<<<<<<< HEAD
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-=======
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -23,14 +18,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import model.Building;
-<<<<<<< HEAD
 import view.components.RoundedButton;
-=======
 import view.components.RoundedPanel;
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
 
 @SuppressWarnings("serial")
 public class BrowseBuilding extends JPanel {
@@ -39,33 +32,18 @@ public class BrowseBuilding extends JPanel {
     private JPanel wrapper;
     private JPanel bldgContent;
 
-<<<<<<< HEAD
     private List<RoundedButton> buildingButtons = new ArrayList<>();
 
-=======
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
     Consumer<Building> onBuildingClicked;
 
     public void setOnBuildingClicked(Consumer<Building> action) {
         this.onBuildingClicked = action;// register
     }
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
     public void loadBuilding(List<Building> buildings) {
         bldgContent = new JPanel(new GridLayout(0, 2, 16, 16));
         bldgContent.setBackground(Color.WHITE);
 
-<<<<<<< HEAD
-        for (Building building : buildings) {
-            RoundedButton btn = createBldgBtn(building.getName(), ""); //registering the button to the model
-            btn.addActionListener(e ->{
-                onBuildingClicked.accept(building);
-            });
-            bldgContent.add(btn);
-=======
         wrapper.removeAll();
         wrapper.add(headerPanel);
 
@@ -89,7 +67,6 @@ public class BrowseBuilding extends JPanel {
                 }
             });
             bldgContent.add(buildingPanel);
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
         }
         wrapper.add(bldgContent);
     }
@@ -131,20 +108,6 @@ public class BrowseBuilding extends JPanel {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-<<<<<<< HEAD
-    private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(117,144,156),2);
-        btn.setForeground(new Color(117, 144,156));
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
-        btn.setPreferredSize(new Dimension(120,120));
-        btn.setMaximumSize(new Dimension(120,120));
-
-        // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-        // Image img = icon.getImage();
-        // btn.setBackgroundImage(img);
-
-        return btn;
-=======
     private RoundedPanel createBldgCard(String bldgName, String imgPath) {
         RoundedPanel card = new RoundedPanel(20, 2, new Color(139, 0, 0));
         card.setLayout(new BorderLayout());
@@ -171,7 +134,7 @@ public class BrowseBuilding extends JPanel {
         nameArea.setForeground(new Color(139, 0, 0));
         nameArea.setEditable(false);
         nameArea.setOpaque(false);
-        nameArea.setFocusable(false);     
+        nameArea.setFocusable(false);
         nameArea.setHighlighter(null);
         nameArea.setLineWrap(true);
         nameArea.setWrapStyleWord(true);
@@ -183,6 +146,5 @@ public class BrowseBuilding extends JPanel {
         centerWrapper.add(nameArea, BorderLayout.CENTER);
         card.add(centerWrapper, BorderLayout.CENTER);
         return card;
->>>>>>> e66f0d95031860846cfa1fa1ae5d91d88278fd37
     }
 }
