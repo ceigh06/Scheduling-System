@@ -58,6 +58,7 @@ public class RoomBrowser extends JPanel{
 		roomCard.removeAll();
 		for (Room room : rooms) {
 			roomCard.add(createRoomCards(room, room.getStatus(), room.getBuildingCode()));
+			roomCard.add(Box.createVerticalStrut(5)); // Add spacing between cards
 		}
 		
 		roomCard.revalidate();
@@ -96,7 +97,9 @@ public class RoomBrowser extends JPanel{
         roomTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
         roomPanel.add(roomTitle, BorderLayout.NORTH);
 
-        roomCard = new JPanel(new GridLayout(rooms.size(), 1, 10, 10));
+        // roomCard = new JPanel(new GridLayout(rooms.size(), 1, 10, 10));
+		roomCard = new JPanel(); 
+		roomCard.setLayout(new BoxLayout(roomCard, BoxLayout.Y_AXIS));
         roomCard.setBorder(new EmptyBorder(10, 0, 10, 0));
 
 		loadRooms(rooms);
