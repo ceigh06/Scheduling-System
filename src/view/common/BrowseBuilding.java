@@ -3,14 +3,11 @@ package view.common;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -21,12 +18,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import model.Building;
 import view.components.RoundedButton;
-import view.components.RoundedPanel;
 
 @SuppressWarnings("serial")
 public class BrowseBuilding extends JPanel  {
@@ -36,7 +31,6 @@ public class BrowseBuilding extends JPanel  {
     private JPanel bldgContent;
 
     private List<RoundedButton> buildingButtons = new ArrayList<>();
-    private List<String> testList = new ArrayList<>();
 
     Consumer<Building> onBuildingClicked;
 
@@ -44,53 +38,21 @@ public class BrowseBuilding extends JPanel  {
         this.onBuildingClicked = action;// register
     }
     
-    // public void loadBuilding(List<Building> buildings) {
-    //     bldgContent = new JPanel(new GridLayout(0, 2, 16, 16));
-    //     bldgContent.setBackground(Color.WHITE);
-
-    //     for (Building building : buildings) {
-    //         RoundedButton btn = createBldgBtn(building.getName(), ""); //registering the button to the model
-    //         btn.addActionListener(e ->{
-    //             onBuildingClicked.accept(building);
-    //         });
-    //         bldgContent.add(btn);
-    //     }
-    //     wrapper.add(bldgContent);
-    // }
-
-    //lab rat
-    public void testLoadBuilding(List<String> testList) {
-        wrapper.removeAll();
-        wrapper.add(headerPanel); 
-
-        int rows = (int) Math.ceil(testList.size() / 2.0);
+    public void loadBuilding(List<Building> buildings) {
         bldgContent = new JPanel(new GridLayout(0, 2, 16, 16));
         bldgContent.setBackground(Color.WHITE);
-        bldgContent.setAlignmentX(CENTER_ALIGNMENT); //test line
-        bldgContent.setPreferredSize(new Dimension(0, rows * 140)); // 140 = height of each card
-        for (String bldgName : testList) {
-            RoundedPanel card = createBldgCard(bldgName, ""); //registering the button to the model
-            
-            //testing to see if working, for UI purposes only
-            card.addMouseListener(new MouseAdapter(){
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("Clicked on: " + bldgName);
-                }
+
+        for (Building building : buildings) {
+            RoundedButton btn = createBldgBtn(building.getName(), ""); //registering the button to the model
+            btn.addActionListener(e ->{
+                onBuildingClicked.accept(building);
             });
-            bldgContent.add(card);
+            bldgContent.add(btn);
         }
         wrapper.add(bldgContent);
-        wrapper.revalidate();
-        wrapper.repaint();
     }
 
     public BrowseBuilding() {
-        testList.addAll(List.of("Engineering Building", "Science Building",
-        "Pimentel Hall", "Athelete Dorm", 
-        "Happy Birthday", "Happy New Year",
-        "Merry Christmas", "Happy Halloween"));
-
-
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -116,7 +78,6 @@ public class BrowseBuilding extends JPanel  {
         headerPanel.add(subtitle, BorderLayout.SOUTH);
 
         wrapper.add(headerPanel);
-        testLoadBuilding(testList); //test line
 
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -128,63 +89,17 @@ public class BrowseBuilding extends JPanel  {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-    // private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-    //     RoundedButton btn = new RoundedButton(bldgName, 25, new Color(139,0,0),2);
-    //     btn.setForeground(new Color(139,0,0));
-    //     btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
-    //     btn.setPreferredSize(new Dimension(120,120));
-    //     btn.setMaximumSize(new Dimension(120,120));
-
-    //     // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
-    //     // Image img = icon.getImage();
-    //     // btn.setBackgroundImage(img);
-
-    //     return btn;
-    // }
-
-    //lab rat 
-    private RoundedPanel createBldgCard(String bldgName, String imgPath){
-        RoundedPanel card = new RoundedPanel(20, 2, new Color(139,0,0));
-        card.setLayout(new BorderLayout());
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-        card.setPreferredSize(new Dimension(140,140));
-        card.setMaximumSize(new Dimension(140,140));
-
-        JPanel centerWrapper = new JPanel(new BorderLayout());
-        centerWrapper.setOpaque(false);
+    private RoundedButton createBldgBtn(String bldgName, String imgPath) {
+        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(117,144,156),2);
+        btn.setForeground(new Color(117, 144,156));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        btn.setPreferredSize(new Dimension(120,120));
+        btn.setMaximumSize(new Dimension(120,120));
 
         // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
         // Image img = icon.getImage();
-        // JLabel imgLabel = new JLabel(new ImageIcon(img));
-        // centerWrapper.add(imgLabel);
+        // btn.setBackgroundImage(img);
 
-        // Added text area so the building name can be displayed completely even when long
-        JTextArea nameArea = new JTextArea(bldgName);
-        nameArea.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        nameArea.setForeground(new Color(139,0,0));
-        nameArea.setEditable(false);
-        nameArea.setOpaque(false);
-        nameArea.setLineWrap(true);
-        nameArea.setWrapStyleWord(true);
-        nameArea.setColumns(10); // if 10 characters fit in one line, adjust as needed
-        nameArea.setRows(3); //maximum of 3 lines, adjust as needed
-        nameArea.setAlignmentX(JTextArea.CENTER_ALIGNMENT);
-        nameArea.setAlignmentY(JTextArea.CENTER_ALIGNMENT);
-
-        centerWrapper.add(nameArea, BorderLayout.CENTER);
-        card.add(centerWrapper, BorderLayout.CENTER);
-        return card; 
+        return btn;
     }
-
-    // @Override
-    // public void actionPerformed(ActionEvent e) {
-    //     RoundedButton source = (RoundedButton) e.getSource();
-    //     String buildingName = source.getText();
-
-    //     MainFrame.setNavBarVisible(true);
-    //     RoomBrowser roomPanel = new RoomBrowser(buildingName);
-    //     MainFrame.addContentPanel(roomPanel, "roomBrowser");
-    //     MainFrame.showPanel("roomBrowser", buildingName);
-    // }
 }
