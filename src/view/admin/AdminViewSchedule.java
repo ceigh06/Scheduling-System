@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import model.Room;
 import model.schedule.Schedule;
+import view.common.ConfirmPanel;
+import view.common.MainFrame;
 import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
 
@@ -34,7 +36,7 @@ public class AdminViewSchedule extends JPanel {
 
     private boolean onTimeChangedCallBack = false;
 
-    private AdminConfirmPanel confirmArea;
+    private ConfirmPanel confirmArea;
     private JLabel roomLbl;
     private JPanel timeSched, form;
     private JScrollPane scrollPanel;
@@ -122,7 +124,9 @@ public class AdminViewSchedule extends JPanel {
         southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
         southPanel.setBackground(Color.WHITE);
 
-        confirmArea = new AdminConfirmPanel(AdminMainframe.getFrame(), "Go Back", "Confirm");
+        confirmArea = new ConfirmPanel(MainFrame.getFrame(), "GO BACK", "CONFIRM",
+                new Color(227, 75, 75), 2,
+                new Color(77, 139, 78), 2);
         confirmArea.setBackground(Color.WHITE);
         southPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
         container.add(southPanel, BorderLayout.SOUTH);

@@ -4,10 +4,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import model.user.User;
-import view.admin.AdminMainframe;
 import view.admin.Report1;
 import view.admin.Report2;
 import view.admin.Report3;
+import view.common.MainFrame;
 import view.landing.AdminLanding;
 
 public class AdminController {
@@ -22,9 +22,10 @@ public class AdminController {
         this.user = user;
 
         AdminLanding adminLanding = new AdminLanding();
-        AdminMainframe.addContentPanel(adminLanding, "AdminLanding");
-        AdminMainframe.showPanel("AdminLanding");
-        AdminMainframe.setNavBarVisible(true);
+        MainFrame.setCurrentUser(user);
+        MainFrame.addContentPanel(adminLanding, "AdminLanding");
+        MainFrame.showPanel("AdminLanding");
+        MainFrame.setNavBarVisible(true);
 
         adminLanding.setOnTotalBtn(e -> {
 
@@ -41,7 +42,7 @@ public class AdminController {
             onPeakReportClicked();
         });
 
-        AdminMainframe.setOnBrowsePanel(new MouseAdapter() {
+        MainFrame.setOnBrowsePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
@@ -52,14 +53,14 @@ public class AdminController {
             }
         });
 
-        AdminMainframe.setOnHomePanel(new MouseAdapter() {
+        MainFrame.setOnHomePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 onHomeClicked();
             }
         });
 
-        AdminMainframe.setOnProfilePanel(new MouseAdapter() {
+        MainFrame.setOnProfilePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 onProfileClicked();
@@ -70,9 +71,9 @@ public class AdminController {
     public void onTotalReportClicked() {
         if (report1 == null) {
            ReportOneController reportOneController = new ReportOneController();
-           AdminMainframe.addContentPanel(reportOneController.getView(), "Report1");
+           MainFrame.addContentPanel(reportOneController.getView(), "Report1");
         }
-        AdminMainframe.showPanel("Report1", "Total Room Requests");
+        MainFrame.showPanel("Report1", "Total Room Requests");
     }
 
     public void onMostReportClicked() {
@@ -96,7 +97,7 @@ public class AdminController {
     }
 
     public void onHomeClicked() {
-        AdminMainframe.showPanel("AdminLanding", "Home");
+        MainFrame.showPanel("AdminLanding", "Home");
     }
 
     public void onProfileClicked() {

@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.user.User;
 
 public class MainFrame {
 
@@ -24,6 +25,7 @@ public class MainFrame {
     private static JLabel headerTitle;
     private static NavigationBar navBar;
     private static JPanel navPanel;
+    private static User currentUser;
 
     public static void init() {
         frame = new JFrame("Scheduling System");
@@ -44,7 +46,11 @@ public class MainFrame {
         contentPanel.setBackground(Color.WHITE);
 
         // bottom panel, always has navigation bar unless wants to hide
-        navBar = new NavigationBar(frame);
+        if(getCurrentUser() != null) {
+            navBar = new NavigationBar(frame, getCurrentUser());
+        } else {
+            navBar = new NavigationBar(frame);
+        }
         navPanel = navBar.getNavBar();
 
         // Assemble frame
@@ -147,5 +153,13 @@ public class MainFrame {
 
     public static void setOnProfilePanel(MouseAdapter action) {
         navBar.setOnProfilePanel(action);
+    }
+
+    public static void setCurrentUser(User user) {
+        currentUser = user;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 }

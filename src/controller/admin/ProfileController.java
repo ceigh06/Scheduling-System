@@ -1,9 +1,6 @@
 package controller.admin;
 
-import controller.login.LoginController;
 import model.user.User;
-import utilities.LoginValidator;
-import view.admin.AdminMainframe;
 import view.common.MainFrame;
 import view.common.ViewProfile;
 
@@ -23,8 +20,8 @@ public class ProfileController {
     }
 
     void showProfile() {
-        AdminMainframe.addContentPanel(viewProfile, "Profile");
-        AdminMainframe.showPanel("Profile");
+        MainFrame.addContentPanel(viewProfile, "Profile");
+        MainFrame.showPanel("Profile");
     }
 
     private void createProfile() {
@@ -33,13 +30,10 @@ public class ProfileController {
     }
 
     private void onLogoutClicked() {
+        MainFrame.restoreNavBarDefaultState();
         user = null;
-        AdminMainframe.getFrame().dispose();
-        LoginValidator.clearAuthenticatedUser();
-        LoginController.clearLoginFields();
         MainFrame.setNavBarVisible(false);
-        MainFrame.showPanel("login", "Log In");
-        MainFrame.getFrame().setVisible(true);
+        MainFrame.showPanel("login");
     }
 
     private void onBackClicked() {

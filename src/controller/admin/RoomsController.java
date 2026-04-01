@@ -11,9 +11,9 @@ import model.Course;
 import model.Room;
 import model.schedule.Schedule;
 import model.user.User;
-import view.admin.AdminMainframe;
 import view.admin.AdminViewSchedule;
 import view.common.BrowseBuilding;
+import view.common.MainFrame;
 import view.common.RoomBrowser;
 
 public class RoomsController {
@@ -42,8 +42,8 @@ public class RoomsController {
             }
         });
 
-        AdminMainframe.addContentPanel(browseBuilding, "BrowseBuilding");
-        AdminMainframe.showPanel("BrowseBuilding");
+        MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
+        MainFrame.showPanel("BrowseBuilding");
     }
 
     // 1.2 - RoomBrowser now follows BrowseBuilding pattern
@@ -62,20 +62,20 @@ public class RoomsController {
 
         // Back button still needed for navigation
         roomBrowser.setOnBackButton(e -> {
-            AdminMainframe.showPanel("BrowseBuilding");
+            MainFrame.showPanel("BrowseBuilding");
         });
 
         roomBrowser.setOnConfirmButton(e -> {
             Room selectedRoom = roomBrowser.getSelectedRoom();
             if (selectedRoom == null) {
-                AdminMainframe.setNotification("Please Choose a Room First");
+                MainFrame.setNotification("Please Choose a Room First");
                 roomBrowser.clearSelection();
             }
             showRoomSchedule(selectedRoom);
         });
 
-        AdminMainframe.addContentPanel(roomBrowser, "RoomBrowser");
-        AdminMainframe.showPanel("RoomBrowser");
+        MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
+        MainFrame.showPanel("RoomBrowser");
     }
 
     // 1.3 - AdminViewSchedule also follows same pattern
@@ -96,7 +96,7 @@ public class RoomsController {
 
         // Back button
         viewSchedule.setOnBackClicked(e -> {
-            AdminMainframe.showPanel("RoomBrowser");
+            MainFrame.showPanel("RoomBrowser");
         });
 
         // Remove or keep confirm based on your needs
@@ -104,8 +104,8 @@ public class RoomsController {
             // Optional: handle confirm action
         });
 
-        AdminMainframe.addContentPanel(viewSchedule, "Schedule");
-        AdminMainframe.showPanel("Schedule");
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
     }
 
     // Schedule edit handler
