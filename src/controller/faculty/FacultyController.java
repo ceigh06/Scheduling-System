@@ -1,14 +1,12 @@
 package controller.faculty;
 
+import controller.shared.ProfileController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-
-import controller.shared.ProfileController;
-import view.common.BrowseBuilding;
+import model.user.User;
 import view.common.MainFrame;
 import view.landing.Landing;
-import model.user.User;
 
 public class FacultyController {
 
@@ -17,7 +15,7 @@ public class FacultyController {
     public FacultyController(User user) {
 
         this.user = user;
-
+        MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(new Landing(), "FacultyLanding");
         MainFrame.showPanel("FacultyLanding");
         MainFrame.setNavBarVisible(true);

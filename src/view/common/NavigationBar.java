@@ -60,7 +60,8 @@ public class NavigationBar {
         addPanel(pfPanel, 3);
     }
 
-    public NavigationBar(JFrame frame, User user) {
+     public NavigationBar(JFrame frame, User user) {
+        this.currentUser = user;
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
         navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
@@ -68,20 +69,43 @@ public class NavigationBar {
 
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
-        if(user.getUserType() != "Admin") {
-            reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
-        }
+        reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
         addPanel(homePanel, 0);
         addPanel(browsePanel, 1);
-        if(user.getUserType() != "Admin") {
-            addPanel(reqPanel, 2);
-            addPanel(pfPanel, 3);
+        addPanel(reqPanel, 2);
+        addPanel(pfPanel, 3);
+    }
+
+    public void rebuildForUser(User user) {
+        // Clear everything
+        navPanel.removeAll();
+        selectedPanel = null;
+
+        // Recreate panels fresh
+        homePanel = createOption("/resources/images/icons/Home.png", "Home");
+        browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
+        pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
+
+        // Force revalidate of the navPanel to clear old constraints
+        navPanel.setLayout(new GridBagLayout());
+
+        if (user.getUserType().equals("Admin")) {
+            // Admin: 3 panels with equal weight
+            addPanelWithWeight(homePanel, 0, 1.0);
+            addPanelWithWeight(browsePanel, 1, 1.0);
+            addPanelWithWeight(pfPanel, 2, 1.0);
         } else {
-            addPanel(pfPanel, 2);
+            reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+            addPanelWithWeight(homePanel, 0, 1.0);
+            addPanelWithWeight(browsePanel, 1, 1.0);
+            addPanelWithWeight(reqPanel, 2, 1.0);
+            addPanelWithWeight(pfPanel, 3, 1.0);
         }
-       
+
+        navPanel.revalidate();
+        navPanel.repaint();
     }
 
     private void addPanel(RoundedPanel panel, int x) {
@@ -95,10 +119,21 @@ public class NavigationBar {
         navPanel.add(panel, gbc);
     }
 
+    private void addPanelWithWeight(RoundedPanel panel, int x, double weight) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = 0;
+        gbc.weightx = weight;
+        gbc.ipady = 20;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 2, 0, 2);
+        navPanel.add(panel, gbc);
+    }
+
     private RoundedPanel createOption(String imgPath, String text) {
         RoundedPanel panel = new RoundedPanel(20, 0);
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(new Color(91,112,121));
+        panel.setBackground(new Color(91, 112, 121));
         panel.setPreferredSize(new Dimension(80, 25));
         panel.setMaximumSize(new Dimension(80, 25));
 
@@ -124,8 +159,8 @@ public class NavigationBar {
                 GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
                 if (selectedPanel != null) {
                     selectedPanel.getComponent(1).setVisible(false); // hides the text of the previously selected panel
-                    selectedPanel.setBackground(new Color(91,112,121)); // goes back to the original color of the
-                                                                       // previously selected panel
+                    selectedPanel.setBackground(new Color(91, 112, 121)); // goes back to the original color of the
+                    // previously selected panel
 
                     GridBagConstraints old = layout.getConstraints(selectedPanel);
                     old.weightx = 1;
@@ -158,9 +193,9 @@ public class NavigationBar {
             if (text != null && text.length() > 0) {
                 lbl.setText(text.substring(0, 1));
             }
-            
+
             lbl.setForeground(Color.WHITE);
-            selectedPanel.setBackground(new Color(91,112,121));
+            selectedPanel.setBackground(new Color(91, 112, 121));
 
             GridBagConstraints gbc = layout.getConstraints(selectedPanel);
             gbc.weightx = 1;

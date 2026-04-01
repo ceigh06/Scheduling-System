@@ -22,7 +22,7 @@ public class AdminController {
         this.user = user;
 
         AdminLanding adminLanding = new AdminLanding();
-        MainFrame.setCurrentUser(user);
+        MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(adminLanding, "AdminLanding");
         MainFrame.showPanel("AdminLanding");
         MainFrame.setNavBarVisible(true);
