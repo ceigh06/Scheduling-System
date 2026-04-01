@@ -69,26 +69,26 @@ public class AdminController {
 
     public void onTotalReportClicked() {
         if (report1 == null) {
-            report1 = new Report1();
-            AdminMainframe.addContentPanel(report1, "Report1");
+           ReportOneController reportOneController = new ReportOneController();
+           AdminMainframe.addContentPanel(reportOneController.getView(), "Report1");
         }
         AdminMainframe.showPanel("Report1", "Total Room Requests");
     }
 
     public void onMostReportClicked() {
-        if (report2 == null) {
-            report2 = new Report2();
-            AdminMainframe.addContentPanel(report2, "Report2");
-        }
-        AdminMainframe.showPanel("Report2", "Most Requested Room");
+        // if (report2 == null) {
+        //    ReportTwoController reportTwoController = new ReportTwoController();
+        //    AdminMainframe.addContentPanel(reportTwoController.getView(), "Report2");
+        // }
+        // AdminMainframe.showPanel("Report2", "Most Requested Room");
     }
 
     public void onPeakReportClicked() {
-        if (report3 == null) {
-            report3 = new Report3();
-            AdminMainframe.addContentPanel(report3, "Report3");
-        }
-        AdminMainframe.showPanel("Report3", "Peak Scheduling Hours");
+        // if (report3 == null) {
+        //     ReportThreeController reportThreeController = new ReportThreeController();
+        //     AdminMainframe.addContentPanel(reportThreeController.getView(), "Report3");
+        // }
+        // AdminMainframe.showPanel("Report3", "Peak Scheduling Hours");
     }
 
     public void onBrowseClicked() throws SQLException {

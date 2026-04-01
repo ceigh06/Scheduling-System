@@ -64,4 +64,25 @@ public class ScheduleDAO {
         return schedules;
     }
 
+    public String getFacultyIDByStudentCourse(String studentNumber, String courseCode) {
+        String sql = "SELECT DISTINCT ms.FacultyID " +
+                "FROM MasterSchedule ms " +
+                "JOIN EnrolledCourses ec ON ms.CourseCode = ec.CourseCode " +
+                "AND ms.SectionKey = ec.SectionKey " + // match both keys
+                "WHERE ec.StudentNumber = ? " +
+                "AND ec.CourseCode = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, studentNumber);
+            stmt.setString(2, courseCode);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("FacultyID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

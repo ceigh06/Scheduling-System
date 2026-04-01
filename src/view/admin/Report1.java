@@ -8,8 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.function.Consumer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -24,29 +23,37 @@ import javax.swing.border.EmptyBorder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import view.components.RoundedPanel;
 import view.components.RoundedToggleSwitch;
 
-public class Report1 extends JPanel implements ItemListener {
+public class Report1 extends JPanel {
 
     private RoundedToggleSwitch toggleBtn;
     private JPanel contentPanel;
-    //BACKEND TO DO: these panels should be populated with actual data from the database when created
     private JPanel monthlyPanel;
     private JPanel weeklyPanel;
-    //BACKEND TO DO: these labels should be updated with actual counts from the database when the panels are created
-    private JLabel approvedCount;
-    private JLabel deniedCount;
-    private JLabel voidCount; 
-    private int monthlyApproved, monthlyDenied, monthlyVoid;
-    private int weeklyApproved, weeklyDenied, weeklyVoid;
     private JToggleButton allBtn;
     private JToggleButton approvedBtn;
-    private JToggleButton deniedBtn;
+    private JToggleButton declinedBtn;
     private JToggleButton voidedBtn;
+    
+    private Consumer<Boolean> onToggleChanged;
+    private Consumer<String> onFilterChanged;
+    
+    private int monthlyApproved;
+    private int monthlyDeclined;
+    private int monthlyVoid;
+    private int weeklyApproved;
+    private int weeklyDeclined;
+    private int weeklyVoid;
+    private int[] weeklyApprovedArr;
+    private int[] weeklyDeclinedArr;
+    private int[] weeklyVoidArr;
 
     public JToggleButton getAllBtn() {
         return allBtn;
@@ -56,77 +63,109 @@ public class Report1 extends JPanel implements ItemListener {
         return approvedBtn;
     }
 
-    public JToggleButton getDeniedBtn() {
-        return deniedBtn;
+    public JToggleButton getDeclinedBtn() {
+        return declinedBtn;
     }
 
     public JToggleButton getVoidedBtn() {
         return voidedBtn;
     }
 
-    //BACKEND TO DO: these methods should retrieve actual counts from the database 
-    //I just hardcoded them for now to test the UIs
-    public int getMonthlyApproved(){
-        return monthlyApproved = 300;
+    public void setOnToggleChanged(Consumer<Boolean> callback) {
+        this.onToggleChanged = callback;
     }
 
-    public int getMonthlyDenied(){
-        return monthlyDenied = 150;
+    public void setOnFilterChanged(Consumer<String> callback) {
+        this.onFilterChanged = callback;
     }
 
-    public int getMonthlyVoid(){
-        return monthlyVoid = 50;
+    public void setMonthlyData(int approved, int declined, int voided) {
+        this.monthlyApproved = approved;
+        this.monthlyDeclined = declined;
+        this.monthlyVoid = voided;
     }
 
-    public int getWeeklyApproved(){
-        return weeklyApproved = 80;
+    public void setWeeklyData(int approved, int declined, int voided) {
+        this.weeklyApproved = approved;
+        this.weeklyDeclined = declined;
+        this.weeklyVoid = voided;
     }
 
-    public int getWeeklyDenied(){
-        return weeklyDenied = 40;
+    public void setWeeklyArrays(int[] approved, int[] declined, int[] voided) {
+        this.weeklyApprovedArr = approved;
+        this.weeklyDeclinedArr = declined;
+        this.weeklyVoidArr = voided;
     }
 
-    public int getWeeklyVoid(){
-        return weeklyVoid = 10;
+    public void showMonthlyView() {
+        contentPanel.removeAll();
+        monthlyPanel = createMonthlyPanel();
+        contentPanel.add(monthlyPanel, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 
-    public JLabel getApprovedCount(){
-        return approvedCount;
+    public void showWeeklyView() {
+        contentPanel.removeAll();
+        weeklyPanel = createWeeklyPanel();
+        contentPanel.add(weeklyPanel, BorderLayout.CENTER);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 
-    public JLabel getDeniedCount(){
-        return deniedCount;
+    public void updateWeeklyChart(int[] approved, int[] declined, int[] voided) {
+        if (weeklyPanel != null) {
+            contentPanel.removeAll();
+            weeklyPanel = createWeeklyPanelWithData(approved, declined, voided);
+            contentPanel.add(weeklyPanel, BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        }
     }
 
-    public JLabel getVoidCount(){
-        return voidCount;
+    public void updateWeeklyChart(int[] data, String label) {
+        if (weeklyPanel != null) {
+            contentPanel.removeAll();
+            weeklyPanel = createWeeklyPanelSingleSeries(data, label);
+            contentPanel.add(weeklyPanel, BorderLayout.CENTER);
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        }
     }
 
-    public JPanel getMonthlyPanel(){
-        return monthlyPanel;
-    }
-
-    public JPanel getWeeklyPanel(){
-        return weeklyPanel;
+    public Report1() {
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
+        
+        buildHeader();
+        
+        contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(Color.WHITE);
+        add(contentPanel, BorderLayout.CENTER);
     }
     
-    public Report1(){
-        setLayout(new BorderLayout()); 
-        setBackground(Color.WHITE);
+    public void renderInitialView() {
+        showMonthlyView();
+    }
 
-        // Header
-        JPanel topPanel = new JPanel(new BorderLayout()); 
+    private void buildHeader() {
+        JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(Color.WHITE);
         topPanel.setBorder(new EmptyBorder(5, 10, 5, 10));
 
-        toggleBtn = new RoundedToggleSwitch(40, 2); 
-        toggleBtn.setPreferredSize(new Dimension(220,40));
-        toggleBtn.addItemListener(this);
+        toggleBtn = new RoundedToggleSwitch(40, 2);
+        toggleBtn.setPreferredSize(new Dimension(220, 40));
+        
+        toggleBtn.addItemListener(e -> {
+            boolean isWeekly = (e.getStateChange() == java.awt.event.ItemEvent.SELECTED);
+            if (onToggleChanged != null) {
+                onToggleChanged.accept(isWeekly);
+            }
+        });
 
-        JPanel btnWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+        JPanel btnWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnWrapper.setBackground(Color.WHITE);
         btnWrapper.add(toggleBtn);
-
         topPanel.add(btnWrapper, BorderLayout.NORTH);
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -134,135 +173,56 @@ public class Report1 extends JPanel implements ItemListener {
         titlePanel.setBorder(new EmptyBorder(-5, 0, 5, 0));
 
         JLabel titleLabel = new JLabel("Total Room Schedule Requests", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segeo UI", Font.BOLD, 24));
-
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titlePanel.add(titleLabel);
         topPanel.add(titlePanel, BorderLayout.CENTER);
 
-        // Content panels 
-        contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(Color.WHITE);
-
-        monthlyPanel = openMonthlyPanel();
-        weeklyPanel = openWeeklyPanel();
-        switchView(false); // default to monthly view
-
         add(topPanel, BorderLayout.NORTH);
-        add(contentPanel, BorderLayout.CENTER);
     }
 
-    //test line: 
-    public JPanel openMonthlyPanel() {
+    private JPanel createMonthlyPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        int approved = getMonthlyApproved();
-        int denied = getMonthlyDenied();
-        int voided = getMonthlyVoid();
-
-        panel.add(createStatsCard("Monthly Room Schedule Requests", approved, denied, voided), BorderLayout.NORTH);
-        // lower panel for the pie chart
-        //BACKEND TO DO: the counts passed into createPieChart should be the 
-        // actual counts from the database
-        panel.add(createPieChart(getMonthlyApproved(), 
-        getMonthlyDenied(), 
-        getMonthlyVoid()),
-        BorderLayout.SOUTH);
+        panel.add(createStatsCard("Monthly Room Schedule Requests", monthlyApproved, monthlyDeclined, monthlyVoid), BorderLayout.NORTH);
+        panel.add(createPieChart(monthlyApproved, monthlyDeclined, monthlyVoid), BorderLayout.SOUTH);
 
         return panel;
     }
 
-    public JPanel openWeeklyPanel() {
-        int approved = getWeeklyApproved();
-        int denied   = getWeeklyDenied();
-        int voided   = getWeeklyVoid();
+    private JPanel createWeeklyPanel() {
+        return createWeeklyPanelWithData(weeklyApprovedArr, weeklyDeclinedArr, weeklyVoidArr);
+    }
 
-        int[] approvedArr = {10, 15, 20, 18, 12, 5};
-        int[] deniedArr = {5, 7, 10, 8, 6, 3};
-        int[] voidedArr = {2, 3, 4, 3, 2, 1};
+    private JPanel createWeeklyPanelWithData(int[] approvedArr, int[] declinedArr, int[] voidedArr) {
+        int approved = weeklyApproved;
+        int declined = weeklyDeclined;
+        int voided = weeklyVoid;
+
+        if (approvedArr == null) approvedArr = new int[6];
+        if (declinedArr == null) declinedArr = new int[6];
+        if (voidedArr == null) voidedArr = new int[6];
 
         JPanel contentWrapper = new JPanel();
         contentWrapper.setLayout(new BoxLayout(contentWrapper, BoxLayout.Y_AXIS));
         contentWrapper.setBackground(Color.WHITE);
 
-        //test line
-        JLabel weekSpan = new JLabel("March 16 - March 21");
+        JLabel weekSpan = new JLabel("Current Week");
         weekSpan.setFont(new Font("Segoe UI", Font.BOLD, 14));
         weekSpan.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentWrapper.add(weekSpan);
         contentWrapper.add(Box.createVerticalStrut(3));
 
-        JPanel statsCard = createStatsCard("Weekly Room Schedule Requests", approved, denied, voided);
+        JPanel statsCard = createStatsCard("Weekly Room Schedule Requests", approved, declined, voided);
         statsCard.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentWrapper.add(statsCard);
         contentWrapper.add(Box.createVerticalStrut(15));
 
-        JPanel columnChartCard = createColumnChart(approvedArr, deniedArr, voidedArr);
+        JPanel columnChartCard = createColumnChart(approvedArr, declinedArr, voidedArr);
         columnChartCard.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentWrapper.add(columnChartCard);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
-        buttonPanel.setBackground(Color.WHITE);
-        
-        //labas mo to jessie
-        allBtn = new JToggleButton("All");
-        approvedBtn = new JToggleButton("Approved");
-        deniedBtn = new JToggleButton("Denied");
-        voidedBtn = new JToggleButton("Voided");
-
-        JToggleButton[] buttons = { allBtn, approvedBtn, deniedBtn, voidedBtn };
-
-        for (JToggleButton btn : buttons) {
-            btn.setBackground(Color.WHITE);
-            btn.setForeground(Color.BLACK);
-            btn.setFocusPainted(false);
-        }
-
-        allBtn.setSelected(true);
-        allBtn.setBackground(new Color(139,0,0));
-        allBtn.setForeground(Color.WHITE);
-
-        ButtonGroup group = new ButtonGroup();
-        for (JToggleButton btn : buttons) {
-            group.add(btn);
-            buttonPanel.add(btn);
-
-            btn.addActionListener(e -> {
-                for (JToggleButton b : buttons) {
-                    if (b.isSelected()) {
-                        b.setBackground(new Color(139,0,0));
-                        b.setForeground(Color.WHITE);
-                    } else {
-                        b.setBackground(Color.WHITE);
-                        b.setForeground(Color.BLACK);
-                    }
-                }
-
-                //test lines: 
-                if (btn == allBtn) {
-                    columnChartCard.removeAll(); 
-                    columnChartCard.add(createColumnChart(approvedArr, deniedArr, voidedArr));
-                    columnChartCard.revalidate();
-                    columnChartCard.repaint();
-                } else if (btn == approvedBtn) {
-                    columnChartCard.removeAll(); 
-                    columnChartCard.add(createColumnChart(approvedArr, "Approved"));
-                    columnChartCard.revalidate();
-                    columnChartCard.repaint();
-                } else if (btn == deniedBtn) {
-                    columnChartCard.removeAll(); 
-                    columnChartCard.add(createColumnChart(deniedArr, "Denied"));
-                    columnChartCard.revalidate();
-                    columnChartCard.repaint();
-                } else if (btn == voidedBtn) {
-                    columnChartCard.removeAll(); 
-                    columnChartCard.add(createColumnChart(voidedArr, "Voided"));
-                    columnChartCard.revalidate();
-                    columnChartCard.repaint();
-                }
-            });
-        }
-
+        JPanel buttonPanel = createFilterButtons(approvedArr, declinedArr, voidedArr);
         contentWrapper.add(buttonPanel);
 
         JScrollPane scrollPane = new JScrollPane(contentWrapper,
@@ -279,54 +239,145 @@ public class Report1 extends JPanel implements ItemListener {
         return panel;
     }
 
-    public JPanel createPieChart(int approved, int denied, int voided){
+    private JPanel createWeeklyPanelSingleSeries(int[] data, String label) {
+        JPanel contentWrapper = new JPanel();
+        contentWrapper.setLayout(new BoxLayout(contentWrapper, BoxLayout.Y_AXIS));
+        contentWrapper.setBackground(Color.WHITE);
+
+        JLabel weekSpan = new JLabel("Current Week");
+        weekSpan.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        weekSpan.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(weekSpan);
+        contentWrapper.add(Box.createVerticalStrut(3));
+
+        JPanel statsCard = createStatsCard("Weekly Room Schedule Requests", weeklyApproved, weeklyDeclined, weeklyVoid);
+        statsCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(statsCard);
+        contentWrapper.add(Box.createVerticalStrut(15));
+
+        JPanel columnChartCard = createColumnChart(data, label);
+        columnChartCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(columnChartCard);
+
+        JPanel buttonPanel = createFilterButtons(weeklyApprovedArr, weeklyDeclinedArr, weeklyVoidArr);
+        contentWrapper.add(buttonPanel);
+
+        JScrollPane scrollPane = new JScrollPane(contentWrapper,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JPanel createFilterButtons(int[] approvedArr, int[] declinedArr, int[] voidedArr) {
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        buttonPanel.setBackground(Color.WHITE);
+
+        allBtn = new JToggleButton("All");
+        approvedBtn = new JToggleButton("Approved");
+        declinedBtn = new JToggleButton("Declined");
+        voidedBtn = new JToggleButton("Voided");
+
+        JToggleButton[] buttons = {allBtn, approvedBtn, declinedBtn, voidedBtn};
+
+        for (JToggleButton btn : buttons) {
+            btn.setBackground(Color.WHITE);
+            btn.setForeground(Color.BLACK);
+            btn.setFocusPainted(false);
+        }
+
+        allBtn.setSelected(true);
+        allBtn.setBackground(new Color(139, 0, 0));
+        allBtn.setForeground(Color.WHITE);
+
+        ButtonGroup group = new ButtonGroup();
+        for (JToggleButton btn : buttons) {
+            group.add(btn);
+            buttonPanel.add(btn);
+
+            btn.addActionListener(e -> {
+                for (JToggleButton b : buttons) {
+                    if (b.isSelected()) {
+                        b.setBackground(new Color(139, 0, 0));
+                        b.setForeground(Color.WHITE);
+                    } else {
+                        b.setBackground(Color.WHITE);
+                        b.setForeground(Color.BLACK);
+                    }
+                }
+
+                if (onFilterChanged != null) {
+                    if (btn == allBtn) {
+                        onFilterChanged.accept("All");
+                    } else if (btn == approvedBtn) {
+                        onFilterChanged.accept("Approved");
+                    } else if (btn == declinedBtn) {
+                        onFilterChanged.accept("Declined");
+                    } else if (btn == voidedBtn) {
+                        onFilterChanged.accept("Voided");
+                    }
+                }
+            });
+        }
+
+        return buttonPanel;
+    }
+
+    public JPanel createPieChart(int approved, int declined, int voided) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
         JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setBackground(Color.WHITE);
 
-        RoundedPanel chartPanel = new RoundedPanel(20, 2, new Color(190,190,190));
+        RoundedPanel chartPanel = new RoundedPanel(20, 2, new Color(190, 190, 190));
         chartPanel.setBackground(Color.WHITE);
         chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.Y_AXIS));
-        chartPanel.setBorder(new EmptyBorder(10,20,20,20));
-        chartPanel.setPreferredSize(new Dimension(400,230));
+        chartPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        chartPanel.setPreferredSize(new Dimension(400, 230));
 
         JLabel statsTitle = new JLabel("Pie Chart of Room Requests");
         statsTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         statsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        //BACKEND TO DO: the dataset should be populated with actual counts from the database
         DefaultPieDataset dataset = new DefaultPieDataset();
         dataset.setValue("Approved", approved);
-        dataset.setValue("Denied", denied);
+        dataset.setValue("Declined", declined);
         dataset.setValue("Void", voided);
 
         JFreeChart pieChart = ChartFactory.createPieChart("", dataset, true, true, false);
 
         ChartPanel chart = new ChartPanel(pieChart);
-        chart.setPreferredSize(new Dimension(350,150));
+        chart.setPreferredSize(new Dimension(350, 150));
         chart.setOpaque(false);
 
         chartPanel.add(statsTitle);
-        chartPanel.add(Box.createVerticalStrut(5)); //spacing for BoxLayout, don't remove
+        chartPanel.add(Box.createVerticalStrut(5));
         chartPanel.add(chart);
 
-        wrapper.add(chartPanel); 
+        wrapper.add(chartPanel);
         panel.add(wrapper, BorderLayout.CENTER);
 
-        return panel; 
+        return panel;
     }
 
-    public JPanel createColumnChart(int[] approved, int[] denied, int[] voided){
+    // FIXED: Y-axis now starts at 0
+    public JPanel createColumnChart(int[] approved, int[] declined, int[] voided) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
         RoundedPanel chartPanel = new RoundedPanel(20, 0);
         chartPanel.setBackground(Color.WHITE);
         chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.Y_AXIS));
-        chartPanel.setBorder(new EmptyBorder(10,20,20,20));
-        chartPanel.setPreferredSize(new Dimension(400,230));
+        chartPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        chartPanel.setPreferredSize(new Dimension(400, 230));
 
         JLabel title = new JLabel("Column Chart of Room Requests");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -337,16 +388,24 @@ public class Report1 extends JPanel implements ItemListener {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         String[] daysOfWeek = {"M", "T", "W", "Th", "F", "Sat"};
 
-        for(int i=0; i<6; i++){
+        for (int i = 0; i < 6; i++) {
             dataset.addValue(approved[i], "Approved", daysOfWeek[i]);
-            dataset.addValue(denied[i], "Denied", daysOfWeek[i]);
+            dataset.addValue(declined[i], "Declined", daysOfWeek[i]);
             dataset.addValue(voided[i], "Void", daysOfWeek[i]);
         }
 
         JFreeChart columnChart = ChartFactory.createBarChart("", "Week Day", "", dataset);
 
+        // FIX: Configure Y-axis to always start at 0
+        CategoryPlot plot = columnChart.getCategoryPlot();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setLowerBound(0);
+        rangeAxis.setAutoRangeMinimumSize(1);
+        rangeAxis.setUpperMargin(0.15);
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
         ChartPanel chart = new ChartPanel(columnChart);
-        chart.setPreferredSize(new Dimension(400,150));
+        chart.setPreferredSize(new Dimension(400, 150));
         chart.setOpaque(false);
         chartPanel.add(chart);
 
@@ -354,17 +413,16 @@ public class Report1 extends JPanel implements ItemListener {
         return panel;
     }
 
-    // for specific dataset value (approved, denied, or voided) 
-    // this method is used to create the column chart in the weekly view
-    public JPanel createColumnChart(int[] status, String dataSetValue){
+    // FIXED: Y-axis now starts at 0
+    public JPanel createColumnChart(int[] status, String dataSetValue) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
         RoundedPanel chartPanel = new RoundedPanel(20, 0);
         chartPanel.setBackground(Color.WHITE);
         chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.Y_AXIS));
-        chartPanel.setBorder(new EmptyBorder(10,20,20,20));
-        chartPanel.setPreferredSize(new Dimension(400,230));
+        chartPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+        chartPanel.setPreferredSize(new Dimension(400, 230));
 
         JLabel title = new JLabel("Column Chart of Room Requests");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -375,14 +433,22 @@ public class Report1 extends JPanel implements ItemListener {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         String[] daysOfWeek = {"M", "T", "W", "Th", "F", "Sat"};
 
-        for(int i=0; i<6; i++){
+        for (int i = 0; i < 6; i++) {
             dataset.addValue(status[i], dataSetValue, daysOfWeek[i]);
         }
 
         JFreeChart columnChart = ChartFactory.createBarChart("", "Week Day", "", dataset);
 
+        // FIX: Configure Y-axis to always start at 0
+        CategoryPlot plot = columnChart.getCategoryPlot();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setLowerBound(0);
+        rangeAxis.setAutoRangeMinimumSize(1);
+        rangeAxis.setUpperMargin(0.15);
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
         ChartPanel chart = new ChartPanel(columnChart);
-        chart.setPreferredSize(new Dimension(400,150));
+        chart.setPreferredSize(new Dimension(400, 150));
         chart.setOpaque(false);
         chartPanel.add(chart);
 
@@ -390,7 +456,7 @@ public class Report1 extends JPanel implements ItemListener {
         return panel;
     }
 
-    public JPanel createStatsCard(String title, int approvedCount, int deniedCount, int voidCount){
+    public JPanel createStatsCard(String title, int approvedCount, int declinedCount, int voidCount) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
@@ -400,34 +466,31 @@ public class Report1 extends JPanel implements ItemListener {
         RoundedPanel statsPanel = new RoundedPanel(20, 2, new Color(190, 190, 190));
         statsPanel.setBackground(Color.WHITE);
         statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
-        statsPanel.setBorder(new EmptyBorder(10,20,10,20));
-        statsPanel.setPreferredSize(new Dimension(400,220));
+        statsPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        statsPanel.setPreferredSize(new Dimension(400, 220));
 
-        // Title and total
         JLabel statsTitle = new JLabel(title);
         statsTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         statsTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
 
-        int total = approvedCount + deniedCount + voidCount;
+        int total = approvedCount + declinedCount + voidCount;
         JLabel totalStatsLbl = new JLabel(String.valueOf(total));
         totalStatsLbl.setFont(new Font("Segoe UI", Font.BOLD, 50));
         totalStatsLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Breakdown panel
-        JPanel breakdownPanel = new JPanel(new GridLayout(3,2,10,10));
+        JPanel breakdownPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         breakdownPanel.setBackground(Color.WHITE);
-        breakdownPanel.setMaximumSize(new Dimension(300,120));
+        breakdownPanel.setMaximumSize(new Dimension(300, 120));
 
         JLabel approvedLbl = new JLabel("Approved", SwingConstants.LEFT);
         approvedLbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         JLabel approvedLabel = new JLabel(String.valueOf(approvedCount), SwingConstants.RIGHT);
         approvedLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
-        JLabel deniedLbl = new JLabel("Denied", SwingConstants.LEFT);
-        deniedLbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        JLabel deniedLabel = new JLabel(String.valueOf(deniedCount), SwingConstants.RIGHT);
-        deniedLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        JLabel declinedLbl = new JLabel("Declined", SwingConstants.LEFT);
+        declinedLbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        JLabel declinedLabel = new JLabel(String.valueOf(declinedCount), SwingConstants.RIGHT);
+        declinedLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         JLabel voidLbl = new JLabel("Void", SwingConstants.LEFT);
         voidLbl.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -436,9 +499,9 @@ public class Report1 extends JPanel implements ItemListener {
 
         breakdownPanel.add(approvedLbl);
         breakdownPanel.add(approvedLabel);
-        breakdownPanel.add(deniedLbl); 
-        breakdownPanel.add(deniedLabel);
-        breakdownPanel.add(voidLbl); 
+        breakdownPanel.add(declinedLbl);
+        breakdownPanel.add(declinedLabel);
+        breakdownPanel.add(voidLbl);
         breakdownPanel.add(voidLabel);
 
         JPanel breakdownWrapper = new JPanel(new GridBagLayout());
@@ -454,26 +517,5 @@ public class Report1 extends JPanel implements ItemListener {
         wrapper.add(statsPanel);
         panel.add(wrapper, BorderLayout.CENTER);
         return panel;
-    }
-
-    //test line: PASSED 
-    public void switchView(boolean isWeekly){
-        contentPanel.removeAll(); // clear existing content so it is 'smooth' when switching
-        if(isWeekly){
-            contentPanel.add(openWeeklyPanel(), BorderLayout.CENTER);
-        } else {
-            contentPanel.add(openMonthlyPanel(), BorderLayout.CENTER);
-        }
-        // revalidate and repaint to update the UI after switching panels
-        contentPanel.revalidate();
-        contentPanel.repaint();
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        // Determine if the toggle is in the "weekly" (selected) or 
-        // "monthly" (deselected) state
-        boolean isPindot = (e.getStateChange() == ItemEvent.SELECTED);
-        switchView(isPindot); 
     }
 }

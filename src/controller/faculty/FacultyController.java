@@ -4,6 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
+import controller.shared.ProfileController;
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.landing.Landing;
