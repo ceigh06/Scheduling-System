@@ -10,8 +10,8 @@ import view.landing.Login;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        new DBConnection("Zia\\SQLEXPRESS",
-                "SchedulingSystemUPDATED", "sa", "12345");
+        new DBConnection("JessieHP\\SQLEXPRESS",
+                "SchedulingSystem", "sa", "jessie");
 
         MainFrame.init();
         new LoginController();

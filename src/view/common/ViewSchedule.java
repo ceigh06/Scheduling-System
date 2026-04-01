@@ -13,15 +13,10 @@ import model.schedule.Schedule;
 import view.components.RoundedButton;
 import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
-<<<<<<< Updated upstream
-=======
 import view.components.ScrollBarHelper;
-
-import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
->>>>>>> Stashed changes
 
 @SuppressWarnings("serial")
 public class ViewSchedule extends JPanel {
