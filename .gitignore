@@ -45,3 +45,5 @@ bin/
 
 # Or ignore any Main.java anywhere in project
 **/Main.java
+**/Launcher.java
+**/App.java
