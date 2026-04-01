@@ -6,15 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-<<<<<<< HEAD
 import model.schedule.RequestSchedule;
-=======
-
-import model.Course;
-import model.schedule.RequestSchedule;
-import model.schedule.Schedule;
-import model.user.User;
->>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
 import utilities.DBConnection;
 
 public class RequestScheduleDAO {
@@ -28,7 +20,6 @@ public class RequestScheduleDAO {
         }
     }
 
-<<<<<<< HEAD
     // Status constants
     public static final int STATUS_VOID = 0;
     public static final int STATUS_PENDING = 1;
@@ -62,8 +53,14 @@ public class RequestScheduleDAO {
                     set.getBoolean("IsArchived") ? "1" : "0"
                 );
                 requests.add(request);
-=======
-    public List<RequestSchedule> getRequestOfSection(int sectionKey) {
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
+     public List<RequestSchedule> getRequestOfSection(int sectionKey) {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
             PreparedStatement stmt = connection
@@ -80,14 +77,13 @@ public class RequestScheduleDAO {
                         set.getInt("isArchived"),
                         set.getString("DateRequested"), set.getString("StudentNumber"));
                 sectionRequests.add(requestSchedule);
->>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
-        return requests;
+        return sectionRequests;
     }
+   
 
     // Get request by ID
     public RequestSchedule getById(int requestKey) {
@@ -115,8 +111,11 @@ public class RequestScheduleDAO {
                     set.getBoolean("IsArchived") ? "1" : "0"
                 );
                 return request;
-=======
-        return sectionRequests;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public RequestSchedule getRequestSchedule(int requestKey) {
@@ -134,12 +133,10 @@ public class RequestScheduleDAO {
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
                         set.getString("DateRequested"), set.getString("StudentNumber"));
->>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
         return null;
     }
 
@@ -298,8 +295,4 @@ public class RequestScheduleDAO {
         return false;
     }
 }
-=======
-        return requestSchedule;
-    }
-}
->>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
+        
