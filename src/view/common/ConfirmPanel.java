@@ -44,7 +44,7 @@ public class ConfirmPanel {
         confirmPanel.add(button1); 
         confirmPanel.add(button2); 
     }
-     public void setBtn1Color(Color color) {
+    public void setBtn1Color(Color color) {
         button1.setBackground(color);
     }
 
