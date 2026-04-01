@@ -36,17 +36,16 @@ public class RequestsController {
         LookUpDAO lookUp = new LookUpDAO();
         RequestSchedule rs = new RequestScheduleDAO().getRequestSchedule(requestKey);
 
-        Student student = new StudentDAO().get(rs.getStudentRequested());
-        String section = lookUp.getFullSectionName(requestKey);
-        String room = lookUp.getFullRoomName(rs.getRoomCode());
-        String timeIn = handleTimeChange(rs.getTimeIn());
-        String timeOut = handleTimeChange(rs.getTimeOut());
-        String course = lookUp.getFullCourseName(rs.getCourseCode());
-        String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
-
         if (status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
                 || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void")) {
-            ControlNotifs page = new ControlNotifs();  
+            ControlNotifs page = new ControlNotifs();
+            Student student = new StudentDAO().get(rs.getStudentRequested());
+            String section = lookUp.getFullSectionName(requestKey);
+            String room = lookUp.getFullRoomName(rs.getRoomCode());
+            String timeIn = handleTimeChange(rs.getTimeIn());
+            String timeOut = handleTimeChange(rs.getTimeOut());
+            String course = lookUp.getFullCourseName(rs.getCourseCode());
+            String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
             panel = page;
