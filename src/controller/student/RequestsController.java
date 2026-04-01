@@ -35,12 +35,14 @@ public class RequestsController {
     void showCheckRequestPage(String status, int requestKey) {
         JPanel panel = new JPanel();
         LookUpDAO lookUp = new LookUpDAO();
+        Student student = new StudentDAO().get(user.getUserID());
         RequestSchedule rs = new RequestScheduleDAO().getRequestSchedule(requestKey);
 
-        if (status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
-                || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void")) {
+        if ((status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
+                || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void"))
+                && (user.getUserID().equalsIgnoreCase(rs.getStudentRequested()))) {
             ControlNotifs page = new ControlNotifs();
-            Student student = new StudentDAO().get(rs.getStudentRequested());
+            student = new StudentDAO().get(rs.getStudentRequested());
             String section = lookUp.getFullSectionName(requestKey);
             String room = lookUp.getFullRoomName(rs.getRoomCode());
             String timeIn = handleTimeChange(rs.getTimeIn());
@@ -51,13 +53,15 @@ public class RequestsController {
             page.loadRequestStatusHeader(status);
 
             panel = page;
+        }
 
-            if(RequestValidatorService.hasExceededMaxRequests(user.getUserID())) {
-                NotificationMessage notifPage = new NotificationMessage("", status);
-                panel = notifPage;
-            }
-            
-        } else {
+        else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()))) {
+            NotificationMessage notifPage = new NotificationMessage("",
+                    "Your section has a pending request.");
+            panel = notifPage;
+        }
+
+        else {
             NotificationMessage page = new NotificationMessage("", status);
             panel = page;
         }
