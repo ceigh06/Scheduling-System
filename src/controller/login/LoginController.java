@@ -6,7 +6,6 @@ import controller.student.StudentController;
 import java.sql.SQLException;
 import model.user.User;
 import utilities.LoginValidator;
-import view.admin.AdminMainframe;
 import view.common.MainFrame;
 import view.landing.Login;
 
@@ -63,8 +62,6 @@ public class LoginController {
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
             System.out.println("Admin");
-            MainFrame.getFrame().setVisible(false);
-            AdminMainframe.init();
             new AdminController(authenticatedUser);
         }
     }

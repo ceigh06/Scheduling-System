@@ -3,7 +3,7 @@ import java.sql.SQLException;
 import utilities.DBConnection;
 import view.common.MainFrame;
 
-public class Launcher {
+public class Main {
     public static void main(String[] args) throws SQLException {
         DBConnection connection = new DBConnection("ALEX\\SQLEXPRESS",
                 "SchedulingSystem", "sa", "1234");

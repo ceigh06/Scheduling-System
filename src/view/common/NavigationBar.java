@@ -14,12 +14,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import model.user.User;
 import view.components.RoundedPanel;
 
 public class NavigationBar {
 
     private JPanel navPanel;
     private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, pfPanel;
+    private User currentUser;
 
     public RoundedPanel getSelectedPanel() { // still not sure what is the purpose of this
         return selectedPanel;
@@ -56,6 +58,30 @@ public class NavigationBar {
         addPanel(browsePanel, 1);
         addPanel(reqPanel, 2);
         addPanel(pfPanel, 3);
+    }
+
+    public NavigationBar(JFrame frame, User user) {
+        navPanel = new JPanel(new GridBagLayout());
+        navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
+        navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
+        navPanel.setBackground(Color.WHITE);
+
+        homePanel = createOption("/resources/images/icons/Home.png", "Home");
+        browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
+        if(user.getUserType() != "Admin") {
+            reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+        }
+        pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
+
+        addPanel(homePanel, 0);
+        addPanel(browsePanel, 1);
+        if(user.getUserType() != "Admin") {
+            addPanel(reqPanel, 2);
+            addPanel(pfPanel, 3);
+        } else {
+            addPanel(pfPanel, 2);
+        }
+       
     }
 
     private void addPanel(RoundedPanel panel, int x) {
@@ -150,4 +176,5 @@ public class NavigationBar {
     public JPanel getNavBar() {
         return navPanel;
     }
+
 }
