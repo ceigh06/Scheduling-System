@@ -123,7 +123,7 @@ public class RequestScheduleDAO {
 
             while (set.next()) {
                 requestSchedule.load(requestKey, set.getString("RoomCode"),
-                        set.getString("CourseCode"), set.getString("SectionKey"), set.getString("FacultyID"),
+                        set.getString("SectionKey"), set.getString("CourseCode"), set.getString("FacultyID"),
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
@@ -132,7 +132,7 @@ public class RequestScheduleDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return requestSchedule;
     }
 
     // Get single count by status for CURRENT MONTH
