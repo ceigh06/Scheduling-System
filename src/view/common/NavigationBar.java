@@ -74,7 +74,7 @@ public class NavigationBar {
     private RoundedPanel createOption(String imgPath,String text){
         RoundedPanel panel = new RoundedPanel(20,0);
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(new Color(139,0,0));
+        panel.setBackground(new Color(91,112,121));
         panel.setPreferredSize(new Dimension(80,25));
         panel.setMaximumSize(new Dimension(80,25));
 
@@ -98,7 +98,7 @@ public class NavigationBar {
                 GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
                 if(selectedPanel != null){
                     selectedPanel.getComponent(1).setVisible(false); //hides the text of the previously selected panel
-                    selectedPanel.setBackground(new Color(139,0,0)); //goes back to the original color of the previously selected panel
+                    selectedPanel.setBackground(new Color(91,112,121)); //goes back to the original color of the previously selected panel
 
                     GridBagConstraints old = layout.getConstraints(selectedPanel);
                     old.weightx = 1;
@@ -128,7 +128,7 @@ public class NavigationBar {
         JLabel lbl = (JLabel) selectedPanel.getComponent(0);
         lbl.setText(lbl.getText().substring(0,1));
         lbl.setForeground(Color.WHITE);
-        selectedPanel.setBackground(new Color(139,0,0));
+        selectedPanel.setBackground(new Color(91,112,121));
 
         GridBagConstraints gbc = layout.getConstraints(selectedPanel);
         gbc.weightx = 1;
