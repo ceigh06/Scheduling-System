@@ -57,7 +57,7 @@ public class RoundedButton extends JButton {
         setOpaque(false); 
         setContentAreaFilled(false); 
         setBorderPainted(false); 
-        setBackground(Color.WHITE); //default if the color is not supplied properly
+        setBackground(new Color(117, 144, 156)); //default if the color is not supplied properly
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
