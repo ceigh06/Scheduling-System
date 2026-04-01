@@ -1,7 +1,22 @@
 package controller.student;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import dao.LookUpDAO;
+import dao.StudentDAO;
+import dao.schedule.RequestScheduleDAO;
+import model.schedule.RequestSchedule;
+import model.user.Student;
 import model.user.User;
+import service.SectionRequestValidator;
+import view.common.BrowseBuilding;
+import view.common.ControlNotifs;
 import view.common.MainFrame;
+import view.common.NotificationMessage;
 
 public class RequestsController {
 
@@ -9,12 +24,55 @@ public class RequestsController {
 
     public RequestsController(User user) {
         this.user = user;
+        Student student = new StudentDAO().get(user.getUserID());
+        String status = requestStatus(student.getSectionKey());
+        int requestKey = SectionRequestValidator.getLastUsedRequestKey();
+        showCheckRequestPage(status, requestKey);
+
     }
 
-    void showRequestStatus() {
-        
+    void showCheckRequestPage(String status, int requestKey) {
+        JPanel panel = new JPanel();
+        LookUpDAO lookUp = new LookUpDAO();
+        RequestSchedule rs = new RequestScheduleDAO().getRequestSchedule(requestKey);
+
+        Student student = new StudentDAO().get(rs.getStudentRequested());
+        String section = lookUp.getFullSectionName(requestKey);
+        String room = lookUp.getFullRoomName(rs.getRoomCode());
+        String timeIn = handleTimeChange(rs.getTimeIn());
+        String timeOut = handleTimeChange(rs.getTimeOut());
+        String course = lookUp.getFullCourseName(rs.getCourseCode());
+        String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
+
+        if (status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
+                || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void")) {
+            ControlNotifs page = new ControlNotifs();  
+            page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
+            page.loadRequestStatusHeader(status);
+            panel = page;
+        } else {
+            NotificationMessage page = new NotificationMessage("", status);
+            panel = page;
+        }
+        MainFrame.addContentPanel(panel, "CheckRequest");
+        MainFrame.showPanel("CheckRequest");
     }
 
+    private String handleTimeChange(String time) {
+        LocalTime timeObj = LocalTime.parse(time);
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a");
+        String formattedTime = timeObj.format(formatter);
+
+        return formattedTime;
+    }
+
+    private String requestStatus(int sectionKey) {
+        RequestScheduleDAO rsDAO = new RequestScheduleDAO();
+        List<RequestSchedule> requests = rsDAO.getRequestOfSection(sectionKey);
+        SectionRequestValidator requestValidator = new SectionRequestValidator();
+        String status = requestValidator.getRequestStatus(requests);
+        return status;
+    }
 
 }
