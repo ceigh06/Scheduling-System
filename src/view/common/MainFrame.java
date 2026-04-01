@@ -46,11 +46,7 @@ public class MainFrame {
         contentPanel.setBackground(Color.WHITE);
 
         // bottom panel, always has navigation bar unless wants to hide
-        if(getCurrentUser() != null) {
-            navBar = new NavigationBar(frame, getCurrentUser());
-        } else {
-            navBar = new NavigationBar(frame);
-        }
+        navBar = new NavigationBar(frame);
         navPanel = navBar.getNavBar();
 
         // Assemble frame
@@ -68,7 +64,7 @@ public class MainFrame {
     private static JPanel createHeader(String title) {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setPreferredSize(new Dimension(500, 50));
-        topPanel.setBackground(new Color(91, 112 ,121));
+        topPanel.setBackground(new Color(91, 112, 121));
 
         // this is to balance the space added from the button on the east side
         JPanel leftSpacer = new JPanel();
@@ -138,7 +134,6 @@ public class MainFrame {
     }
 
     // NAV BAR REGISTRATION METHODS
-
     public static void setOnBrowsePanel(MouseAdapter action) {
         navBar.setOnBrowsePanel(action);
     }
@@ -157,6 +152,17 @@ public class MainFrame {
 
     public static void setCurrentUser(User user) {
         currentUser = user;
+    }
+
+    // This method also refreshes the nav bar to reflect the new user type
+    public static void setCurrentUser(User user, boolean refreshNavBar) {
+        currentUser = user;
+        if (refreshNavBar && navBar != null) {
+            navBar.rebuildForUser(user);
+        } else if (refreshNavBar) {
+            navBar = new NavigationBar(frame, user);
+            navPanel.add(navBar.getNavBar());
+        }
     }
 
     public static User getCurrentUser() {
