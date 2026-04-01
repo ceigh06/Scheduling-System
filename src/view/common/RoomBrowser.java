@@ -130,7 +130,7 @@ public class RoomBrowser extends JPanel{
 	        roomCard.setPreferredSize(new Dimension(400, 100));
 	        roomCard.setMaximumSize(new Dimension(400,100));
 	        
-	        RoundedPanel codePanel = new RoundedPanel(20,1, new Color(130,0,0));
+	        RoundedPanel codePanel = new RoundedPanel(20,1, new Color(91,112,121));
 	        codePanel.setBackground(new Color(91,112,121));
 	        codePanel.setPreferredSize(new Dimension(90, 60));
 	        codePanel.setMaximumSize(new Dimension(90,60));
