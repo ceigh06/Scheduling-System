@@ -1,17 +1,12 @@
-import java.sql.SQLException;
-
-import controller.faculty.FacultyController;
 import controller.login.LoginController;
+import java.sql.SQLException;
 import utilities.DBConnection;
-import view.common.BrowseBuilding;
 import view.common.MainFrame;
-import view.landing.Landing;
-import view.landing.Login;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        DBConnection connection = new DBConnection("JessieHP\\SQLEXPRESS",
-                "SchedulingSystem", "sa", "jessie");
+        DBConnection connection = new DBConnection("ALEX\\SQLEXPRESS",
+                "SchedulingSystem", "sa", "1234");
 
         MainFrame.init();
         new LoginController();
