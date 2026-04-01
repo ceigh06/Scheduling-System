@@ -122,10 +122,9 @@ public class RequestForm extends JPanel {
         // Confirm buttons
         ConfirmPanel reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
 		    "GO BACK", "SUBMIT",
-		    new Color(227,75,75), 2, 
-		    new Color(77,139, 78),2);
-	    reqConfirm.setBtn1Color(new Color(255, 100, 100));
-	    reqConfirm.setBtn2Color(new Color(63, 193, 127));
+		    new Color(91, 112 ,121), 2, 
+		    new Color(91, 112 ,121),2);
+
         reqConfirm.setBtn1Action(e -> {
         	//BACKEND TO DO: Make it so that if the user wants to go back, 
         	//they are still browsing the same building that they selected

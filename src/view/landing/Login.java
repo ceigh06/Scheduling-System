@@ -87,8 +87,8 @@ public class Login extends JPanel {
 
         // Username field
         userText = new RoundedTextField(30, 15, 2,
-                new Color(220, 220, 220),
-                new Color(139, 0, 0));
+                new Color(117,144,156),
+                new Color(91,112,121));
         userText.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         userText.setBackground(new Color(245, 245, 245));
         userText.setMaximumSize(new Dimension(260, 40));
@@ -104,8 +104,8 @@ public class Login extends JPanel {
 
         // Password field
         passwordText = new RoundedPasswordField(30, 15, 2,
-                new Color(220, 220, 220),
-                new Color(139, 0, 0));
+                new Color(117,144,156),
+                new Color(91,112,121));
         passwordText.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         passwordText.setBackground(new Color(245, 245, 245));
         passwordText.setMaximumSize(new Dimension(260, 40));
@@ -119,7 +119,7 @@ public class Login extends JPanel {
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setPreferredSize(new Dimension(260, 40));
         loginBtn.setMaximumSize(new Dimension(260, 40));
-        loginBtn.setBackground(new Color(139, 0, 0));
+        loginBtn.setBackground(new Color(91,112,121));
         loginBtn.setAlignmentX(LEFT_ALIGNMENT);
 
         card.add(loginBtn);

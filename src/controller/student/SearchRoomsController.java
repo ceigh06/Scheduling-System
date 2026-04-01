@@ -89,7 +89,11 @@ public class SearchRoomsController {
                     boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
                     boolean isOverlap = ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
 
+<<<<<<< HEAD
                     if (isValidCapacity && isValidFloor && isOverlap) {
+=======
+                    if (isValidCapacity && isValidFloor && !isOverlap) {
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
                         availableRooms.add(room);
                     }
                 }

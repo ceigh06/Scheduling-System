@@ -6,7 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
 import model.schedule.RequestSchedule;
+=======
+
+import model.Course;
+import model.schedule.RequestSchedule;
+import model.schedule.Schedule;
+import model.user.User;
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
 import utilities.DBConnection;
 
 public class RequestScheduleDAO {
@@ -20,6 +28,7 @@ public class RequestScheduleDAO {
         }
     }
 
+<<<<<<< HEAD
     // Status constants
     public static final int STATUS_VOID = 0;
     public static final int STATUS_PENDING = 1;
@@ -53,10 +62,30 @@ public class RequestScheduleDAO {
                     set.getBoolean("IsArchived") ? "1" : "0"
                 );
                 requests.add(request);
+=======
+    public List<RequestSchedule> getRequestOfSection(int sectionKey) {
+        List<RequestSchedule> sectionRequests = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement("SELECT * FROM RequestSchedule WHERE SectionKey = ?");
+            stmt.setInt(1, sectionKey);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("CourseCode"), String.valueOf(sectionKey), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                sectionRequests.add(requestSchedule);
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
         return requests;
     }
 
@@ -86,10 +115,31 @@ public class RequestScheduleDAO {
                     set.getBoolean("IsArchived") ? "1" : "0"
                 );
                 return request;
+=======
+        return sectionRequests;
+    }
+
+    public RequestSchedule getRequestSchedule(int requestKey) {
+        RequestSchedule requestSchedule = new RequestSchedule();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement("SELECT * FROM RequestSchedule WHERE RequestKey = ?");
+            stmt.setInt(1, requestKey);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                requestSchedule.load(requestKey, set.getString("RoomCode"),
+                        set.getString("CourseCode"), set.getString("SectionKey"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+<<<<<<< HEAD
         return null;
     }
 
@@ -248,3 +298,8 @@ public class RequestScheduleDAO {
         return false;
     }
 }
+=======
+        return requestSchedule;
+    }
+}
+>>>>>>> 0540a8f1304fff0fbaf5885998bc6a5a3255c455
