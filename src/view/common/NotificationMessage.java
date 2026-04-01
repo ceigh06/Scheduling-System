@@ -50,13 +50,13 @@ public class NotificationMessage extends JPanel {
          */
         messageLabel = new JLabel(message, SwingConstants.CENTER);
         messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        messageLabel.setForeground(Color.DARK_GRAY);
+        messageLabel.setForeground(new Color(91,112,121));
         content.add(messageLabel, BorderLayout.CENTER);
         
         //So users have an idea that they can go back by clicking
         JLabel hint = new JLabel("Click anywhere to go back", SwingConstants.CENTER);
         hint.setFont(new Font("Arial", Font.ITALIC, 14));
-        hint.setForeground(Color.GRAY);
+        hint.setForeground(new Color(117,144,156));
         content.add(hint, BorderLayout.SOUTH);
         
         add(content, BorderLayout.CENTER);

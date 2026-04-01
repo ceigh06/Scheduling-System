@@ -18,14 +18,17 @@ import javax.swing.JTextField;
 import view.components.RoundedTextField;
 
 public class ControlNotifs extends JPanel{
+        // BACKEND TO DO: Make sure to remove this and retrieve 
+        // actual data from the database
+        
 	String studeNo = "2024101030", 
-	           name = "Jessie Claire Santos",
-	           section = "2AG2",
-	           roomCode = "PH 101",
-	           timeIn = "7:00 AM",
-	           timeOut = "10:00 AM",
-	           course = "Event-Driven Programming",
-	           professor = "Janice Castillo";
+	        name = "Jessie Claire Santos",
+	        section = "2AG2",
+	        roomCode = "PH 101",
+	        timeIn = "7:00 AM",
+	        timeOut = "10:00 AM",
+	        course = "Event-Driven Programming",
+	        professor = "Janice Castillo";
 	String reqStatus = "PENDING"; 
 	
 	public ControlNotifs(JFrame frame, String message) {
@@ -72,11 +75,11 @@ public class ControlNotifs extends JPanel{
         
         JLabel timeInLbl = new JLabel("Time In"); 
         timeInLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        timeInLbl.setForeground(Color.DARK_GRAY);
+        timeInLbl.setForeground(new Color(91,112,121));
         
         JLabel timeOutLbl = new JLabel("Time Out"); 
         timeOutLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        timeOutLbl.setForeground(Color.DARK_GRAY);
+        timeOutLbl.setForeground(new Color(91,112,121));
         
         timeLabels.add(timeInLbl);
         timeLabels.add(timeOutLbl);
@@ -144,11 +147,11 @@ public class ControlNotifs extends JPanel{
 		
 		JLabel headerLabel = new JLabel(status, JLabel.CENTER);
 		headerLabel.setFont(new Font("Segoe UI",Font.BOLD, 23));
-		headerLabel.setForeground(Color.DARK_GRAY);
+		headerLabel.setForeground(new Color(91,112,121));
 		headerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
 		headerPanel.add(headerLabel);
-        headerPanel.add(Box.createVerticalStrut(8));
+                headerPanel.add(Box.createVerticalStrut(8));
         
         return headerPanel;
 	}

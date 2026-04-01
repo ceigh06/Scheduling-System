@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -21,6 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import model.Building;
+import view.components.RoundedButton;
 import view.components.RoundedPanel;
 
 @SuppressWarnings("serial")
@@ -29,6 +31,8 @@ public class BrowseBuilding extends JPanel {
     private JPanel headerPanel;
     private JPanel wrapper;
     private JPanel bldgContent;
+
+    private List<RoundedButton> buildingButtons = new ArrayList<>();
 
     Consumer<Building> onBuildingClicked;
 
@@ -65,8 +69,6 @@ public class BrowseBuilding extends JPanel {
             bldgContent.add(buildingPanel);
         }
         wrapper.add(bldgContent);
-        wrapper.revalidate();
-        wrapper.repaint();
     }
 
     public BrowseBuilding() {
@@ -132,7 +134,7 @@ public class BrowseBuilding extends JPanel {
         nameArea.setForeground(new Color(139, 0, 0));
         nameArea.setEditable(false);
         nameArea.setOpaque(false);
-        nameArea.setFocusable(false);     
+        nameArea.setFocusable(false);
         nameArea.setHighlighter(null);
         nameArea.setLineWrap(true);
         nameArea.setWrapStyleWord(true);
