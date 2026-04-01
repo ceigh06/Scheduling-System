@@ -1,4 +1,4 @@
-package view.common;
+package view.admin;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

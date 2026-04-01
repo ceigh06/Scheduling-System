@@ -106,7 +106,12 @@ public class RoomBrowser extends JPanel{
 
 		roomPanel.add(roomCard, BorderLayout.CENTER);
 
-        confirmArea = new ConfirmPanel(MainFrame.getFrame(),"Go Back", "Confirm");
+		confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+			"GO BACK", "CONFIRM",
+			new Color(227,75,75), 2, 
+			new Color(77,139, 78),2);
+		confirmArea.setBtn1Color(new Color(255, 100, 100));
+		confirmArea.setBtn2Color(new Color(63, 193, 127));
         roomPanel.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
         wrapper.add(roomPanel);
         

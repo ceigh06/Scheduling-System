@@ -6,6 +6,10 @@ import model.user.User;
 
 public class LoginValidator {
 
+    private static String adminUN = "admin";
+    private static String adminPW = "1234";
+    private static boolean isAdmin = false;
+
     private static User authenticatedUser;
     private static String errorMessage;
 
@@ -30,12 +34,14 @@ public class LoginValidator {
 
         // find user first
         if (!isExisting(username)) {
+
             errorMessage = "User does not exist.";
             return false;
         }
 
         // then validate password against stored user
         if (!isPasswordCorrect(password)) {
+
             errorMessage = "Incorrect password.";
             return false;
         }
@@ -44,19 +50,26 @@ public class LoginValidator {
     }
 
     private static boolean isExisting(String username) {
-        
+
         User user = studentDAO.get(username);
         if (user != null) {
             user.setUserType("Student");
-            authenticatedUser = user; 
+            authenticatedUser = user;
             return true;
         }
 
-    
         user = facultyDAO.get(username);
         if (user != null) {
             user.setUserType("Faculty");
-            authenticatedUser = user; 
+            authenticatedUser = user;
+            return true;
+        }
+        user = new User();
+        if (username.equals(adminUN)) {
+            user.setUserType("Admin");
+            user.setPassword(adminPW);
+            authenticatedUser = user;
+            isAdmin = true;
             return true;
         }
 
@@ -65,6 +78,9 @@ public class LoginValidator {
 
     private static boolean isPasswordCorrect(String inputPassword) {
         String decrypted = decrypt(authenticatedUser.getPassword());
+        if (isAdmin) {
+            decrypted = adminPW;
+        }
         return decrypted.equals(inputPassword);
     }
 
@@ -83,4 +99,11 @@ public class LoginValidator {
     public static String getErrorMessage() {
         return errorMessage;
     }
+
+    public static void clearAuthenticatedUser() {
+        authenticatedUser = null;
+        errorMessage = null;
+        isAdmin = false;
+    }
+
 }

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import controller.shared.BookingController;
 import dao.BuildingDAO;
 import dao.CourseDAO;
 import dao.RoomDAO;
@@ -36,8 +37,7 @@ public class RoomsController {
 
         browseBuilding.loadBuilding(buildings);
 
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is
-                                                          // clicked
+        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
@@ -69,100 +69,10 @@ public class RoomsController {
                 MainFrame.setNotification("Please Choose a Room First");
                 roomBrowser.clearSelection();
             }
-            showRoomSchedule(selectedRoom);
+            new BookingController(user, selectedRoom);
         });
 
     }
 
-    // 1.3
-    private String timeIn = "";
-    private String timeOut = "";
-
-    void showRoomSchedule(Room selectedRoom) {
-        ScheduleDAO scheduleDAO = new ScheduleDAO();
-        CourseDAO courseDAO = new CourseDAO();
-
-        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
-        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-        // doesnt catch if the courses is null.
-
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
-        viewSchedule.loadClassSchedule(selectedRoom);
-
-        viewSchedule.loadCourse(facultyCourses);
-        attachShowRoomScheduleListeners(viewSchedule);
-
-        viewSchedule.setOnHourChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
-            }
-        });
-
-        viewSchedule.setOnMinuteChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at" + timeIn);
-            }
-        });
-
-        viewSchedule.setOnMeridiemChanged(e -> {
-            handleTimeChange(viewSchedule);
-            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
-            }
-        });
-
-        MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule");
-
-    }
-
-    void handleTimeChange(ViewSchedule viewSchedule) {
-        int hour = viewSchedule.getHour();
-        int timeOutHour;
-        int minute = viewSchedule.getMinute();
-
-        if (viewSchedule.getMeridiem().equals("PM") && hour != 12) {
-            hour += 12;
-        } else if (viewSchedule.getMeridiem().equals("AM") && hour == 12) {
-            hour = 0;
-        }
-
-        if (viewSchedule.getIsLec() == true) {
-            timeOutHour = hour + 1;
-        } else {
-            timeOutHour = hour + 3;
-        }
-
-        // Convert back to 12-hour format for validator
-        String timeInMeridiem = (hour >= 12) ? "PM" : "AM";
-        int timeIn12Hour = (hour > 12) ? hour - 12 : (hour == 0) ? 12 : hour;
-        timeIn = String.format("%d:%02d %s", timeIn12Hour, minute, timeInMeridiem);
-
-        String timeOutMeridiem = (timeOutHour >= 12) ? "PM" : "AM";
-        int timeOut12Hour = (timeOutHour > 12) ? timeOutHour - 12 : (timeOutHour == 0) ? 12 : timeOutHour;
-        timeOut = String.format("%d:%02d %s", timeOut12Hour, minute, timeOutMeridiem);
-        viewSchedule.setTimeOut(timeOut);
-    }
-
-    void attachShowRoomScheduleListeners(ViewSchedule viewSchedule) {
-        viewSchedule.setOnBackClicked(e -> {
-            MainFrame.showPanel("RoomBrowser");
-        });
-
-        viewSchedule.setOnConfirmClicked(e -> {
-
-        });
-
-        viewSchedule.setOnLabBtn(e -> {
-            viewSchedule.setIsLec(false);
-            handleTimeChange(viewSchedule);
-        });
-
-        viewSchedule.setOnLecBtn(e -> {
-            viewSchedule.setIsLec(true);
-            handleTimeChange(viewSchedule);
-        });
-    }
+    
 }
