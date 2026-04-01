@@ -1,6 +1,8 @@
 package controller.admin;
 
+import controller.login.LoginController;
 import model.user.User;
+import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.common.ViewProfile;
 
@@ -32,6 +34,8 @@ public class ProfileController {
     private void onLogoutClicked() {
         MainFrame.restoreNavBarDefaultState();
         user = null;
+        LoginController.clearLoginFields();
+        LoginValidator.clearAuthenticatedUser();
         MainFrame.setNavBarVisible(false);
         MainFrame.showPanel("login");
     }
