@@ -47,4 +47,26 @@ public class RequestScheduleDAO {
         }
         return sectionRequests;
     }
+
+    public RequestSchedule getRequestSchedule(int requestKey) {
+        RequestSchedule requestSchedule = new RequestSchedule();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement("SELECT * FROM RequestSchedule WHERE RequestKey = ?");
+            stmt.setInt(1, requestKey);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                requestSchedule.load(requestKey, set.getString("RoomCode"),
+                        set.getString("CourseCode"), set.getString("SectionKey"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requestSchedule;
+    }
 }

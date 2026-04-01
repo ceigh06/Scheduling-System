@@ -16,7 +16,6 @@ public class SectionRequestValidator {
 
     public String getRequestStatus(List<RequestSchedule> requestSchedule) {
         for (RequestSchedule rs : requestSchedule) {
-            System.out.println(rs.getStatus());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
             LocalDate dateRequested = LocalDateTime.parse(rs.getDateRequested(), formatter).toLocalDate();
             if (!dateRequested.equals(LocalDate.now())) {
@@ -43,10 +42,14 @@ public class SectionRequestValidator {
             } else if (status == 3) { // denied
                 if (!(requestKey == lastUsedRequestKey)) {
                     lastUsedRequestKey = requestKey;
-                    return "denied";
+                    return "declined";
                 }
             }
         }
         return "standby";
+    }
+
+    public static int getLastUsedRequestKey() {
+        return lastUsedRequestKey;
     }
 }
