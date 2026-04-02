@@ -8,6 +8,7 @@ import model.Room;
 import model.schedule.RequestSchedule;
 import model.user.User;
 import service.ScheduleValidator;
+import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.ViewSchedule;
 
@@ -16,7 +17,6 @@ public class BookingController {
     private String timeIn = "";
     private String timeOut = "";
 
-   
     // Overloaded constructor for student
     // fields are filled already and we just need to show the schedule and load the
     // data.
@@ -26,12 +26,12 @@ public class BookingController {
 
     // for student workflow, no form just show the schedule and confirmation.
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
-        
+
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
         selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
-        
+
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
         viewSchedule.loadConfirmationPanel();
@@ -44,26 +44,10 @@ public class BookingController {
         viewSchedule.setOnConfirmClicked(e -> {
             new RequestController(requestSchedule);
         });
-        
+
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     // constructor for browse workflow.
+    // constructor for browse workflow.
     // needs to build a request schedule through the forms
     public BookingController(User user, Room selectedRoom) {
         showRoomSchedule(user, selectedRoom);
@@ -109,7 +93,8 @@ public class BookingController {
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
 
-        viewSchedule.setOnConfirmClicked(e->{
+        viewSchedule.setOnConfirmClicked(e -> {
+            RequestSchedule requestSchedule = new RequestSchedule();
             // new RequestController(requestSchedule);
         });
 
@@ -117,29 +102,34 @@ public class BookingController {
 
     void handleTimeChange(ViewSchedule viewSchedule) {
         int hour = viewSchedule.getHour();
-        int timeOutHour;
         int minute = viewSchedule.getMinute();
+        String meridiem = viewSchedule.getMeridiem();
 
-        if (viewSchedule.getMeridiem().equals("PM") && hour != 12) {
-            hour += 12;
-        } else if (viewSchedule.getMeridiem().equals("AM") && hour == 12) {
-            hour = 0;
-        }
-
-        if (viewSchedule.getIsLec() == true) {
-            timeOutHour = hour + 1;
+        int hour24;
+        if (meridiem.equals("AM")) {
+            hour24 = (hour == 12) ? 0 : hour;
         } else {
-            timeOutHour = hour + 3;
+            hour24 = (hour == 12) ? 12 : hour + 12;
         }
 
-        // Convert back to 12-hour format for validator
-        String timeInMeridiem = (hour >= 12) ? "PM" : "AM";
-        int timeIn12Hour = (hour > 12) ? hour - 12 : (hour == 0) ? 12 : hour;
-        timeIn = String.format("%d:%02d %s", timeIn12Hour, minute, timeInMeridiem);
+        // Clamp to school hours: 7 AM (7) to 8 PM (20)
+        if (hour24 < 7)
+            hour24 = 7;
+        if (hour24 > 20)
+            hour24 = 20;
 
-        String timeOutMeridiem = (timeOutHour >= 12) ? "PM" : "AM";
-        int timeOut12Hour = (timeOutHour > 12) ? timeOutHour - 12 : (timeOutHour == 0) ? 12 : timeOutHour;
-        timeOut = String.format("%d:%02d %s", timeOut12Hour, minute, timeOutMeridiem);
+        int duration = viewSchedule.getIsLec() ? 1 : 3;
+        int timeOutHour24 = hour24 + duration;
+
+        // Also clamp timeout — can't end past 8PM
+        if (timeOutHour24 > 20) {
+            timeOutHour24 = 20;
+            hour24 = 20 - duration; // push timeIn back too
+        }
+
+        timeIn = DateTimeBuilder.formatTo12Hour(hour24, minute);
+        timeOut = DateTimeBuilder.formatTo12Hour(timeOutHour24, minute);
+
         viewSchedule.setTimeOut(timeOut);
     }
 
