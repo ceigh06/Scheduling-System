@@ -58,9 +58,6 @@ public class LoginController {
         if (authenticatedUser.getUserType().equals("Student")) {
             System.out.println("Student");
             try {
-                Student user = new Student();
-                MainFrame.setIconType(user);
-                TitleHeader.addIconToHeader();
                 new StudentController(authenticatedUser);
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
@@ -68,9 +65,6 @@ public class LoginController {
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             System.out.println("Faculty");
-            Faculty user = new Faculty();
-            MainFrame.setIconType(user);
-            TitleHeader.addIconToHeader();
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
             System.out.println("Admin");

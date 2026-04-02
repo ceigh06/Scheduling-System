@@ -7,8 +7,11 @@ import controller.shared.SearchRoomsController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+
+import model.user.Faculty;
 import model.user.User;
 import view.common.MainFrame;
+import view.common.TitleHeader;
 import view.landing.Landing;
 
 public class FacultyController {
@@ -22,6 +25,9 @@ public class FacultyController {
         Landing landing = new Landing();
         MainFrame.addContentPanel(landing, "FacultyLanding");
         MainFrame.showPanel("FacultyLanding");
+        Faculty faculty = new Faculty();
+        MainFrame.setIconType(faculty);
+        TitleHeader.addIconToHeader();
         MainFrame.setNavBarVisible(true);
 
         landing.setOnSearchAction(new MouseAdapter() {
@@ -34,7 +40,7 @@ public class FacultyController {
                 }
             }
         });
-        
+
         MainFrame.setOnBrowsePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -45,21 +51,21 @@ public class FacultyController {
                 }
             }
         });
-        
+
         MainFrame.setOnHomePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 onHomeClicked();
             }
         });
-        
+
         MainFrame.setOnRequestPanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 onRequestClicked();
             }
         });
-        
+
         MainFrame.setOnProfilePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -67,6 +73,7 @@ public class FacultyController {
             }
         });
     }
+
     public void onSearchClicked() throws SQLException {
         new SearchRoomsController(user);
     }
@@ -77,10 +84,10 @@ public class FacultyController {
 
     public void onHomeClicked() {
         MainFrame.showPanel("FacultyLanding");
-    }   
+    }
 
     public void onRequestClicked() {
-       new FacultyController(user);
+        new FacultyController(user);
     }
 
     public void onProfileClicked() {
