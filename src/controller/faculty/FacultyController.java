@@ -1,6 +1,9 @@
 package controller.faculty;
 
 import controller.shared.ProfileController;
+import controller.shared.RoomsController;
+import controller.shared.SearchRoomsController;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -16,11 +19,22 @@ public class FacultyController {
 
         this.user = user;
         MainFrame.setCurrentUser(user, true);
-        MainFrame.addContentPanel(new Landing(), "FacultyLanding");
+        Landing landing = new Landing();
+        MainFrame.addContentPanel(landing, "FacultyLanding");
         MainFrame.showPanel("FacultyLanding");
         MainFrame.setNavBarVisible(true);
 
-
+        landing.setOnSearchAction(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    MainFrame.restoreNavBarDefaultState();
+                    onSearchClicked();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        
         MainFrame.setOnBrowsePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -52,6 +66,9 @@ public class FacultyController {
                 onProfileClicked();
             }
         });
+    }
+    public void onSearchClicked() throws SQLException {
+        new SearchRoomsController(user);
     }
 
     public void onBrowseClicked() throws SQLException {
