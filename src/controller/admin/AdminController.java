@@ -71,6 +71,8 @@ public class AdminController {
     public void onTotalReportClicked() {
         if (report1 == null) {
            ReportOneController reportOneController = new ReportOneController();
+           reportOneController.initView();
+           report1.renderInitialView();
            MainFrame.addContentPanel(reportOneController.getView(), "Report1");
         }
         MainFrame.showPanel("Report1", "Total Room Requests");

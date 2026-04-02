@@ -1,5 +1,6 @@
 package view.landing;
 
+import controller.admin.ReportOneController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -80,7 +81,7 @@ public class AdminLanding extends JPanel {
 
         // Create button for most vacancies report
         peakBtn = new RoundedButton("View Report", 20);
-        contentPanel.add(createReportSection("Most Vacancies Today", 387, 187, peakBtn));
+        contentPanel.add(createReportSection("Most Vacancies Today", 397, 187, peakBtn));
 
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
@@ -195,8 +196,23 @@ public class AdminLanding extends JPanel {
         cardsContainer.setBorder(new EmptyBorder(0, 15, 0, 0));
         cardsContainer.setOpaque(false);
         cardsContainer.setBackground(OFF_WHITE);
-
-        cardsContainer.add(createCard("Sample Report", width, height, viewBtn));
+        String cardTitle = "";
+        switch (title) {
+            case "Total Room Requests":
+                    ReportOneController report1 = new ReportOneController();
+                    cardTitle = String.valueOf(report1.getMonthlyTotal());
+                break;
+            case "Most Requested Room":
+                    //ReportTwoController report2 = new ReportTwoController();
+                    //cardTitle = String.valueOf(report2.getMonthlyTotal());
+                break;
+            case "Most Vacancies Today":
+                    //ReportThreeController report3 = new ReportThreeController();
+                    //cardTitle = String.valueOf(report3.getMonthlyTotal());
+                break;
+        }
+        
+        cardsContainer.add(createCard(cardTitle, width, height, viewBtn));
 
         sectionPanel.add(cardsContainer, BorderLayout.CENTER);
 
@@ -212,10 +228,10 @@ public class AdminLanding extends JPanel {
 
         JLabel nameLabel = new JLabel(roomName, JLabel.CENTER);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        nameLabel.setForeground(new Color(139, 0, 0));
+        nameLabel.setForeground(new Color(91,112,121));
 
         viewBtn.setForeground(Color.WHITE);
-        viewBtn.setBackground(new Color(139, 0, 0));
+        viewBtn.setBackground(new Color(91,112,121));
         viewBtn.setPreferredSize(new Dimension(120, 35));
 
         roomCard.add(nameLabel, BorderLayout.CENTER);

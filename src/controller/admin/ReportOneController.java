@@ -16,8 +16,6 @@ public class ReportOneController {
     public ReportOneController() {
         this.requestDAO = new RequestScheduleDAO();
         loadData();
-        initView();
-        view.renderInitialView();
     }
     
     private void loadData() {
@@ -41,7 +39,7 @@ public class ReportOneController {
         this.weeklyVoidArr = requestDAO.getWeeklyDailyBreakdown(RequestScheduleDAO.STATUS_VOID);
     }
     
-    private void initView() {
+    public void initView() {
         this.view = new Report1();
         
         // Set data: approved, declined, void (no pending)
@@ -79,6 +77,10 @@ public class ReportOneController {
     
     public Report1 getView() {
         return view;
+    }
+
+    public int getMonthlyTotal() {
+        return monthlyApproved + monthlyDeclined + monthlyVoid;
     }
     
     public void refreshData() {
