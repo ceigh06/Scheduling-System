@@ -106,7 +106,6 @@ public class SearchRoomsController {
         requestSchedule = new RequestSchedule();
         Student student = new StudentDAO().get(user.getUserID());
         ScheduleDAO scheduleDAO = new ScheduleDAO();
-        System.out.println(student.getSectionKey());
         requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(),
                 scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
                 timeIn, timeOut, DateTimeBuilder.getDayName(), "1", 0, DateTimeBuilder.getCurrentDate(),

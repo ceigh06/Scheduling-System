@@ -44,20 +44,6 @@ public class BookingController {
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
-        System.out.println("RequestSchedule{" +
-           "ID=" + requestSchedule.getID() +
-           ", roomCode='" + requestSchedule.getRoomCode() + '\'' +
-           ", sectionKey='" + requestSchedule.getSectionKey() + '\'' +
-           ", courseCode='" + requestSchedule.getCourseCode() + '\'' +
-           ", facultyID='" + requestSchedule.getFacultyID() + '\'' +
-           ", timeIn='" + requestSchedule.getTimeIn() + '\'' +
-           ", timeOut='" + requestSchedule.getTimeOut() + '\'' +
-           ", scheduledDay='" + requestSchedule.getScheduledDay() + '\'' +
-           ", status='" + requestSchedule.getStatus() + '\'' +
-           ", isArchived=" + requestSchedule.getIsArchived() +
-           ", dateRequested='" + requestSchedule.getDateRequested() + '\'' +
-           ", studentNumber='" + requestSchedule.getStudentRequested() + '\'' +
-           '}');
     }
 
     void showRoomSchedule(User user, Room selectedRoom) {
