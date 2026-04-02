@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -15,39 +16,40 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import model.user.Student;
+import view.components.RoundedPanel;
 import view.components.RoundedTextField;
+import view.components.ScrollBarHelper;
 
 public class ControlNotifs extends JPanel {
 
         private JPanel contentPanel, formsPanel, formsTop, timeSection, timeLabels, timeValues, formsBottom;
-        private JLabel timeInLbl, timeOutLbl;
+        private JLabel timeInLbl, timeOutLbl, headerLabel;
         private ConfirmPanel confirmArea;
         private RoundedTextField field, timeInTxt, timeOutTxt;
         private JScrollPane scrollPanel;
+        RoundedPanel headerPanel;
 
         public ControlNotifs() {
                 setLayout(new BorderLayout());
                 setBackground(Color.WHITE);
-
+                
                 contentPanel = new JPanel(new BorderLayout());
                 contentPanel.setBackground(Color.WHITE);
 
                 formsPanel = new JPanel();
                 formsPanel.setLayout(new BoxLayout(formsPanel, BoxLayout.Y_AXIS));
-                formsPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+                formsPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 30, 40));
                 formsPanel.setBackground(Color.WHITE);
 
                 // Top section - Student info (4 rows, tighter spacing)
                 formsTop = new JPanel(new GridLayout(4, 1, 0, 12));
                 formsTop.setBackground(Color.WHITE);
-                formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
+                formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
 
                 field = new RoundedTextField(10, 20, 1,
                                 new Color(200, 200, 200),
                                 null);
                 RequestForm.styleField(field);
-
-                formsPanel.add(Box.createVerticalStrut(20));
 
                 timeSection = new JPanel();
                 timeSection.setLayout(new BoxLayout(timeSection, BoxLayout.Y_AXIS));
@@ -90,40 +92,47 @@ public class ControlNotifs extends JPanel {
                 // Bottom section - Course and Professor
                 formsBottom = new JPanel(new GridLayout(2, 1, 0, 12));
                 formsBottom.setBackground(Color.WHITE);
-                formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
-
-                formsPanel.add(Box.createVerticalStrut(30));
+                formsBottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+                formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
                 contentPanel.add(formsPanel, BorderLayout.CENTER);
 
                 scrollPanel = new JScrollPane(contentPanel);
                 scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                ScrollBarHelper.applySlimScrollBar(scrollPanel,10, 30, Color.GRAY, Color.LIGHT_GRAY);
                 scrollPanel.setBorder(BorderFactory.createEmptyBorder());
+                scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
                 scrollPanel.getViewport().setBackground(Color.WHITE);
 
                 add(scrollPanel, BorderLayout.CENTER);
         }
 
-        private JPanel addHeaderPanel(String status) {
-                JPanel headerPanel = new JPanel();
-                headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-                headerPanel.setBackground(Color.WHITE);
-                headerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        public JPanel addHeaderPanel(String classType) {
+                headerLabel = new JLabel(classType, JLabel.CENTER);
+		headerLabel.setFont(new Font("Segoe UI",Font.BOLD, 23));
+		headerLabel.setForeground(Color.WHITE);
 
-                JLabel headerLabel = new JLabel(status, JLabel.CENTER);
-                headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 23));
-                headerLabel.setForeground(Color.DARK_GRAY);
-                headerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		headerPanel = new RoundedPanel(40, 4, new Color(91,112,121)); 
+		headerPanel.setLayout(new BorderLayout()); 
+                headerPanel.setPreferredSize(new Dimension(200, 60));
+                headerPanel.setMaximumSize(new Dimension(200, 60));
+		headerPanel.setBackground(new Color(117,144,156));
+		headerPanel.add(headerLabel);
 
-                headerPanel.add(headerLabel);
-                headerPanel.add(Box.createVerticalStrut(8));
-
-                return headerPanel;
-        }
+                JPanel headerWrapper = new JPanel();            //test line
+                headerWrapper.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+                headerWrapper.setPreferredSize(new Dimension(300, 70));
+                headerWrapper.setMaximumSize(new Dimension(300, 70));
+                headerWrapper.setBackground(Color.WHITE);
+                headerWrapper.add(headerPanel);
+        return headerWrapper;
+	}
 
         public void loadRequestStatusHeader(String status) {
-                JPanel statusHeader = addHeaderPanel(status);
+                JPanel statusHeader = addHeaderPanel(status.toUpperCase());
+                statusHeader.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
                 contentPanel.add(statusHeader, BorderLayout.NORTH);
+
         }
 
         public void loadRequestForm(Student student, String section, String room, String timeIn, String timeOut,
@@ -134,6 +143,7 @@ public class ControlNotifs extends JPanel {
                 formsTop.add(RequestForm.labeledField("Section", section));
                 formsTop.add(RequestForm.labeledField("Room", room));
                 formsPanel.add(formsTop);
+                formsPanel.add(Box.createVerticalStrut(10));
 
                 timeInTxt.setText(timeIn);
                 timeOutTxt.setText(timeOut);
@@ -147,16 +157,21 @@ public class ControlNotifs extends JPanel {
                 formsBottom.add(RequestForm.labeledField("Course", course));
                 formsBottom.add(RequestForm.labeledField("Faculty", faculty));
                 formsPanel.add(formsBottom);
-
+                formsPanel.add(Box.createVerticalStrut(20));
+                
                 if (status.equalsIgnoreCase("pending")) {
+                        
                         confirmArea = new ConfirmPanel(MainFrame.getFrame(),
-                                        "GO BACK", "SUBMIT",
-                                        new Color(227, 75, 75), 2,
-                                        new Color(77, 139, 78), 2);
-                        confirmArea.setBtn1Color(new Color(255, 100, 100));
-                        confirmArea.setBtn2Color(new Color(63, 193, 127));
+                                "GO BACK", "CANCEL REQUEST",
+                                new Color(91, 112, 121), 2,
+                                new Color(227, 75, 75), 2);
+                        confirmArea.setBtn2Color(new Color(255, 100, 100));
+                       
                         formsPanel.add(confirmArea.getConfirmPanel());
                 }
+
+                formsPanel.revalidate();
+                formsPanel.repaint();
 
         }
 

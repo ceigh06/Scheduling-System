@@ -28,6 +28,7 @@ public class ConfirmPanel {
 
     private void initPanel(String btn1, String btn2, Color border1, int thickness1, Color border2, int thickness2){
         confirmPanel = new JPanel(new GridLayout(1, 2, 40, 20)); 
+        confirmPanel.setBackground(Color.WHITE);
 
         button1 = new RoundedButton(btn1, 25, border1, thickness1); 
         button1.setForeground(Color.WHITE);
