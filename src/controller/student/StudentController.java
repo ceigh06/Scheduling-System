@@ -1,6 +1,7 @@
 package controller.student;
 
 import controller.shared.ProfileController;
+import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
 
 import java.awt.event.MouseAdapter;
