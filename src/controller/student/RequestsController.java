@@ -54,14 +54,16 @@ public class RequestsController {
             panel = page;
         }
 
-        else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()))) {
+        else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()), rs.getDateRequested())) {
             NotificationMessage notifPage = new NotificationMessage("",
                     "Your section has a pending request.");
             panel = notifPage;
         }
 
         else {
-            NotificationMessage page = new NotificationMessage("", status);
+            System.out.println(SectionRequestValidator.getLastUsedRequestKey());
+            System.out.println(status);
+            NotificationMessage page = new NotificationMessage("", "Your section has no pending request.");
             panel = page;
         }
         MainFrame.addContentPanel(panel, "CheckRequest");
@@ -80,8 +82,7 @@ public class RequestsController {
     private String requestStatus(int sectionKey) {
         RequestScheduleDAO rsDAO = new RequestScheduleDAO();
         List<RequestSchedule> requests = rsDAO.getRequestOfSection(sectionKey);
-        SectionRequestValidator requestValidator = new SectionRequestValidator();
-        String status = requestValidator.getRequestStatus(requests);
+        String status = SectionRequestValidator.getRequestStatus(requests);
         return status;
     }
 
