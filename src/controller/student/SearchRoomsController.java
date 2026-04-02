@@ -1,6 +1,5 @@
 package controller.student;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,6 @@ import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 import view.common.SearchRooms1;
-import view.common.ViewSchedule;
-import dao.BuildingDAO;
 
 public class SearchRoomsController {
 

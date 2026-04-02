@@ -5,8 +5,8 @@ import view.common.MainFrame;
 
 public class Launcher {
     public static void main(String[] args) throws SQLException {
-        DBConnection connection = new DBConnection("ALEX\\SQLEXPRESS",
-                "SchedulingSystem", "sa", "1234");
+        DBConnection connection = new DBConnection("LAPTOP-81CGQV8U\\SQLEXPRESS",
+                "SchedulingSystem", "sa", "a");
 
         MainFrame.init();
         new LoginController();
