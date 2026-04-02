@@ -66,4 +66,8 @@ public class Schedule {
         return isArchived;
     }
 
+    public void setRoomCode(String roomCode) {
+        this.roomCode = roomCode;
+    }
+
 }

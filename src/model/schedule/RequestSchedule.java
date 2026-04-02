@@ -12,6 +12,11 @@ public class RequestSchedule extends Schedule {
         this.studentNumber = studentNumber;
     }
 
+    public void setRoomCode(String roomCode) {
+        super.setRoomCode(roomCode);
+    }
+
+
     public String getDateRequested(){
         return dateRequested;
     }

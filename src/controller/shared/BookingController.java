@@ -16,12 +16,7 @@ public class BookingController {
     private String timeIn = "";
     private String timeOut = "";
 
-    // constructor for browse workflow.
-    // needs to build a request schedule through the forms
-    public BookingController(User user, Room selectedRoom) {
-        showRoomSchedule(user, selectedRoom);
-    }
-
+   
     // Overloaded constructor for student
     // fields are filled already and we just need to show the schedule and load the
     // data.
@@ -31,11 +26,12 @@ public class BookingController {
 
     // for student workflow, no form just show the schedule and confirmation.
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
+        
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
         selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
-
+        
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
         viewSchedule.loadConfirmationPanel();
@@ -44,6 +40,33 @@ public class BookingController {
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
+
+        viewSchedule.setOnConfirmClicked(e -> {
+            new RequestController(requestSchedule);
+        });
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     // constructor for browse workflow.
+    // needs to build a request schedule through the forms
+    public BookingController(User user, Room selectedRoom) {
+        showRoomSchedule(user, selectedRoom);
     }
 
     void showRoomSchedule(User user, Room selectedRoom) {
@@ -54,7 +77,7 @@ public class BookingController {
         List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
         // doesnt catch if the courses is null.
 
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
         viewSchedule.loadFormPanel();
         viewSchedule.loadConfirmationPanel();
@@ -85,6 +108,10 @@ public class BookingController {
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
+
+        viewSchedule.setOnConfirmClicked(e->{
+            // new RequestController(requestSchedule);
+        });
 
     }
 

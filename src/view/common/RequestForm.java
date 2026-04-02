@@ -5,32 +5,51 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import model.schedule.RequestSchedule;
 import view.components.RoundedTextField;
 
 @SuppressWarnings("serial")
 public class RequestForm extends JPanel {
 
-    String studeNo = "2024101030", 
-           name = "Jessie Claire Santos",
-           section = "2AG2",
-           roomCode,
-           timeIn = "7:00 AM",
-           timeOut = "10:00 AM",
-           course = "Event-Driven Programming",
-           professor = "Janice Castillo";
+    ConfirmPanel reqConfirm;
+    public void setSubmitOnClick(ActionListener action){
+        reqConfirm.setBtn2Action(action);
+    }
 
-    public RequestForm(JFrame frame, String roomCode) {
-        this.roomCode = roomCode;
+    public void setGoBackOnClick(ActionListener action){
+        reqConfirm.setBtn1Action(action);
+    }
+    
+    String requestorID, 
+           name,
+           section,
+           roomCode,
+           timeIn,
+           timeOut,
+           course,
+           professor;
+
+
+
+    public RequestForm(RequestSchedule requestSchedule) {
+        this.roomCode = requestSchedule.getRoomCode();
+        this.requestorID = requestSchedule.getStudentRequested();
+        this.name = requestSchedule.getStudentRequested();
+        this.section = requestSchedule.getSectionKey();
+        this.timeIn = requestSchedule.getTimeIn();
+        this.timeOut = requestSchedule.getTimeOut();
+        this.course = requestSchedule.getCourseCode();
+        this.professor = requestSchedule.getFacultyID();
 
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -55,7 +74,7 @@ public class RequestForm extends JPanel {
         formsTop.setBackground(Color.WHITE);
         formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
         
-        formsTop.add(labeledField("Student No.", studeNo));
+        formsTop.add(labeledField("Requestor", requestorID));
         formsTop.add(labeledField("Name", name));
         formsTop.add(labeledField("Section", section));
         formsTop.add(labeledField("Room Code", this.roomCode));
@@ -121,24 +140,13 @@ public class RequestForm extends JPanel {
         formsPanel.add(Box.createVerticalStrut(30));
 
         // Confirm buttons
-        ConfirmPanel reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
+        reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
 		    "GO BACK", "SUBMIT",
 		    new Color(91, 112 ,121), 2, 
 		    new Color(91, 112 ,121),2);
 
-        reqConfirm.setBtn1Action(e -> {
-        	//BACKEND TO DO: Make it so that if the user wants to go back, 
-        	//they are still browsing the same building that they selected
-        });
+
         
-        //make the message dynamic based on the request status 
-        reqConfirm.setBtn2Action(e -> {
-        	MainFrame.setNavBarVisible(false); 
-        	MainFrame.addContentPanel(
-        			new NotificationMessage("C:\\Users\\HP\\Downloads\\checkIcon.png","Your request is successfully submitted."), 
-        			"Notification"); 
-        	MainFrame.showPanel("Notification", "RoomFindr"); 
-        });
         
         
         formsPanel.add(reqConfirm.getConfirmPanel()); 
