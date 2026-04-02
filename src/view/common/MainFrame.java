@@ -14,15 +14,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import model.user.Faculty;
+import model.user.Student;
 import model.user.User;
 
 public class MainFrame {
 
     private static JFrame frame;
     private static JPanel contentPanel;
-    private static JPanel requestPanel;
     private static CardLayout cardLayout;
-    private static JLabel headerTitle;
+    private static TitleHeader titleHeader;
     private static NavigationBar navBar;
     private static JPanel navPanel;
     private static User currentUser;
@@ -38,7 +40,7 @@ public class MainFrame {
 
         // top panel, fixed lang din sya
         // kumabaga ito yung default header
-        JPanel topPanel = createHeader("RoomMate");
+        JPanel topPanel = TitleHeader.createHeader("RoomMate");//FRONTEND TASK: instead na name ng app, pwede ba ung Logo Icon
 
         // swapping of contents here, JPanel only
         cardLayout = new CardLayout();
@@ -48,7 +50,6 @@ public class MainFrame {
         // bottom panel, always has navigation bar unless wants to hide
         navBar = new NavigationBar(frame);
         navPanel = navBar.getNavBar();
-
         // Assemble frame
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(contentPanel, BorderLayout.CENTER);
@@ -61,45 +62,6 @@ public class MainFrame {
         navBar.resetToDefault();
     }
 
-    private static JPanel createHeader(String title) {
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setPreferredSize(new Dimension(500, 50));
-        topPanel.setBackground(new Color(91, 112, 121));
-
-        // this is to balance the space added from the button on the east side
-        JPanel leftSpacer = new JPanel();
-        leftSpacer.setOpaque(false);
-        leftSpacer.setPreferredSize(new Dimension(50, 50));
-
-        // ito yung section
-        headerTitle = new JLabel(title, JLabel.CENTER);
-        headerTitle.setForeground(Color.WHITE);
-        headerTitle.setFont(new Font("Georgia", Font.BOLD, 26));
-        headerTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-
-        requestPanel = new JPanel();
-        requestPanel.setOpaque(false);
-        requestPanel.setPreferredSize(new Dimension(50, 50));
-        requestPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-
-        ImageIcon img = new ImageIcon(MainFrame.class.getResource("/resources/images/icons/Home.png")); // sample only
-        Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-        JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
-        requestPanel.add(reqHistoryIcon);
-
-        requestPanel.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                // insert logic here
-                System.out.println("Request History: Im working.");
-            }
-        });
-
-        topPanel.add(leftSpacer, BorderLayout.WEST);
-        topPanel.add(headerTitle, BorderLayout.CENTER);
-        topPanel.add(requestPanel, BorderLayout.EAST);
-        return topPanel;
-    }
-
     // Add a content panel
     // default header is always "RoomFindr"
     public static void addContentPanel(JPanel panel, String name) {
@@ -109,7 +71,7 @@ public class MainFrame {
     // Switch content and update header
     public static void showPanel(String name, String newTitle) {
         cardLayout.show(contentPanel, name);
-        headerTitle.setText(newTitle);
+        TitleHeader.headerTitle.setText(newTitle);
         contentPanel.revalidate();
         contentPanel.repaint();
     }
@@ -133,6 +95,28 @@ public class MainFrame {
         JOptionPane.showMessageDialog(frame, message);
     }
 
+    // HEADER BUTTON REGISTRATION METHODS
+    //(Student-side) Request History
+    public static void setOnRequestHistoryPanel(Student user, MouseAdapter action) {
+        titleHeader = new TitleHeader();
+        titleHeader.setOnRequestHistoryPanel(user, action);
+    }
+    
+    //(Faculty-side) View my Schedule
+    public static void setOnViewSchedulePanel(Faculty user, MouseAdapter action) {
+        titleHeader = new TitleHeader();
+        titleHeader.setOnViewSchedulePanel(user, action);
+    }
+
+    public static void setIconType(Student user) {
+        titleHeader = new TitleHeader();
+        titleHeader.setIconType(user);
+    }
+
+    public static void setIconType(Faculty user) {
+        titleHeader = new TitleHeader();
+        titleHeader.setIconType(user);
+    }
     // NAV BAR REGISTRATION METHODS
     public static void setOnBrowsePanel(MouseAdapter action) {
         navBar.setOnBrowsePanel(action);

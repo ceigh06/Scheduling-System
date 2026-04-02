@@ -7,6 +7,7 @@ import dao.StudentDAO;
 import model.user.Student;
 import model.user.User;
 import view.common.MainFrame;
+import view.common.TitleHeader;
 import view.common.ViewProfile;
 
 public class ProfileController {
@@ -34,6 +35,7 @@ public class ProfileController {
         MainFrame.restoreNavBarDefaultState();
         user = null;
         MainFrame.setNavBarVisible(false);
+        TitleHeader.removeIconFromHeader();
         MainFrame.showPanel("login");
     }
 
