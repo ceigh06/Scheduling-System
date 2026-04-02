@@ -80,7 +80,7 @@ public class AdminLanding extends JPanel {
 
         // Create button for most vacancies report
         peakBtn = new RoundedButton("View Report", 20);
-        contentPanel.add(createReportSection("Most Vacancies Today", 387, 187, peakBtn));
+        contentPanel.add(createReportSection("Most Vacancies Today", 397, 187, peakBtn));
 
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
@@ -212,10 +212,10 @@ public class AdminLanding extends JPanel {
 
         JLabel nameLabel = new JLabel(roomName, JLabel.CENTER);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        nameLabel.setForeground(new Color(139, 0, 0));
+        nameLabel.setForeground(new Color(91,112,121));
 
         viewBtn.setForeground(Color.WHITE);
-        viewBtn.setBackground(new Color(139, 0, 0));
+        viewBtn.setBackground(new Color(91,112,121));
         viewBtn.setPreferredSize(new Dimension(120, 35));
 
         roomCard.add(nameLabel, BorderLayout.CENTER);
