@@ -14,7 +14,6 @@ import model.user.Student;
 import model.user.User;
 import service.RequestValidatorService;
 import service.SectionRequestValidator;
-import view.common.BrowseBuilding;
 import view.common.ControlNotifs;
 import view.common.MainFrame;
 import view.common.NotificationMessage;

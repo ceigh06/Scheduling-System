@@ -13,7 +13,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;

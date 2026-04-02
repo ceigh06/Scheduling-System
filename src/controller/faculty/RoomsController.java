@@ -2,23 +2,16 @@ package controller.faculty;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import controller.shared.BookingController;
 import dao.BuildingDAO;
-import dao.CourseDAO;
 import dao.RoomDAO;
-import dao.schedule.ScheduleDAO;
 import model.Building;
-import model.Course;
 import model.Room;
-import model.user.Student;
 import model.user.User;
-import service.ScheduleValidator;
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
-import view.common.ViewSchedule;
 
 public class RoomsController {
 
@@ -37,7 +30,8 @@ public class RoomsController {
 
         browseBuilding.loadBuilding(buildings);
 
-        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is clicked
+        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is
+                                                          // clicked
             try {
                 showRoomBrowser(building);
             } catch (SQLException e) {
@@ -74,5 +68,4 @@ public class RoomsController {
 
     }
 
-    
 }
