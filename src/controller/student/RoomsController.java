@@ -10,7 +10,6 @@ import model.user.User;
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
-import view.common.ViewSchedule;
 
 public class RoomsController {
 

@@ -6,7 +6,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import view.common.MainFrame;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedPasswordField;
@@ -17,7 +16,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.awt.Graphics;

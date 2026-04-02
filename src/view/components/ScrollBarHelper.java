@@ -1,9 +1,18 @@
 package view.components;
 
 
-import javax.swing.*;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import java.awt.*;
 
 public class ScrollBarHelper {
 
