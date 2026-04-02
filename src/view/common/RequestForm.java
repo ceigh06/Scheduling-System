@@ -53,7 +53,7 @@ public class RequestForm extends JPanel {
         // Top section - Student info (4 rows, tighter spacing)
         JPanel formsTop = new JPanel(new GridLayout(4, 1, 0, 12)); 
         formsTop.setBackground(Color.WHITE);
-        formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
+        formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
         
         formsTop.add(labeledField("Student No.", studeNo));
         formsTop.add(labeledField("Name", name));
@@ -70,6 +70,7 @@ public class RequestForm extends JPanel {
         
         // Labels row
         JPanel timeLabels = new JPanel(new GridLayout(1, 2, 20, 0));
+        
         timeLabels.setBackground(Color.WHITE);
         
         JLabel timeInLbl = new JLabel("Time In"); 

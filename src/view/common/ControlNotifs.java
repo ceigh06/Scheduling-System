@@ -32,7 +32,7 @@ public class ControlNotifs extends JPanel {
         public ControlNotifs() {
                 setLayout(new BorderLayout());
                 setBackground(Color.WHITE);
-
+                
                 contentPanel = new JPanel(new BorderLayout());
                 contentPanel.setBackground(Color.WHITE);
 
@@ -44,14 +44,12 @@ public class ControlNotifs extends JPanel {
                 // Top section - Student info (4 rows, tighter spacing)
                 formsTop = new JPanel(new GridLayout(4, 1, 0, 12));
                 formsTop.setBackground(Color.WHITE);
-                formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
+                formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
 
                 field = new RoundedTextField(10, 20, 1,
                                 new Color(200, 200, 200),
                                 null);
                 RequestForm.styleField(field);
-
-                formsPanel.add(Box.createVerticalStrut(20));
 
                 timeSection = new JPanel();
                 timeSection.setLayout(new BoxLayout(timeSection, BoxLayout.Y_AXIS));
@@ -94,9 +92,8 @@ public class ControlNotifs extends JPanel {
                 // Bottom section - Course and Professor
                 formsBottom = new JPanel(new GridLayout(2, 1, 0, 12));
                 formsBottom.setBackground(Color.WHITE);
-                formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
-
-                formsPanel.add(Box.createVerticalStrut(10));
+                formsBottom.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+                formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
                 contentPanel.add(formsPanel, BorderLayout.CENTER);
 
@@ -115,7 +112,7 @@ public class ControlNotifs extends JPanel {
 		headerLabel.setFont(new Font("Segoe UI",Font.BOLD, 23));
 		headerLabel.setForeground(Color.WHITE);
 
-		headerPanel = new RoundedPanel(20, 4, new Color(91,112,121)); 
+		headerPanel = new RoundedPanel(40, 4, new Color(91,112,121)); 
 		headerPanel.setLayout(new BorderLayout()); 
                 headerPanel.setPreferredSize(new Dimension(200, 60));
                 headerPanel.setMaximumSize(new Dimension(200, 60));
@@ -146,6 +143,7 @@ public class ControlNotifs extends JPanel {
                 formsTop.add(RequestForm.labeledField("Section", section));
                 formsTop.add(RequestForm.labeledField("Room", room));
                 formsPanel.add(formsTop);
+                formsPanel.add(Box.createVerticalStrut(10));
 
                 timeInTxt.setText(timeIn);
                 timeOutTxt.setText(timeOut);
