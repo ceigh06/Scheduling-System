@@ -183,6 +183,6 @@ public class RequestForm extends JPanel {
         ));
         field.setForeground(Color.DARK_GRAY);
         field.setEditable(false);
-        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
     }
 }
