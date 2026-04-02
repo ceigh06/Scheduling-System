@@ -77,16 +77,19 @@ public class SearchRoomsController {
             for (Building building : checkedBuildings) {
                 List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
                 for (Room room : roomsToCheck) {
+                    room.loadSchedules(new ScheduleDAO().getRoom(room.getRoomCode())); // load the schedules for each room to check
                     List<Schedule> schedules = room.getSchedules();
                     if (schedules == null) {
                         schedules = new ArrayList<>();
+                        System.out.println("Schedules is null for room: " + room.getRoomCode());
+                        // catching incase the room has no schedule
                     }
 
                     boolean isValidCapacity = room.getCapacity() >= capacity;
                     boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
                     boolean isOverlap = ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
 
-                    if (isValidCapacity && isValidFloor && isOverlap) {
+                    if (isValidCapacity && isValidFloor && !isOverlap) {
                         availableRooms.add(room);
                     }
                 }
