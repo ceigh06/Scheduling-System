@@ -40,7 +40,7 @@ public class RequestHistory extends JPanel {
      RoundedPanel selectedDatePanel = null;
 
 
-	RequestHistory() {
+	public RequestHistory() {
 	    setLayout(new BorderLayout());
 	    //pa modify na lang ng padding if gagawing rounded yung scrollpane
 	    setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
@@ -54,7 +54,7 @@ public class RequestHistory extends JPanel {
 	    calendar = new JPanel(new GridLayout(1, day.length, 10, 0));
 
 	    for (int i = 0; i < date.length; i++) {
-	        RoundedPanel clickableDate = new RoundedPanel(55, 5, new Color(91, 112 ,121)); // declare inside loop
+	        RoundedPanel clickableDate = new RoundedPanel(55, 2, new Color(91, 112 ,121)); // declare inside loop
 	        clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
 	        clickableDate.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 	        clickableDate.setPreferredSize(new Dimension(0, 75));
@@ -114,14 +114,15 @@ public class RequestHistory extends JPanel {
 	        });
 
 	        calendar.add(clickableDate);
+			
 	    }
-	    
 	    
 	    mainWrapper = new JPanel();
 	    mainWrapper.setLayout(new BoxLayout(mainWrapper, BoxLayout.Y_AXIS));
 	    mainWrapper.setOpaque(false);
 	    
 	    mainWrapper.add(calendar, BorderLayout.NORTH);
+		mainWrapper.add(Box.createVerticalStrut(5));
 	    
 	    mainScrollPane = new JScrollPane(mainWrapper);
 	    mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -129,10 +130,27 @@ public class RequestHistory extends JPanel {
 		mainScrollPane.setBorder(null);
 		
 		add(mainScrollPane, BorderLayout.CENTER);
+
+		//simple checker lang
+		//BACKEND TO DO: pa lagay na lang to into method
+		//NO REQUESTS PANEL
+		JPanel noRequests = new JPanel(new BorderLayout());
+		JLabel noReqLabel = new JLabel("No Request Schedule for this day!", SwingConstants.CENTER);
+		noReqLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		noReqLabel.setForeground(new Color(117, 144, 156));
+		noRequests.add(noReqLabel, BorderLayout.CENTER);
 		
-		newRequest(true);
-		newRequest(false);
-		newRequest(true);
+		
+		int requestsCount = 0; // example count, replace with actual logic to check requests for the selected date
+		if(requestsCount > 0){
+			newRequest(true);
+			newRequest(false);
+			newRequest(true);
+		}else {
+			mainWrapper.add(noRequests);
+		}
+				
+		
 	    
 	    
 	}
@@ -219,7 +237,7 @@ public class RequestHistory extends JPanel {
 		    setFont(new Font("Courier New", Font.BOLD, 12));
 		}}, gbcTimeData);
 
-		RoundedPanel mainPanel = new RoundedPanel(50, 3, new Color(91, 112 ,121), new BorderLayout());
+		RoundedPanel mainPanel = new RoundedPanel(60, 3, new Color(91, 112 ,121), new BorderLayout());
 		mainPanel.setOpaque(false);
 		mainPanel.setBackground(new Color(243, 244, 247));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));

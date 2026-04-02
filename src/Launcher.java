@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import controller.login.LoginController;
 import utilities.DBConnection;
 import view.common.MainFrame;
+import view.common.RequestHistory;
 
 public class Launcher {
     public static void main(String[] args) throws SQLException {
@@ -10,7 +11,8 @@ public class Launcher {
                 "SchedulingSystemUPDATED", "sa", "12345");
 
         MainFrame.init();
-        new LoginController();
+        MainFrame.addContentPanel(new RequestHistory(), "requestHistory");
+        MainFrame.showPanel("requestHistory", "SEARCH ROOMS");
 
     }
 }
