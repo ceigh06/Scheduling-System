@@ -299,14 +299,16 @@ public class RequestScheduleDAO {
         return false;
     }
 
-    public int countActiveRequests(String sectionKey) {
+    public int countActiveRequests(String sectionKey, String dateToday) {
         String sql = "SELECT COUNT(*) as Requests FROM RequestSchedule " +
                 "WHERE SectionKey = ? " +
-                "AND Status != 0 " + // not cancelled
+                "AND DateRequested = ? " +
+                "AND Status = 1 " + // not cancelled
                 "AND IsArchived = 0";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sectionKey);
+            stmt.setString(2, dateToday);
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
                 return rs.getInt("Requests");

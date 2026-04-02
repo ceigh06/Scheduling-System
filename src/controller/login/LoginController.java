@@ -4,9 +4,15 @@ import controller.admin.AdminController;
 import controller.faculty.FacultyController;
 import controller.student.StudentController;
 import java.sql.SQLException;
+
+import org.jfree.chart.title.Title;
+
+import model.user.Faculty;
+import model.user.Student;
 import model.user.User;
 import utilities.LoginValidator;
 import view.common.MainFrame;
+import view.common.TitleHeader;
 import view.landing.Login;
 
 public class LoginController {

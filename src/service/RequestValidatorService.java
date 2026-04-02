@@ -4,7 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import dao.schedule.RequestScheduleDAO;
-import dao.schedule.ScheduleDAO;
+
 
 public class RequestValidatorService {
 
@@ -14,9 +14,9 @@ public class RequestValidatorService {
         return LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY;
     }
 
-    public static boolean hasExceededMaxRequests(String sectionKey) {
+    public static boolean hasExceededMaxRequests(String sectionKey, String dateToday) {
         RequestScheduleDAO requestDAO = new RequestScheduleDAO();
-        int count = requestDAO.countActiveRequests(sectionKey);
+        int count = requestDAO.countActiveRequests(sectionKey, dateToday);
         return count >= MAX_REQUESTS;
     }
 }

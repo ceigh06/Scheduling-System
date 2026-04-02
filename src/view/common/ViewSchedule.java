@@ -1,11 +1,32 @@
 package view.common;
 
-import java.awt.*;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeListener;
 import model.Course;
 import model.Room;
@@ -13,6 +34,12 @@ import model.schedule.Schedule;
 import view.components.RoundedButton;
 import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
+import view.components.ScrollBarHelper;
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class ViewSchedule extends JPanel {
@@ -139,12 +166,13 @@ public class ViewSchedule extends JPanel {
         container.add(timeSched);
         container.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        lecBtn = new RoundedButton("LECTURE SCHEDULE", 20, Color.GRAY, 2);
-        labBtn = new RoundedButton("LABORATORY SCHEDULE", 20, Color.GRAY, 2);
+        lecBtn = new RoundedButton("LECTURE SCHEDULE", 20, new Color(91, 112 ,121), 2);
+        labBtn = new RoundedButton("LABORATORY SCHEDULE", 20, new Color(91, 112 ,121), 2);
 
-        // Scroll pane
+        // Scroll pane 
         scrollPanel = new JScrollPane(container);
         scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // test line
         scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
         scrollPanel.setBorder(null);
@@ -205,12 +233,12 @@ public class ViewSchedule extends JPanel {
         lecBtn.setPreferredSize(new Dimension(180, 60));
         lecBtn.setMaximumSize(new Dimension(180, 60));
         lecBtn.setForeground(Color.WHITE);
-        lecBtn.setBackground(new Color(139, 0, 0));
+        lecBtn.setBackground(new Color(117, 144, 156));
         
         labBtn.setPreferredSize(new Dimension(180, 60));
         labBtn.setMaximumSize(new Dimension(180, 60));
         labBtn.setForeground(Color.WHITE);
-        labBtn.setBackground(new Color(139, 0, 0));
+        labBtn.setBackground(new Color(117, 144, 156));
 
         unitBtnPanel.add(lecBtn);
         unitBtnPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -231,7 +259,7 @@ public class ViewSchedule extends JPanel {
         timeOut.setForeground(Color.GRAY);
         timeOut.setFont(new Font("Arial", Font.BOLD, 15));
 
-        RoundedPanel timePanel = new RoundedPanel(10, 1, Color.GRAY);
+        RoundedPanel timePanel = new RoundedPanel(10, 1, new Color(91, 112, 121));
         timePanel.setLayout(new GridBagLayout());
         timePanel.setPreferredSize(new Dimension(365, 60));
         timePanel.setMaximumSize(new Dimension(365, 60));
@@ -250,6 +278,7 @@ public class ViewSchedule extends JPanel {
 
         // Add all to form
         courseCombo = new RoundedComboBox<>(new String[] {}, 20, 2);
+        courseCombo.setBorderColor(new Color(91, 112 ,121));
         form.add(selectCoursePanel);
         form.add(courseCombo);
         form.add(unitBtnPanel);
@@ -361,6 +390,7 @@ public class ViewSchedule extends JPanel {
             timeLbl.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             timeLbl.setOpaque(true);
             timeLbl.setBackground(Color.WHITE);
+            timeLbl.setForeground(new Color(91, 112 ,121));
             timeLbl.setPreferredSize(new Dimension(60, 30));
             timeSched.add(timeLbl, gbc);
         }
@@ -402,7 +432,7 @@ public class ViewSchedule extends JPanel {
         roomLbl.setFont(new Font("Arial", Font.BOLD, 16));
         roomLbl.setOpaque(false);
 
-        labelPanel.setBackground(new Color(139, 0, 0));
+        labelPanel.setBackground(new Color(117, 144, 156));
         labelPanel.setPreferredSize(new Dimension(200, 50));
         labelPanel.setMaximumSize(new Dimension(200, 50));
         labelPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -455,19 +485,20 @@ public class ViewSchedule extends JPanel {
 
         JPanel schedPanel = new JPanel();
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
-        schedPanel.setBackground(schedType ? Color.YELLOW : new Color(190, 190, 190));
+        schedPanel.setBackground(schedType ? new Color(255, 169, 62) : new Color(255, 245, 157));
         if (!schedType)
             schedPanel.setForeground(Color.WHITE);
 
         schedPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.BLACK, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        // TESTING ONLY
-        schedPanel.add(new JLabel(schedule.getSectionKey()));
-        schedPanel.add(new JLabel(schedule.getCourseCode()));
-        schedPanel.add(new JLabel(schedule.getFacultyID()));
-        schedPanel.add(new JLabel(timeRange));
+        schedPanel.add(new JLabel(schedule.getCourseCode()){{
+            setFont(new Font("Arial", Font.BOLD, 20));}});
+        schedPanel.add(new JLabel(schedule.getFacultyID()){{
+            setFont(new Font("Arial", Font.BOLD, 16));}});
+        schedPanel.add(new JLabel(timeRange){{
+            setFont(new Font("Arial", Font.PLAIN, 16));}});
 
         timeSched.add(schedPanel, gbc);
         timeSched.setComponentZOrder(schedPanel, 0);

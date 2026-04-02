@@ -29,6 +29,7 @@ public class BookingController {
         showRoomSchedule(user, selectedRoom, requestSchedule);
     }
 
+    // for student workflow, no form just show the schedule and confirmation.
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
@@ -43,7 +44,6 @@ public class BookingController {
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
-
     }
 
     void showRoomSchedule(User user, Room selectedRoom) {

@@ -1,11 +1,17 @@
 package controller.student;
 
 import controller.shared.ProfileController;
+import controller.shared.RoomsController;
+import controller.shared.SearchRoomsController;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+
+import model.user.Student;
 import model.user.User;
 import view.common.MainFrame;
+import view.common.TitleHeader;
 import view.landing.Landing;
 
 public class StudentController {
@@ -19,8 +25,11 @@ public class StudentController {
         MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(landing, "StudentLanding");
         MainFrame.showPanel("StudentLanding");
+        Student student = new Student();
+        MainFrame.setIconType(student);
+        TitleHeader.addIconToHeader();
         MainFrame.setNavBarVisible(true);
-        
+
         landing.setOnSearchAction(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
@@ -64,7 +73,6 @@ public class StudentController {
             }
         });
 
-
     }
 
     public void onSearchClicked() throws SQLException {
@@ -77,7 +85,7 @@ public class StudentController {
 
     public void onHomeClicked() {
         MainFrame.showPanel("StudentLanding");
-    }   
+    }
 
     public void onRequestClicked() {
         new RequestsController(user);
