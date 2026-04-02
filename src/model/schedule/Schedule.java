@@ -2,29 +2,29 @@ package model.schedule;
 
 public class Schedule {
     private int ID;
-	private String roomCode;
-	private String sectionKey;
-	private String courseCode;
-	private String facultyID;
-	private String timeIn;
-	private String timeOut;
-	private String status;
-	private String scheduledDay;
-	private int isArchived;
-	
-	public void load(int ID, String roomCode,  String courseCode, String sectionKey, String facultyID, String timeIn, String timeOut, String scheduledDay,String status, int isArchived) {
-		this.ID = ID;
-		this.roomCode = roomCode;
-		this.sectionKey = sectionKey;
-		this.courseCode = courseCode;
-		this.facultyID = facultyID;
-		this.timeIn = timeIn;
-		this.timeOut = timeOut;
-		this.status = status;
-		this.scheduledDay = scheduledDay;
-		this.isArchived = isArchived;
-	}
-    
+    private String roomCode;
+    private String sectionKey;
+    private String courseCode;
+    private String facultyID;
+    private String timeIn;
+    private String timeOut;
+    private String status;
+    private String scheduledDay;
+    private int isArchived;
+
+    public void load(int ID, String roomCode, String sectionKey, String courseCode, String facultyID, String timeIn,
+            String timeOut, String scheduledDay, String status, int isArchived) {
+        this.ID = ID;
+        this.roomCode = roomCode;
+        this.sectionKey = sectionKey;
+        this.courseCode = courseCode;
+        this.facultyID = facultyID;
+        this.timeIn = timeIn;
+        this.timeOut = timeOut;
+        this.status = status;
+        this.scheduledDay = scheduledDay;
+        this.isArchived = isArchived;
+    }
 
     public int getID() {
         return ID;

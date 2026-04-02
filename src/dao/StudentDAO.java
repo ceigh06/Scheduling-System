@@ -27,15 +27,14 @@ public class StudentDAO {
 
             ResultSet set = stmt.executeQuery();
             set.next();
-
-            String employeeID = set.getString("StudentNumber");
+ 
             String firstName = set.getString("FirstName");
             String middleName = set.getString("MiddleName");
             String lastName = set.getString("LastName");
-            int position = Integer.parseInt(set.getString("SectionKey"));
+            int section = Integer.parseInt(set.getString("SectionKey"));
             String password = set.getString("Password");
             
-            student.load(employeeID, firstName, middleName, lastName, position, password);
+            student.load(studentID, firstName, middleName, lastName, section, password);
             return student;
         } catch (Exception e) {
             System.out.println("Error checking if student exists: " + e.getMessage());
