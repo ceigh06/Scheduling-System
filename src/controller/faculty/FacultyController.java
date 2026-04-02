@@ -1,6 +1,8 @@
 package controller.faculty;
 
 import controller.shared.ProfileController;
+import controller.shared.RoomsController;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;

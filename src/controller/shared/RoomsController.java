@@ -1,9 +1,8 @@
-package controller.faculty;
+package controller.shared;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import controller.shared.BookingController;
 import dao.BuildingDAO;
 import dao.RoomDAO;
 import model.Building;
@@ -17,7 +16,7 @@ public class RoomsController {
 
     User user;
 
-    RoomsController(User user) throws SQLException {
+    public RoomsController(User user) throws SQLException {
         this.user = user;
         showBrowseBuilding();
     }

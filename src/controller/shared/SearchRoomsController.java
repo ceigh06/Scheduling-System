@@ -1,10 +1,9 @@
-package controller.student;
+package controller.shared;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import controller.shared.BookingController;
 import dao.BuildingDAO;
 import dao.CourseDAO;
 import dao.RoomDAO;
