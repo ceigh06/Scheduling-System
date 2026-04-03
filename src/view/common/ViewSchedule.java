@@ -134,9 +134,8 @@ public class ViewSchedule extends JPanel {
         return (Course) courseCombo.getSelectedItem();
     }
 
-    public String getSelectedSection() {
-        String selected = (String) sectionCombo.getSelectedItem();
-        return selected != null ? selected : null;
+    public Section getSection() {
+        return (Section) sectionCombo.getSelectedItem();
     }
 
     public void setTimeOut(String time) {

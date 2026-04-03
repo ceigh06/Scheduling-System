@@ -4,6 +4,7 @@ import controller.admin.EditScheduleController;
 import dao.CourseDAO;
 import dao.schedule.ScheduleDAO;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import model.Course;
@@ -110,11 +111,14 @@ public class BookingController {
             MainFrame.showPanel("Schedule");
 
             viewSchedule.setOnConfirmClicked(e -> {
+                if (viewSchedule.getCourse() == null || viewSchedule.getSection() == null) {
+                    MainFrame.setNotification("Please Choose a Course and Section First");
+                    return;
+                }
                 RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(-1, selectedRoom.getRoomCode(), String.valueOf(viewSchedule.getSection().getSectionKey()), viewSchedule.getCourse().getCode(), user.getUserID(), timeIn,timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(), user.getUserID());
 
-                // requestSchedule.load(-1, selectedRoom.getRoomCode(), , timeIn, timeIn,
-                // timeIn, timeOut, timeOut, timeIn, 0);
-                // new RequestController(requestSchedule);
+                new RequestController(requestSchedule);
             });
         } else {
             viewSchedule.setOnScheduleClicked(schedule -> {

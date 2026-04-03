@@ -70,4 +70,12 @@ public class Schedule {
         this.roomCode = roomCode;
     }
 
+    public void setTimeIn(String timeIn) {
+        this.timeIn = timeIn;
+    }
+
+    public void setTimeOut(String timeOut) {
+        this.timeOut = timeOut;
+    }
+
 }
