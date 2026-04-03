@@ -14,28 +14,23 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 public class RoundedLabel extends JLabel {
-	//mostly for pfp pa lang ito, pwede pa mabago parameters lng baguhin of other labels na rin
-
     private Image image;
     private int borderThickness = 0;
     private int dimension = 0;
     private Color borderColor;
+    private String text;
     private JLabel label;
-    
-
-    public RoundedLabel(ImageIcon icon, int dimension) {
-    	this.dimension = dimension;
-        this.image = icon.getImage();
-        setPreferredSize(new Dimension(dimension, dimension));
-    }
+    private Color bgColor = new Color(255, 255, 255, 0); // Transparent background
 
     public RoundedLabel(ImageIcon icon, int borderThickness, Color borderColor, int dimension) {
-    	this.dimension = dimension;
+        this.dimension = dimension;
         this.image = icon.getImage();
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
         setPreferredSize(new Dimension(dimension, dimension));
+        setOpaque(false); // CRITICAL: prevents background fill from covering image
     }
+
     public RoundedLabel(JLabel label, int borderThickness, Color borderColor, int dimension) {
     	this.dimension = dimension;
         this.label = label;
@@ -44,51 +39,48 @@ public class RoundedLabel extends JLabel {
         setPreferredSize(new Dimension(dimension, dimension));
     }
 
+    public RoundedLabel(String text,  int borderThickness, Color borderColor, int dimension) {
+        this.text = text;
+        this.setBackground(bgColor);
+        this.borderThickness = borderThickness;
+        this.borderColor = borderColor;
+        this.dimension = dimension;
+        setPreferredSize(new Dimension(dimension, dimension));
+        setOpaque(false);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         int diameter = Math.min(getWidth(), getHeight());
         
+        // Center the circle in the component
+        int x = (getWidth() - diameter) / 2;
+        int y = (getHeight() - diameter) / 2;
+
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // To set BACKGROUND COLOR HERE
-        g2.setColor(getBackground());
-        //how rounded the label if text
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 100, 100);
+        // Create circular clip
+        Ellipse2D circle = new Ellipse2D.Float(x, y, diameter, diameter);
+        g2.clip(circle);
 
-        // Clip to circle
-        g2.setClip(new Ellipse2D.Float(0, 0, diameter, diameter));
-
+        // Draw image centered and scaled to fill the circle
         if (image != null) {
-            // Draw image clipped to circle
-            g2.drawImage(image, 0, 0, diameter, diameter, this);
-        } else if (label != null) {
-            // Draw label text centered inside the circle
-        	label.setSize(diameter, diameter);
-        	label.setHorizontalAlignment(SwingConstants.CENTER);
-        	label.setVerticalAlignment(SwingConstants.CENTER);
-        	label.paint(g2);
+            g2.drawImage(image, x, y, diameter, diameter, this);
         }
 
-        // Reset clip before drawing border
+        // Remove clip for border
         g2.setClip(null);
-        drawBorder(g2, diameter);
-
-        g2.dispose();
-    }
-
-
-    //Helper method for drawing border and color to the img
-    private void drawBorder(Graphics2D g2, int diameter) {
+        
+        // Draw border
         if (borderThickness > 0) {
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(borderThickness));
-            g2.drawOval(
-                borderThickness / 2,
-                borderThickness / 2,
-                diameter - borderThickness,
-                diameter - borderThickness
-            );
+            int offset = borderThickness / 2;
+            g2.drawOval(x + offset, y + offset, 
+                       diameter - borderThickness, diameter - borderThickness);
         }
+
+        g2.dispose();
     }
 }
