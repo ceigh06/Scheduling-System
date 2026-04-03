@@ -59,6 +59,7 @@ public class AdminController {
     public void onTotalReportClicked() {
         if (report1 == null) {
            ReportOneController reportOneController = new ReportOneController();
+           reportOneController.loadData();
            reportOneController.initView();
            report1 = reportOneController.getView();
            MainFrame.addContentPanel(report1, "Report1");

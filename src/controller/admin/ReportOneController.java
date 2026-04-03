@@ -18,7 +18,7 @@ public class ReportOneController {
         loadData();
     }
     
-    private void loadData() {
+    public void loadData() {
         // Use the efficient single-query method
         int[] monthly = requestDAO.getAllStatusCountsMonthly();
         this.monthlyApproved = monthly[0];   // Status 3
