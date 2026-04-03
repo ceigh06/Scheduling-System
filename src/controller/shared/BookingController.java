@@ -3,9 +3,12 @@ package controller.shared;
 import controller.admin.EditScheduleController;
 import dao.CourseDAO;
 import dao.schedule.ScheduleDAO;
+
+import java.util.ArrayList;
 import java.util.List;
 import model.Course;
 import model.Room;
+import model.Section;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
@@ -55,6 +58,7 @@ public class BookingController {
     // constructor for browse workflow.
     // needs to build a request schedule through the forms
     public BookingController(User user, Room selectedRoom) {
+        this.user = user;
         showRoomSchedule(user, selectedRoom);
     }
 
@@ -64,16 +68,22 @@ public class BookingController {
 
         selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
         List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+
         // doesnt catch if the courses is null.
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
+
         if (user.getUserType() != "Admin") {
             viewSchedule.loadFormPanel();
+            viewSchedule.loadCourse(facultyCourses);
             viewSchedule.loadConfirmationPanel();
 
-            viewSchedule.loadCourse(facultyCourses);
             attachShowRoomScheduleListeners(viewSchedule);
+
+            viewSchedule.setOnCourseChanged(e -> {
+                loadSection(viewSchedule);
+            });
 
             viewSchedule.setOnHourChanged(e -> {
                 handleTimeChange(viewSchedule);
@@ -117,6 +127,17 @@ public class BookingController {
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
             MainFrame.showPanel("Schedule");
+        }
+    }
+
+    void loadSection(ViewSchedule viewSchedule) {
+        // will be loaded ones the courses are picked
+        Course selectedCourse = viewSchedule.getCourse();
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        List<Section> sections = scheduleDAO.getSectionByFacultyCourse(selectedCourse.getCode(), user.getUserID());
+        viewSchedule.loadSection(sections);
+        if (selectedCourse != null) {
+            viewSchedule.loadSection(sections);
         }
     }
 

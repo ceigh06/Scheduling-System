@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Section;
 import model.schedule.Schedule;
 import utilities.DBConnection;
 
@@ -83,4 +84,22 @@ public class ScheduleDAO {
         return null;
     }
 
+    public List<Section> getSectionByFacultyCourse(String courseCode, String facultyID) {
+        String query = "SELECT s.SectionKey, s.SectionID, s.ProgramCode FROM MasterSchedule m JOIN Section s ON s.SectionKey = m.SectionKey WHERE CourseCode = ? AND FacultyID = ?";
+
+        List<Section> sections = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, courseCode);
+            stmt.setString(2, facultyID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Section section = new Section(rs.getInt("SectionKey"), rs.getString("SectionID"), rs.getString("ProgramCode"));
+                sections.add(section);
+            }
+            return sections;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
