@@ -59,7 +59,8 @@ public class LookUpDAO {
             ResultSet set = stmt.executeQuery();
             set.next();
 
-            fullCourseName = set.getString("CourseCode") + " - " + set.getString("CourseDescription") + " | " + set.getDouble("Units") + " Units";
+            fullCourseName = set.getString("CourseCode") + " - " + set.getString("CourseDescription") + " | "
+                    + set.getDouble("Units") + " Units";
         } catch (Exception e) {
             System.out.println("Error checking if record exists: " + e.getMessage());
         }
@@ -75,10 +76,28 @@ public class LookUpDAO {
             ResultSet set = stmt.executeQuery();
             set.next();
 
-            fullFacultyName = set.getString("FirstName") + " " + set.getString("MiddleName") + " " + set.getString("LastName");
+            fullFacultyName = set.getString("FirstName") + " " + set.getString("MiddleName") + " "
+                    + set.getString("LastName");
         } catch (Exception e) {
             System.out.println("Error checking if record exists: " + e.getMessage());
         }
         return fullFacultyName;
+    }
+
+    public String getFullStudentName(String studentNumber) {
+        String fullStudentName = "";
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Student WHERE StudentNumber = ?");
+            stmt.setString(1, studentNumber);
+
+            ResultSet set = stmt.executeQuery();
+            set.next();
+
+            fullStudentName = set.getString("FirstName") + " " + set.getString("MiddleName") + " "
+                    + set.getString("LastName");
+        } catch (Exception e) {
+            System.out.println("Error checking if record exists: " + e.getMessage());
+        }
+        return fullStudentName;
     }
 }
