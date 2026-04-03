@@ -11,10 +11,10 @@ import model.Course;
 import model.Room;
 import model.schedule.Schedule;
 import model.user.User;
-import view.admin.AdminViewSchedule;
 import view.common.BrowseBuilding;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
+import view.common.ViewSchedule;
 
 public class RoomsController {
 
@@ -86,8 +86,9 @@ public class RoomsController {
         selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
         List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID());
 
-        AdminViewSchedule viewSchedule = new AdminViewSchedule(selectedRoom);
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
+        viewSchedule.loadConfirmationPanel();
 
         // Pattern: Click schedule immediately navigates to edit
         viewSchedule.setOnScheduleClicked(schedule -> {

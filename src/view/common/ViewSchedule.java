@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -35,11 +35,6 @@ import view.components.RoundedButton;
 import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class ViewSchedule extends JPanel {
@@ -83,6 +78,12 @@ public class ViewSchedule extends JPanel {
             "12:00 PM", "1:00 PM", "2:00 PM",
             "3:00 PM", "4:00 PM", "5:00 PM",
             "6:00 PM", "7:00 PM", "8:00 PM" };
+
+    private Consumer<Schedule> onScheduleClicked;
+
+    public void setOnScheduleClicked(Consumer<Schedule> action) {
+        this.onScheduleClicked = action;
+    }
 
     // register of listeners
     public void setOnLecBtn(ActionListener action) {
@@ -526,6 +527,15 @@ public class ViewSchedule extends JPanel {
             setFont(new Font("Arial", Font.BOLD, 16));}});
         schedPanel.add(new JLabel(timeRange){{
             setFont(new Font("Arial", Font.PLAIN, 16));}});
+
+                schedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        schedPanel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (onScheduleClicked != null) {
+                    onScheduleClicked.accept(schedule);
+                }
+            }
+        });
 
         timeSched.add(schedPanel, gbc);
         timeSched.setComponentZOrder(schedPanel, 0);
