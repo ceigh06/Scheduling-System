@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 
 import model.schedule.RequestSchedule;
 import view.components.RoundedTextField;
+import view.components.ScrollBarHelper;
 
 @SuppressWarnings("serial")
 public class RequestForm extends JPanel {
@@ -154,7 +155,8 @@ public class RequestForm extends JPanel {
 
         JScrollPane scrollPanel = new JScrollPane(contentPanel);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPanel.setBorder(BorderFactory.createEmptyBorder());
+        ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPanel.setBorder(null);
         scrollPanel.getViewport().setBackground(Color.WHITE);
 
         add(scrollPanel, BorderLayout.CENTER);

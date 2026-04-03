@@ -1,5 +1,6 @@
 package view.landing;
 
+import controller.admin.ReportOneController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedTextField;
+import view.components.ScrollBarHelper;
 
 @SuppressWarnings("serial")
 public class AdminLanding extends JPanel {
@@ -85,7 +87,8 @@ public class AdminLanding extends JPanel {
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
         JScrollPane mainScroll = new JScrollPane(contentPanel);
-        mainScroll.setBorder(BorderFactory.createEmptyBorder());
+        mainScroll.setBorder(null);
+        ScrollBarHelper.applySlimScrollBar(mainScroll, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         mainScroll.getViewport().setBackground(OFF_WHITE);
         mainScroll.getVerticalScrollBar().setUnitIncrement(16);
         mainScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -195,8 +198,23 @@ public class AdminLanding extends JPanel {
         cardsContainer.setBorder(new EmptyBorder(0, 15, 0, 0));
         cardsContainer.setOpaque(false);
         cardsContainer.setBackground(OFF_WHITE);
-
-        cardsContainer.add(createCard("Sample Report", width, height, viewBtn));
+        String cardTitle = "";
+        switch (title) {
+            case "Total Room Requests":
+                    ReportOneController report1 = new ReportOneController();
+                    cardTitle = String.valueOf(report1.getMonthlyTotal());
+                break;
+            case "Most Requested Room":
+                    //ReportTwoController report2 = new ReportTwoController();
+                    //cardTitle = String.valueOf(report2.getMonthlyTotal());
+                break;
+            case "Most Vacancies Today":
+                    //ReportThreeController report3 = new ReportThreeController();
+                    //cardTitle = String.valueOf(report3.getMonthlyTotal());
+                break;
+        }
+        
+        cardsContainer.add(createCard(cardTitle, width, height, viewBtn));
 
         sectionPanel.add(cardsContainer, BorderLayout.CENTER);
 

@@ -33,6 +33,7 @@ import javax.swing.SpinnerNumberModel;
 
 import dao.BuildingDAO;
 import view.components.RoundedPanel;
+import view.components.ScrollBarHelper;
 import model.Building;
 import model.Course;
 
@@ -64,7 +65,7 @@ public class SearchRooms1 extends JPanel {
 		selectionWrapper.add(select, BorderLayout.NORTH);
 
 		// ROUNDED PANEL CONTAINER
-		RoundedPanel buildings = new RoundedPanel(30, 5, Color.BLACK, new BorderLayout());
+		RoundedPanel buildings = new RoundedPanel(30, 3, new Color(117,144,156), new BorderLayout());
 		buildings.setPreferredSize(new Dimension(380, 100));
 		buildings.setMaximumSize(new Dimension(380, 150));
 
@@ -79,7 +80,8 @@ public class SearchRooms1 extends JPanel {
 		selectBuilding.setOpaque(false);
 		selectBuilding.getViewport().setOpaque(false);
 		selectBuilding.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		selectBuilding.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 20));
+		ScrollBarHelper.applySlimScrollBar(selectBuilding, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+		selectBuilding.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
 
 		buildings.add(selectBuilding, BorderLayout.CENTER);
 
