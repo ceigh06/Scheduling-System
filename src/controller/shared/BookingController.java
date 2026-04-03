@@ -95,6 +95,9 @@ public class BookingController {
 
         viewSchedule.setOnConfirmClicked(e -> {
             RequestSchedule requestSchedule = new RequestSchedule();
+
+            // requestSchedule.load(-1, selectedRoom.getRoomCode(), , timeIn, timeIn,
+            // timeIn, timeOut, timeOut, timeIn, 0);
             // new RequestController(requestSchedule);
         });
 
@@ -105,27 +108,24 @@ public class BookingController {
         int minute = viewSchedule.getMinute();
         String meridiem = viewSchedule.getMeridiem();
 
-        int hour24;
-        if (meridiem.equals("AM")) {
-            hour24 = (hour == 12) ? 0 : hour;
-        } else {
-            hour24 = (hour == 12) ? 12 : hour + 12;
+        int hour24 = hour;
+        if (meridiem.equals("PM")) {
+            hour24 += 12;
         }
-
-        // Clamp to school hours: 7 AM (7) to 8 PM (20)
-        if (hour24 < 7)
-            hour24 = 7;
-        if (hour24 > 20)
-            hour24 = 20;
 
         int duration = viewSchedule.getIsLec() ? 1 : 3;
-        int timeOutHour24 = hour24 + duration;
 
-        // Also clamp timeout — can't end past 8PM
-        if (timeOutHour24 > 20) {
-            timeOutHour24 = 20;
-            hour24 = 20 - duration; // push timeIn back too
+        // Clamp to school hours: 7 AM (7) to 8 PM (20)
+        if (hour24 < 7){
+            hour24 = 7;
+            viewSchedule.setTimeIn(hour24, minute, meridiem);
         }
+        if (hour24 > 20 - duration){
+            hour24 = 20 - duration; // clamp first
+            viewSchedule.setTimeIn(hour24 - 12, minute, meridiem);
+        }
+        int timeOutHour24 = hour24 + duration;
+        System.out.println(hour24 + " " + timeOutHour24);
 
         timeIn = DateTimeBuilder.formatTo12Hour(hour24, minute);
         timeOut = DateTimeBuilder.formatTo12Hour(timeOutHour24, minute);
