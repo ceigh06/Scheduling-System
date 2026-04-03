@@ -1,11 +1,16 @@
 package controller.shared;
 
-import java.sql.SQLException;
-
+import controller.admin.AdminController;
+import controller.faculty.FacultyController;
+import controller.login.LoginController;
 import controller.student.StudentController;
+import dao.FacultyDAO;
 import dao.StudentDAO;
+import java.sql.SQLException;
+import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
+import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.common.TitleHeader;
 import view.common.ViewProfile;
@@ -18,11 +23,29 @@ public class ProfileController {
     public ProfileController(User user) {
         this.user = user;
         viewProfile = new ViewProfile();
-        Student student = new StudentDAO().get(user.getUserID());
-        viewProfile.loadUser(student);
+        String registeredUser = user.getUserType();
+        switch (registeredUser) {
+            case "Student":
+                Student student = new StudentDAO().get(user.getUserID());
+                viewProfile.loadUser(student);
+                break;
+            case "Faculty":
+                Faculty faculty = new FacultyDAO().get(user.getUserID());
+                viewProfile.loadUser(faculty);
+                break;
+            case "Admin":
+                break;
+        }
+
         showProfile();
 
-        viewProfile.setOnBackClicked(e -> onBackClicked());
+        viewProfile.setOnBackClicked(e -> {
+            try {
+                onBackClicked();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
         viewProfile.setOnLogoutClicked(e -> onLogoutClicked());
     }
 
@@ -34,18 +57,21 @@ public class ProfileController {
     private void onLogoutClicked() {
         MainFrame.restoreNavBarDefaultState();
         user = null;
+        LoginController.clearLoginFields();
+        LoginValidator.clearAuthenticatedUser();
         MainFrame.setNavBarVisible(false);
         TitleHeader.removeIconFromHeader();
         MainFrame.showPanel("login");
     }
 
-    private void onBackClicked() {
-        try {
+    private void onBackClicked() throws SQLException {
+        if (user.getUserType() == "Student") {
             new StudentController(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else if (user.getUserType() == "Faculty") {
+            new FacultyController(user);
+        } else if (user.getUserType() == "Admin") {
+            new AdminController(user);
         }
-        ;
     }
 
 }
