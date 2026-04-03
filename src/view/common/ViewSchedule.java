@@ -46,6 +46,7 @@ public class ViewSchedule extends JPanel {
 
     // field components
     RoundedComboBox<String> courseCombo;
+    RoundedComboBox<String> sectionCombo;
 
     // dynamic label
     JLabel timeOut;
@@ -182,11 +183,10 @@ public class ViewSchedule extends JPanel {
         setClick(false); // enables clicking of panels (ONLY)
         // BACKEND TO DO: direct to room schedule to modify the room schedule
         add(scrollPanel, BorderLayout.CENTER);
-
-        
-
-        
+  
     }
+
+ 
 
     public void loadConfirmationPanel() {
         JPanel southPanel = new JPanel(new BorderLayout());
@@ -208,7 +208,7 @@ public class ViewSchedule extends JPanel {
         // container panel of the forms below
         form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
-        form.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
+        form.setBorder(BorderFactory.createEmptyBorder(0, 20, 15, 20));
         form.setBackground(Color.WHITE);
         form.setAlignmentX(Component.CENTER_ALIGNMENT);
         form.setMaximumSize(new Dimension(430, Integer.MAX_VALUE));
@@ -216,7 +216,7 @@ public class ViewSchedule extends JPanel {
         // Course selection
         JLabel selectCourseLbl = new JLabel("SELECT COURSE");
         selectCourseLbl.setFont(new Font("Arial", Font.BOLD, 20));
-
+        selectCourseLbl.setForeground(new Color(91, 112,121));
         JPanel selectCoursePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         selectCoursePanel.setBackground(Color.WHITE);
         selectCoursePanel.add(selectCourseLbl);
@@ -247,6 +247,7 @@ public class ViewSchedule extends JPanel {
         // Time out section
         JLabel timeoutLbl = new JLabel("TIME OUT");
         timeoutLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        timeoutLbl.setForeground(new Color(91, 112,121));
         JPanel timeOutPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         timeOutPanel.setBackground(Color.WHITE);
         timeOutPanel.add(timeoutLbl);
@@ -259,7 +260,7 @@ public class ViewSchedule extends JPanel {
         timeOut.setForeground(Color.GRAY);
         timeOut.setFont(new Font("Arial", Font.BOLD, 15));
 
-        RoundedPanel timePanel = new RoundedPanel(10, 1, new Color(91, 112, 121));
+        RoundedPanel timePanel = new RoundedPanel(30, 1, new Color(91, 112, 121));
         timePanel.setLayout(new GridBagLayout());
         timePanel.setPreferredSize(new Dimension(365, 60));
         timePanel.setMaximumSize(new Dimension(365, 60));
@@ -279,15 +280,40 @@ public class ViewSchedule extends JPanel {
         // Add all to form
         courseCombo = new RoundedComboBox<>(new String[] {}, 20, 2);
         courseCombo.setBorderColor(new Color(91, 112 ,121));
+        //SECTION COMBO BOX
+        sectionCombo = new RoundedComboBox<>(new String[] {}, 20, 2);
+        sectionCombo.setBorderColor(new Color(91, 112 ,121));
+        sectionCombo.setBackground(Color.WHITE);
+        sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        sectionCombo.setMaximumSize(new Dimension(400, 50));
+
         form.add(selectCoursePanel);
         form.add(courseCombo);
+        form.add(Box.createVerticalStrut(10));
+        showSectionCombo(true); // default for faculty, only shows when its faculty
         form.add(unitBtnPanel);
         form.add(timeInPanel);
         form.add(spinnerPan);
+        form.add(Box.createVerticalStrut(10));
         form.add(timeOutPanel);
         form.add(timeWrapper);
 
         container.add(form);
+    }
+
+   public void showSectionCombo(boolean userIsFaculty) {
+     // Section selection
+        JLabel selectSectionLbl = new JLabel("SELECT SECTION");
+        selectSectionLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        selectSectionLbl.setForeground(new Color(91, 112,121));
+        JPanel selectSectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectSectionPanel.setBackground(Color.WHITE);
+        selectSectionPanel.add(selectSectionLbl);
+        if (userIsFaculty) {
+            form.add(selectSectionPanel);
+        form.add(sectionCombo);
+        form.add(Box.createVerticalStrut(10));
+        } 
     }
 
     private void createTimeInSection() {
@@ -295,6 +321,7 @@ public class ViewSchedule extends JPanel {
         // Time in label
         timeinLbl = new JLabel("TIME IN");
         timeinLbl.setFont(new Font("Arial", Font.BOLD, 20));
+        timeinLbl.setForeground(new Color(91, 112,121));
 
         timeInPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         timeInPanel.setBackground(Color.WHITE);
@@ -487,13 +514,13 @@ public class ViewSchedule extends JPanel {
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
         schedPanel.setBackground(schedType ? new Color(255, 169, 62) : new Color(255, 245, 157));
         if (!schedType)
-            schedPanel.setForeground(Color.WHITE);
+            schedPanel.setForeground(Color.BLACK);
 
         schedPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        schedPanel.add(new JLabel(schedule.getCourseCode()){{
+        schedPanel.add(new JLabel(schedule.getSectionKey()){{
             setFont(new Font("Arial", Font.BOLD, 20));}});
         schedPanel.add(new JLabel(schedule.getFacultyID()){{
             setFont(new Font("Arial", Font.BOLD, 16));}});
