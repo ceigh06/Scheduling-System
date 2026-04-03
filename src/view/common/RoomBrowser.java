@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import model.Room;
 import view.components.RoundedPanel;
+import view.components.ScrollBarHelper;
 
 public class RoomBrowser extends JPanel{
 	private JPanel roomPanel;
@@ -114,7 +115,8 @@ public class RoomBrowser extends JPanel{
         
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPanel.setBorder(BorderFactory.createEmptyBorder());
+		ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPanel.setBorder(null);
         add(scrollPanel, BorderLayout.CENTER);
         
 	}

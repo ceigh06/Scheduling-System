@@ -132,6 +132,7 @@ public class SearchRoomsController {
     }
 
     void showRoomSchedule(Room selectedRoom) {
+        requestSchedule.setRoomCode(selectedRoom.getRoomCode());
         new BookingController(user, selectedRoom, requestSchedule);
     }
 }
