@@ -3,9 +3,13 @@ package controller.shared;
 import controller.admin.EditScheduleController;
 import dao.CourseDAO;
 import dao.schedule.ScheduleDAO;
+
+import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import model.Course;
 import model.Room;
+import model.Section;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
@@ -55,6 +59,7 @@ public class BookingController {
     // constructor for browse workflow.
     // needs to build a request schedule through the forms
     public BookingController(User user, Room selectedRoom) {
+        this.user = user;
         showRoomSchedule(user, selectedRoom);
     }
 
@@ -64,16 +69,22 @@ public class BookingController {
 
         selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
         List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+
         // doesnt catch if the courses is null.
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
+
         if (user.getUserType() != "Admin") {
             viewSchedule.loadFormPanel();
+            viewSchedule.loadCourse(facultyCourses);
             viewSchedule.loadConfirmationPanel();
 
-            viewSchedule.loadCourse(facultyCourses);
             attachShowRoomScheduleListeners(viewSchedule);
+
+            viewSchedule.setOnCourseChanged(e -> {
+                loadSection(viewSchedule);
+            });
 
             viewSchedule.setOnHourChanged(e -> {
                 handleTimeChange(viewSchedule);
@@ -100,11 +111,14 @@ public class BookingController {
             MainFrame.showPanel("Schedule");
 
             viewSchedule.setOnConfirmClicked(e -> {
+                if (viewSchedule.getCourse() == null || viewSchedule.getSection() == null) {
+                    MainFrame.setNotification("Please Choose a Course and Section First");
+                    return;
+                }
                 RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(-1, selectedRoom.getRoomCode(), String.valueOf(viewSchedule.getSection().getSectionKey()), viewSchedule.getCourse().getCode(), user.getUserID(), timeIn,timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(), user.getUserID());
 
-                // requestSchedule.load(-1, selectedRoom.getRoomCode(), , timeIn, timeIn,
-                // timeIn, timeOut, timeOut, timeIn, 0);
-                // new RequestController(requestSchedule);
+                new RequestController(requestSchedule);
             });
         } else {
             viewSchedule.setOnScheduleClicked(schedule -> {
@@ -117,6 +131,17 @@ public class BookingController {
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
             MainFrame.showPanel("Schedule");
+        }
+    }
+
+    void loadSection(ViewSchedule viewSchedule) {
+        // will be loaded ones the courses are picked
+        Course selectedCourse = viewSchedule.getCourse();
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        List<Section> sections = scheduleDAO.getSectionByFacultyCourse(selectedCourse.getCode(), user.getUserID());
+        viewSchedule.loadSection(sections);
+        if (selectedCourse != null) {
+            viewSchedule.loadSection(sections);
         }
     }
 
