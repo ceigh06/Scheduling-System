@@ -159,6 +159,11 @@ public class ViewSchedule extends JPanel {
         // FRONTEND TO BACKEND: No need to make this database connected
         loadScheduleLayout();
 
+         confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+                "GO BACK", "CONFIRM",
+                new Color(227, 75, 75), 2,
+                new Color(77, 139, 78), 2);
+
         // creates space for the schedule panels to be added to timeSched
         // RFONTEND TO BACKEND: No need to make this database connected
 
@@ -194,10 +199,6 @@ public class ViewSchedule extends JPanel {
         southPanel.setPreferredSize(new Dimension(100, 50));
         southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
         southPanel.setBackground(Color.WHITE);
-        confirmArea = new ConfirmPanel(MainFrame.getFrame(),
-                "GO BACK", "CONFIRM",
-                new Color(227, 75, 75), 2,
-                new Color(77, 139, 78), 2);
         confirmArea.setBtn1Color(new Color(255, 100, 100));
         confirmArea.setBtn2Color(new Color(63, 193, 127));
         confirmArea.setBackground(Color.WHITE);
