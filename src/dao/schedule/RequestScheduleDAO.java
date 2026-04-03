@@ -7,10 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.schedule.RequestSchedule;
+import model.schedule.Schedule;
 import utilities.DBConnection;
 
 public class RequestScheduleDAO {
-    Connection connection;
+
+    static Connection connection;
 
     public RequestScheduleDAO() {
         try {
@@ -161,10 +163,10 @@ public class RequestScheduleDAO {
 
     // Get single count by status for CURRENT MONTH
     public int getMonthlyCountByStatus(int status) {
-        String sql = "SELECT COUNT(*) as count FROM RequestSchedule " +
-                "WHERE Status = ? AND IsArchived = 0 " +
-                "AND MONTH(DateRequested) = MONTH(GETDATE()) " +
-                "AND YEAR(DateRequested) = YEAR(GETDATE())";
+        String sql = "SELECT COUNT(*) as count FROM RequestSchedule "
+                + "WHERE Status = ? AND IsArchived = 0 "
+                + "AND MONTH(DateRequested) = MONTH(GETDATE()) "
+                + "AND YEAR(DateRequested) = YEAR(GETDATE())";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, status);
@@ -180,10 +182,10 @@ public class RequestScheduleDAO {
 
     // Get single count by status for CURRENT WEEK
     public int getWeeklyCountByStatus(int status) {
-        String sql = "SELECT COUNT(*) as count FROM RequestSchedule " +
-                "WHERE Status = ? AND IsArchived = 0 " +
-                "AND DateRequested >= DATEADD(day, -7, GETDATE()) " +
-                "AND DateRequested <= GETDATE()";
+        String sql = "SELECT COUNT(*) as count FROM RequestSchedule "
+                + "WHERE Status = ? AND IsArchived = 0 "
+                + "AND DateRequested >= DATEADD(day, -7, GETDATE()) "
+                + "AND DateRequested <= GETDATE()";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, status);
@@ -220,15 +222,15 @@ public class RequestScheduleDAO {
 
     // Get all status counts in one query - more efficient
     public int[] getAllStatusCountsMonthly() {
-        String sql = "SELECT " +
-                "SUM(CASE WHEN Status = 3 THEN 1 ELSE 0 END) as Approved, " +
-                "SUM(CASE WHEN Status = 2 THEN 1 ELSE 0 END) as Declined, " +
-                "SUM(CASE WHEN Status = 0 THEN 1 ELSE 0 END) as Void, " +
-                "SUM(CASE WHEN Status = 1 THEN 1 ELSE 0 END) as Pending " +
-                "FROM RequestSchedule " +
-                "WHERE IsArchived = 0 " +
-                "AND MONTH(DateRequested) = MONTH(GETDATE()) " +
-                "AND YEAR(DateRequested) = YEAR(GETDATE())";
+        String sql = "SELECT "
+                + "SUM(CASE WHEN Status = 3 THEN 1 ELSE 0 END) as Approved, "
+                + "SUM(CASE WHEN Status = 2 THEN 1 ELSE 0 END) as Declined, "
+                + "SUM(CASE WHEN Status = 0 THEN 1 ELSE 0 END) as Void, "
+                + "SUM(CASE WHEN Status = 1 THEN 1 ELSE 0 END) as Pending "
+                + "FROM RequestSchedule "
+                + "WHERE IsArchived = 0 "
+                + "AND MONTH(DateRequested) = MONTH(GETDATE()) "
+                + "AND YEAR(DateRequested) = YEAR(GETDATE())";
 
         int[] counts = new int[4]; // [approved, declined, void, pending]
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -248,15 +250,15 @@ public class RequestScheduleDAO {
     // Get daily breakdown for current week by status
     public int[] getWeeklyDailyBreakdown(int status) {
         int[] dailyCounts = new int[7]; // Mon-Sun
-        String sql = "SELECT DATENAME(weekday, DateRequested) as day, COUNT(*) as count " +
-                "FROM RequestSchedule " +
-                "WHERE Status = ? AND IsArchived = 0 " +
-                "AND DateRequested >= DATEADD(day, -7, GETDATE()) " +
-                "GROUP BY DATENAME(weekday, DateRequested) " +
-                "ORDER BY CASE DATENAME(weekday, DateRequested) " +
-                "WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3 " +
-                "WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6 " +
-                "WHEN 'Sunday' THEN 7 END";
+        String sql = "SELECT DATENAME(weekday, DateRequested) as day, COUNT(*) as count "
+                + "FROM RequestSchedule "
+                + "WHERE Status = ? AND IsArchived = 0 "
+                + "AND DateRequested >= DATEADD(day, -7, GETDATE()) "
+                + "GROUP BY DATENAME(weekday, DateRequested) "
+                + "ORDER BY CASE DATENAME(weekday, DateRequested) "
+                + "WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3 "
+                + "WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6 "
+                + "WHEN 'Sunday' THEN 7 END";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, status);
@@ -324,21 +326,105 @@ public class RequestScheduleDAO {
     }
 
     public int countActiveRequests(String sectionKey, String dateToday) {
-        String sql = "SELECT COUNT(*) as Requests FROM RequestSchedule " +
-                "WHERE SectionKey = ? " +
-                "AND DateRequested = ? " +
-                "AND Status = 1 " + // not cancelled
+        String sql = "SELECT COUNT(*) as Requests FROM RequestSchedule "
+                + "WHERE SectionKey = ? "
+                + "AND DateRequested = ? "
+                + "AND Status = 1 "
+                + // not cancelled
                 "AND IsArchived = 0";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sectionKey);
             stmt.setString(2, dateToday);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 return rs.getInt("Requests");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+
+    public static boolean archiveStudentSchedule(
+        String roomCode,
+        String courseCode,
+        String studentNumber,
+        String sectionKey,
+        String facultyID,
+        String timeIn,
+        String timeOut,
+        String scheduledDay) {
+
+    String sql = "UPDATE RequestSchedule " +
+                 "SET IsArchived = 1 " +
+                 "WHERE RoomCode = ? " +
+                 "AND CourseCode = ? " +
+                 "AND StudentNumber = ? " +
+                 "AND SectionKey = ? " +
+                 "AND FacultyID = ? " +
+                 "AND TimeIn = ? " +
+                 "AND TimeOut = ? " +
+                 "AND ScheduledDay = ?";
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, roomCode);
+        stmt.setString(2, courseCode);
+        stmt.setString(3, studentNumber);
+        stmt.setString(4, sectionKey);
+        stmt.setString(5, facultyID);
+        stmt.setString(6, timeIn);
+        stmt.setString(7, timeOut);
+        stmt.setString(8, scheduledDay);
+
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+    public RequestSchedule getBySchedule(Schedule sched) {
+    try {
+        PreparedStatement stmt = connection.prepareStatement(
+            "SELECT * FROM RequestSchedule WHERE " +
+            "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ?");
+
+        stmt.setString(1, sched.getRoomCode());
+        stmt.setString(2, sched.getTimeIn());
+        stmt.setString(3, sched.getTimeOut());
+        stmt.setString(4, sched.getScheduledDay());
+
+        ResultSet set = stmt.executeQuery();
+
+        if (set.next()) {
+            RequestSchedule request = new RequestSchedule();
+
+            request.load(
+                set.getInt("RequestKey"),
+                set.getString("RoomCode"),
+                set.getString("SectionKey"),
+                set.getString("CourseCode"),
+                set.getString("FacultyID"),
+                set.getString("TimeIn"),
+                set.getString("TimeOut"),
+                set.getString("ScheduledDay"),
+                String.valueOf(set.getInt("Status")),
+                set.getInt("IsArchived"),
+                set.getString("DateRequested"),
+                set.getString("StudentNumber")
+            );
+
+            return request;
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
 }
