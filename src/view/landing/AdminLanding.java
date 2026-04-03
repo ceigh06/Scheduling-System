@@ -1,6 +1,7 @@
 package view.landing;
 
 import controller.admin.ReportOneController;
+import controller.admin.ReportTwoController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -205,8 +205,8 @@ public class AdminLanding extends JPanel {
                     cardTitle = String.valueOf(report1.getMonthlyTotal());
                 break;
             case "Most Requested Room":
-                    //ReportTwoController report2 = new ReportTwoController();
-                    //cardTitle = String.valueOf(report2.getMonthlyTotal());
+                    ReportTwoController report2 = new ReportTwoController();
+                    cardTitle = report2.getTopBuildingName();
                 break;
             case "Most Vacancies Today":
                     //ReportThreeController report3 = new ReportThreeController();
