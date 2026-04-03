@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,7 +36,7 @@ import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
 
 public class RequestHistory extends JPanel {
-	JPanel calendar, mainWrapper, requestPanel, wrapper;
+	JPanel calendar, mainWrapper, requestPanel, wrapper, statusWrapper;
 	JLabel dateLabel, dayLabel, status;
 	RoundedLabel roundedDate, pfp;
 	RoundedPanel clickableDate, statusPanel;
@@ -94,97 +95,112 @@ public class RequestHistory extends JPanel {
 		GridBagConstraints gbcPfp = new GridBagConstraints();
 		gbcPfp.gridx = 0;
 		gbcPfp.gridy = 0;
-		gbcPfp.gridheight = 4;
+		gbcPfp.gridheight = 4;   
 		gbcPfp.weightx = 0.1;
-		gbcPfp.anchor = GridBagConstraints.CENTER;
+		gbcPfp.weighty = 0;             
+		gbcPfp.insets = new Insets(5, 5, 0, 0);
+		gbcPfp.anchor = GridBagConstraints.NORTH;
 
-		ImageIcon rawIcon = new ImageIcon("pfp.png");
-		Image scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-		pfp = new RoundedLabel(new ImageIcon(scaledImg), 2, new Color(91, 112, 121), 100);
+		ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
+		Image scaled = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 80);
 		requestPanel.add(pfp, gbcPfp);
+		requestPanel.revalidate();	
+		requestPanel.repaint();
 
 		for (int i = 1; i < 5; i++) {
 			GridBagConstraints gbcInfo = new GridBagConstraints();
 			gbcInfo.gridx = 1;
-			gbcInfo.gridy = i;
-			gbcInfo.weightx = 0.9;
-			gbcInfo.anchor = GridBagConstraints.WEST;
-			gbcInfo.insets = new Insets(5, 5, 5, 5);
+    		gbcInfo.gridy = i - 1;      
+    		gbcInfo.weightx = 0.9;
+    		gbcInfo.weighty = 0;         
+    		gbcInfo.anchor = GridBagConstraints.WEST;
+    		gbcInfo.insets = new Insets(i == 1 ? 5 : 2, 20, 2, 5);  
 			if (i == 4) {
 				requestPanel.add(new JLabel("Requested at: " + requestData.get(4)) {
 					{
-						setFont(new Font("Courier New", Font.BOLD, 14));
+						setFont(new Font("Arial", Font.BOLD, 14));
 					}
 				}, gbcInfo);
 			} else {
-				requestPanel.add(new JLabel(requestData.get(i)) {
-					{
-						setFont(new Font("Courier New", Font.BOLD, 14));
-					}
-				}, gbcInfo);
+				if (i == 1) {
+					requestPanel.add(new JLabel(requestData.get(i)) {
+						{
+							setFont(new Font("Arial", Font.BOLD, 20));
+						}
+					}, gbcInfo);
+				} else {
+					requestPanel.add(new JLabel(requestData.get(i)) {
+						{
+							setFont(new Font("Arial", Font.BOLD, 15));
+						}
+					}, gbcInfo);
+				}
 			}
 		}
 
-		GridBagConstraints gbcSchedLabel = new GridBagConstraints();
-		gbcSchedLabel.gridx = 0;
-		gbcSchedLabel.gridy = 4;
-		gbcSchedLabel.anchor = GridBagConstraints.WEST;
-		gbcSchedLabel.insets = new Insets(15, 5, 0, 5);
-		requestPanel.add(new JLabel("CLASSROOM SCHEDULE") {
+		GridBagConstraints gbcRoomCode = new GridBagConstraints();
+		gbcRoomCode.gridx = 0;
+		gbcRoomCode.gridy = 5;
+		gbcRoomCode.anchor = GridBagConstraints.WEST;
+		gbcRoomCode.insets = new Insets(15, 15, 0, 5);
+		requestPanel.add(new JLabel("ROOM CODE") {
 			{
-				setFont(new Font("Courier New", Font.BOLD, 12));
+				setFont(new Font("Arial", Font.BOLD, 12));
 			}
-		}, gbcSchedLabel);
+		}, gbcRoomCode);
 
-		GridBagConstraints gbcSchedData = new GridBagConstraints();
-		gbcSchedData.gridx = 0;
-		gbcSchedData.gridy = 5;
-		gbcSchedData.anchor = GridBagConstraints.WEST;
-		gbcSchedData.insets = new Insets(5, 5, 15, 5);
+		GridBagConstraints gbcRoomData = new GridBagConstraints();
+		gbcRoomData.gridx = 0;
+		gbcRoomData.gridy = 6;
+		gbcRoomData.anchor = GridBagConstraints.WEST;
+		gbcRoomData.insets = new Insets(5,15, 15, 5);
 		requestPanel.add(new JLabel(requestData.get(5)) {
 			{
-				setFont(new Font("Courier New", Font.BOLD, 12));
+				setFont(new Font("Arial", Font.BOLD, 12));
 			}
-		}, gbcSchedData);
+		}, gbcRoomData);
 
 		GridBagConstraints gbcTimeLabel = new GridBagConstraints();
 		gbcTimeLabel.gridx = 1;
-		gbcTimeLabel.gridy = 4;
+		gbcTimeLabel.gridy = 5;
 		gbcTimeLabel.anchor = GridBagConstraints.WEST;
-		gbcTimeLabel.insets = new Insets(15, 15, 0, 5);
+		gbcTimeLabel.insets = new Insets(15, 20, 0, 5);
 		requestPanel.add(new JLabel("TIME") {
 			{
-				setFont(new Font("Courier New", Font.BOLD, 12));
+				setFont(new Font("Arial", Font.BOLD, 12));
 			}
 		}, gbcTimeLabel);
 
 		GridBagConstraints gbcTimeData = new GridBagConstraints();
 		gbcTimeData.gridx = 1;
-		gbcTimeData.gridy = 5;
+		gbcTimeData.gridy = 6;
 		gbcTimeData.anchor = GridBagConstraints.WEST;
-		gbcTimeData.insets = new Insets(5, 15, 15, 5);
+		gbcTimeData.insets = new Insets(5, 20, 15, 5);
 		requestPanel.add(new JLabel(requestData.get(6)) {
 			{
-				setFont(new Font("Courier New", Font.BOLD, 12));
+				setFont(new Font("Arial", Font.BOLD, 12));
 			}
 		}, gbcTimeData);
 
 		RoundedPanel mainPanel = new RoundedPanel(60, 3, new Color(91, 112, 121), new BorderLayout());
 		mainPanel.setOpaque(false);
 		mainPanel.setBackground(new Color(243, 244, 247));
+		mainPanel.setPreferredSize(new Dimension(400, 250));
+		mainPanel.setMaximumSize(new Dimension(400, 250));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));
 
 		requestPanel.setOpaque(false);
 
 		statusPanel = new RoundedPanel(40, 2, new Color(117, 144, 156));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
-		statusPanel.setPreferredSize(new Dimension(150, 40));
-		statusPanel.setMaximumSize(new Dimension(150, 40));
+		statusPanel.setPreferredSize(new Dimension(300, 40));
+		statusPanel.setMaximumSize(new Dimension(300, 40));
 		statusPanel.add(Box.createVerticalStrut(10));
 
 		status = new JLabel();
 		status.setAlignmentX(CENTER_ALIGNMENT);
-		status.setFont(new Font("Courier New", Font.BOLD, 20));
+		status.setFont(new Font("Arial", Font.BOLD, 20));
 
 		if (Integer.parseInt(requestData.get(0)) == 3) {
 			status.setText("APPROVED");
@@ -197,7 +213,11 @@ public class RequestHistory extends JPanel {
 		}
 		statusPanel.add(status);
 
-		mainPanel.add(statusPanel, BorderLayout.NORTH);
+		statusWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		statusWrapper.setOpaque(false);
+		statusWrapper.add(statusPanel);
+
+		mainPanel.add(statusWrapper, BorderLayout.NORTH);
 		mainPanel.add(requestPanel, BorderLayout.CENTER);
 
 		wrapper = new JPanel(new FlowLayout());

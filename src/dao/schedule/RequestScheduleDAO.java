@@ -64,7 +64,8 @@ public class RequestScheduleDAO {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
             PreparedStatement stmt = connection
-                    .prepareStatement("SELECT * FROM RequestSchedule WHERE StudentNumber = ? AND (Status = 2 OR Status = 3)");
+                    .prepareStatement(
+                            "SELECT * FROM RequestSchedule WHERE StudentNumber = ? AND (Status = 2 OR Status = 3)");
             stmt.setString(1, studentNumber);
             ResultSet set = stmt.executeQuery();
 
@@ -427,4 +428,26 @@ public class RequestScheduleDAO {
 
     return null;
 }
+    public void addRequest(RequestSchedule requestSchedule) {
+        String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, StudentNumber, SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
+                +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, requestSchedule.getRoomCode());
+            stmt.setString(2, requestSchedule.getCourseCode());
+            stmt.setString(3, requestSchedule.getStudentRequested());
+            stmt.setString(4, requestSchedule.getSectionKey());
+            stmt.setString(5, requestSchedule.getFacultyID());
+            stmt.setString(6, requestSchedule.getTimeIn());
+            stmt.setString(7, requestSchedule.getTimeOut());
+            stmt.setString(8, requestSchedule.getScheduledDay());
+            stmt.setString(9, requestSchedule.getStatus());
+            stmt.setString(10, requestSchedule.getDateRequested());
+            stmt.setInt(11, requestSchedule.getIsArchived());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

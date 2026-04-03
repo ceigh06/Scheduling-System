@@ -24,4 +24,12 @@ public class RequestSchedule extends Schedule {
     public String getStudentRequested(){
         return studentNumber;
     }
+
+    public void setTimeIn(String timeIn){
+        super.setTimeIn(timeIn);
+    }
+
+    public void setTimeOut(String timeOut){
+        super.setTimeOut(timeOut);
+    }
 }
