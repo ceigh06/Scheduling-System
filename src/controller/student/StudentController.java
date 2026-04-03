@@ -73,6 +73,13 @@ public class StudentController {
             }
         });
 
+        MainFrame.setOnRequestHistoryPanel(student, new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new RequestHistoryController(user);
+            }
+        });
+
     }
 
     public void onSearchClicked() throws SQLException {
@@ -93,5 +100,9 @@ public class StudentController {
 
     public void onProfileClicked() {
         new ProfileController(user);
+    }
+
+    public void onRequestHistoryClicked() {
+        new RequestHistoryController(user);
     }
 }
