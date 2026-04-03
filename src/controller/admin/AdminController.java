@@ -78,6 +78,7 @@ public class AdminController {
     }
 
     public void onPeakReportClicked() {
+        
         // if (report3 == null) {
         //     ReportThreeController reportThreeController = new ReportThreeController();
         //     reportThreeController.loadData();
