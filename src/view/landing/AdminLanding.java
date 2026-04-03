@@ -1,5 +1,6 @@
 package view.landing;
 
+import controller.admin.ReportOneController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -197,8 +198,23 @@ public class AdminLanding extends JPanel {
         cardsContainer.setBorder(new EmptyBorder(0, 15, 0, 0));
         cardsContainer.setOpaque(false);
         cardsContainer.setBackground(OFF_WHITE);
-
-        cardsContainer.add(createCard("Sample Report", width, height, viewBtn));
+        String cardTitle = "";
+        switch (title) {
+            case "Total Room Requests":
+                    ReportOneController report1 = new ReportOneController();
+                    cardTitle = String.valueOf(report1.getMonthlyTotal());
+                break;
+            case "Most Requested Room":
+                    //ReportTwoController report2 = new ReportTwoController();
+                    //cardTitle = String.valueOf(report2.getMonthlyTotal());
+                break;
+            case "Most Vacancies Today":
+                    //ReportThreeController report3 = new ReportThreeController();
+                    //cardTitle = String.valueOf(report3.getMonthlyTotal());
+                break;
+        }
+        
+        cardsContainer.add(createCard(cardTitle, width, height, viewBtn));
 
         sectionPanel.add(cardsContainer, BorderLayout.CENTER);
 
