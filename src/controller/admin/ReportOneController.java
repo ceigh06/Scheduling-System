@@ -73,6 +73,8 @@ public class ReportOneController {
                     break;
             }
         });
+
+        view.showMonthlyView();
     }
     
     public Report1 getView() {
