@@ -19,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedTextField;
+import view.components.ScrollBarHelper;
 
 @SuppressWarnings("serial")
 public class AdminLanding extends JPanel {
@@ -85,7 +86,8 @@ public class AdminLanding extends JPanel {
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
         JScrollPane mainScroll = new JScrollPane(contentPanel);
-        mainScroll.setBorder(BorderFactory.createEmptyBorder());
+        mainScroll.setBorder(null);
+        ScrollBarHelper.applySlimScrollBar(mainScroll, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         mainScroll.getViewport().setBackground(OFF_WHITE);
         mainScroll.getVerticalScrollBar().setUnitIncrement(16);
         mainScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
