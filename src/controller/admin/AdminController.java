@@ -1,5 +1,6 @@
 package controller.admin;
 
+import controller.shared.RoomsController;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
