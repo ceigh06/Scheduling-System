@@ -142,7 +142,7 @@ public class RequestHistory extends JPanel {
 		
 		
 		int requestsCount = 0; // example count, replace with actual logic to check requests for the selected date
-		if(requestsCount > 0){
+		if(requestsCount > 0){ // if there are requests, load them if none, show no requests panel
 			newRequest(true);
 			newRequest(false);
 			newRequest(true);
