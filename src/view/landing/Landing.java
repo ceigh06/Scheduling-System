@@ -1,6 +1,5 @@
 package view.landing;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -11,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedTextField;
+import view.components.ScrollBarHelper;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -55,7 +55,8 @@ public class Landing extends JPanel {
         contentPanel.add(Box.createRigidArea(new Dimension(0,2)));
 
         JScrollPane mainScroll = new JScrollPane(contentPanel);
-        mainScroll.setBorder(BorderFactory.createEmptyBorder());
+        ScrollBarHelper.applySlimScrollBar(mainScroll, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        mainScroll.setBorder(null);
         mainScroll.getViewport().setBackground(OFF_WHITE);
         mainScroll.getVerticalScrollBar().setUnitIncrement(16);
         mainScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -93,10 +94,10 @@ public class Landing extends JPanel {
 
         searchBar = new RoundedTextField(20,25,2,
                 new Color(220,220,220),
-                new Color(170,20,20)
+                new Color(117,144,156)
         );
 
-        searchBar.setMaximumSize(new Dimension(400,45)); //test line
+        searchBar.setMaximumSize(new Dimension(400,45));
         searchBar.setPreferredSize(new Dimension(400,45));
         searchBar.setBackground(Color.WHITE);
         searchBar.setAlignmentX(LEFT_ALIGNMENT);
@@ -167,7 +168,8 @@ public class Landing extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS
         );
 
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        ScrollBarHelper.applySlimScrollBar(scrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPane.setBorder(null);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(450,200)); //test line
         scrollPane.setOpaque(false);

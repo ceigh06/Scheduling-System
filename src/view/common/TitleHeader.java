@@ -53,7 +53,7 @@ public class TitleHeader {
 
     private static JLabel createIconLabel() {
         ImageIcon img = new ImageIcon(MainFrame.class.getResource(iconPath)); // sample only
-        Image scaled = img.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+        Image scaled = img.getImage().getScaledInstance(35, 35, Image.SCALE_SMOOTH);
         JLabel reqHistoryIcon = new JLabel(new ImageIcon(scaled));
         return reqHistoryIcon;
     }
