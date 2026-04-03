@@ -128,7 +128,7 @@ public class ReportTwoController {
             view.setBuildingData(buildingNames, buildingRequestCounts);
         }
         
-        String periodText = isWeeklyView ? "March 8 - March 14" : "FEBRUARY";
+        String periodText = isWeeklyView ? "This Week" : "This Month";
         view.setSelectedPeriod(periodText);
         
         // Toggle callback for Monthly/Weekly switch (top toggle)
@@ -137,7 +137,7 @@ public class ReportTwoController {
             try {
                 loadBuildingListData();
                 view.setBuildingData(buildingNames, buildingRequestCounts);
-                view.setSelectedPeriod(isWeekly ? "March 8 - March 14" : "FEBRUARY");
+                view.setSelectedPeriod(isWeekly ? "This Week" : "This Month");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
