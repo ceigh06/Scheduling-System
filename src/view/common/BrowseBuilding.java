@@ -3,29 +3,22 @@ package view.common;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-
 import java.awt.Font;
 import java.awt.GridLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
 import javax.swing.border.EmptyBorder;
-
 import model.Building;
 import view.components.RoundedButton;
 import view.components.ScrollBarHelper;
 
-
 @SuppressWarnings("serial")
-public class BrowseBuilding extends JPanel  {
+public class BrowseBuilding extends JPanel {
 
     private JPanel headerPanel;
     private JPanel wrapper;
@@ -45,7 +38,7 @@ public class BrowseBuilding extends JPanel  {
 
         for (Building building : buildings) {
             RoundedButton btn = createBldgBtn(building.getName(), ""); //registering the button to the model
-            btn.addActionListener(e ->{
+            btn.addActionListener(e -> {
                 onBuildingClicked.accept(building);
             });
             bldgContent.add(btn);
@@ -70,16 +63,16 @@ public class BrowseBuilding extends JPanel  {
 
         JLabel bldgTitle = new JLabel("Select a building to explore");
         bldgTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        bldgTitle.setForeground(new Color(91,112,121));
+        bldgTitle.setForeground(new Color(91, 112, 121));
         headerPanel.add(bldgTitle, BorderLayout.NORTH);
 
         JLabel subtitle = new JLabel("Choose from available campus buildings");
         subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 14));
-        subtitle.setForeground(new Color(117,144,156));
+        subtitle.setForeground(new Color(117, 144, 156));
         headerPanel.add(subtitle, BorderLayout.SOUTH);
 
         wrapper.add(headerPanel);
-        
+
         JScrollPane scrollPanel = new JScrollPane(wrapper);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -91,17 +84,56 @@ public class BrowseBuilding extends JPanel  {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
+    public BrowseBuilding(boolean viewArchives) {
+        if (viewArchives) {
+            setLayout(new BorderLayout());
+            setBackground(Color.WHITE);
+
+            MainFrame.setNavBarVisible(true);
+
+            wrapper = new JPanel();
+            wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+            wrapper.setBackground(Color.WHITE);
+            wrapper.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+            headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(Color.WHITE);
+            headerPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+
+            JLabel bldgTitle = new JLabel("Browse Archives");
+            bldgTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+            bldgTitle.setForeground(new Color(91, 112, 121));
+            headerPanel.add(bldgTitle, BorderLayout.NORTH);
+
+            JLabel subtitle = new JLabel("Choose from available buildings with archived schedules");
+            subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 14));
+            subtitle.setForeground(new Color(117, 144, 156));
+            headerPanel.add(subtitle, BorderLayout.SOUTH);
+
+            wrapper.add(headerPanel);
+
+            JScrollPane scrollPanel = new JScrollPane(wrapper);
+            scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+            scrollPanel.setBorder(null);
+            scrollPanel.getViewport().setBackground(Color.WHITE);
+            scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
+
+            add(scrollPanel, BorderLayout.CENTER);
+        }
+    }
+
     private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(117,144,156),2);
-        btn.setForeground(new Color(117, 144,156));
+        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(117, 144, 156), 2);
+        btn.setForeground(new Color(117, 144, 156));
         btn.setFont(new Font("Segoe UI", Font.BOLD, 17));
-        btn.setPreferredSize(new Dimension(120,120));
-        btn.setMaximumSize(new Dimension(120,120));
+        btn.setPreferredSize(new Dimension(120, 120));
+        btn.setMaximumSize(new Dimension(120, 120));
 
         // ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
         // Image img = icon.getImage();
         // btn.setBackgroundImage(img);
-
         return btn;
     }
 }

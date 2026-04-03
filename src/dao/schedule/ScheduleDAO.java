@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Section;
 import model.schedule.Schedule;
 import utilities.DBConnection;
@@ -123,6 +122,44 @@ public class ScheduleDAO {
     return false;
 }
 
+public boolean unarchiveSchedule(
+        String roomCode,
+        String courseCode,
+        String sectionKey,
+        String facultyID,
+        String timeIn,
+        String timeOut,
+        String scheduledDay) {
+
+    String sql = "UPDATE MasterSchedule " +
+                 "SET IsArchived = 0 " +
+                 "WHERE RoomCode = ? " +
+                 "AND CourseCode = ? " +
+                 "AND SectionKey = ? " +
+                 "AND FacultyID = ? " +
+                 "AND TimeIn = ? " +
+                 "AND TimeOut = ? " +
+                 "AND ScheduledDay = ?";
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, roomCode);
+        stmt.setString(2, courseCode);
+        stmt.setString(3, sectionKey);
+        stmt.setString(4, facultyID);
+        stmt.setString(5, timeIn);
+        stmt.setString(6, timeOut);
+        stmt.setString(7, scheduledDay);
+
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
 public List<Schedule> filterActiveSchedules(List<Schedule> schedules) {
     List<Schedule> activeSchedules = new ArrayList<>();
 
@@ -134,6 +171,19 @@ public List<Schedule> filterActiveSchedules(List<Schedule> schedules) {
     }
 
     return activeSchedules;
+}
+
+public List<Schedule> filterInactiveSchedules(List<Schedule> schedules) {
+    List<Schedule> inactiveSchedules = new ArrayList<>();
+
+    for (Schedule schedule : schedules) {
+        
+        if (schedule.getIsArchived() == 1) {
+            inactiveSchedules.add(schedule);
+        }
+    }
+
+    return inactiveSchedules;
 }
 
     public List<Section> getSectionByFacultyCourse(String courseCode, String facultyID) {
@@ -154,4 +204,48 @@ public List<Schedule> filterActiveSchedules(List<Schedule> schedules) {
             return null;
         }
     }
+   public static List<Schedule> getSchedulesByDay(String day) throws SQLException {
+    List<Schedule> schedules = new ArrayList<>();
+
+   
+    String fullDay;
+    switch (day) {
+        case "Mon": fullDay = "Monday"; break;
+        case "Tue": fullDay = "Tuesday"; break;
+        case "Wed": fullDay = "Wednesday"; break;
+        case "Thu": fullDay = "Thursday"; break;
+        case "Fri": fullDay = "Friday"; break;
+        case "Sat": fullDay = "Saturday"; break;
+        default: fullDay = day; 
+    }
+
+    String sql = "SELECT * FROM MasterSchedule WHERE ScheduledDay = ? AND IsArchived = 1";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, fullDay);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Schedule sched = new Schedule();
+            sched.load(
+                rs.getInt("ScheduleID"),
+                rs.getString("RoomCode"),
+                rs.getString("SectionKey"),
+                rs.getString("CourseCode"),
+                rs.getString("FacultyID"),
+                rs.getString("TimeIn"),
+                rs.getString("TimeOut"),
+                fullDay,
+                rs.getString("Status"),
+                rs.getInt("IsArchived")
+            );
+            schedules.add(sched);
+        }
+    }
+
+    return schedules;
+}
 }

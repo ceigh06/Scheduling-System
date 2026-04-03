@@ -1,12 +1,11 @@
 package controller.shared;
 
+import controller.admin.ArchiveController;
 import controller.admin.EditScheduleController;
 import dao.CourseDAO;
 import dao.StudentDAO;
 import dao.schedule.ScheduleDAO;
-
-import java.sql.Date;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 import model.Course;
 import model.Room;
@@ -79,12 +78,18 @@ public class BookingController {
         showRoomSchedule(user, selectedRoom);
     }
 
+    public BookingController(User user, Room selectedRoom, boolean viewArchives) {
+        this.user = user;
+        showRoomSchedule(user, selectedRoom, viewArchives);
+    }
+
     void showRoomSchedule(User user, Room selectedRoom) {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
         List<Schedule> activeSchedules = scheduleDAO
                 .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        
         selectedRoom.loadSchedules(activeSchedules); // schedules for room
 
         // doesnt catch if the courses is null.
@@ -94,7 +99,73 @@ public class BookingController {
 
         if (user.getUserType().equals("Admin")) {
             viewSchedule.setOnScheduleClicked(schedule -> {
-                onScheduleEditClicked(schedule, selectedRoom);
+                try {
+                    onScheduleEditClicked(schedule, selectedRoom);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            viewSchedule.setOnBackClicked(e -> {
+                MainFrame.showPanel("RoomBrowser");
+            });
+
+            MainFrame.addContentPanel(viewSchedule, "Schedule");
+            MainFrame.showPanel("Schedule");
+            return;
+        }
+
+        viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
+        attachShowRoomScheduleListeners(viewSchedule, selectedRoom,user.getUserType().equals("Faculty"));
+        // attaches form listeners
+        
+        
+
+        if (user.getUserType().equals("Faculty")) {
+            List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+            viewSchedule.loadCourse(facultyCourses);
+            viewSchedule.loadConfirmationPanel();
+
+            viewSchedule.setOnCourseChanged(e -> {
+                loadSection(viewSchedule);
+            });
+
+        } else if (user.getUserType().equals("Student")) {
+            List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
+            viewSchedule.loadCourse(studentCourses);
+            viewSchedule.loadConfirmationPanel();
+
+        }
+
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
+
+    }
+
+     void showRoomSchedule(User user, Room selectedRoom, boolean viewArchives) {
+        if(!viewArchives){
+            showRoomSchedule(user, selectedRoom);
+            return;
+        }
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        CourseDAO courseDAO = new CourseDAO();
+
+        List<Schedule> inactiveSchedules = scheduleDAO
+                .filterInactiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        selectedRoom.loadSchedules(inactiveSchedules); // schedules for room
+
+        // doesnt catch if the courses is null.
+
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom, viewArchives);
+        viewSchedule.loadClassSchedule(selectedRoom, viewArchives);
+
+        if (user.getUserType().equals("Admin")) {
+            viewSchedule.setOnScheduleClicked(schedule -> {
+                try {
+                    onScheduleClicked(schedule, selectedRoom, viewArchives);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             });
 
             viewSchedule.setOnBackClicked(e -> {
@@ -265,8 +336,13 @@ public class BookingController {
         });
     }
 
-    public void onScheduleEditClicked(Schedule schedule, Room room) {
+    public void onScheduleEditClicked(Schedule schedule, Room room) throws SQLException {
 
         new EditScheduleController(schedule, room, user);
+    }
+
+    public void onScheduleClicked(Schedule schedule, Room room, Boolean viewArchives) throws SQLException {
+
+        new ArchiveController(user, schedule, room, viewArchives);
     }
 }
