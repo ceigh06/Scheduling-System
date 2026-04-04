@@ -8,6 +8,5 @@ public class ArchiveController {
 
     public ArchiveController(User user) throws SQLException {
         new RoomsController(user);
-        
     }
 }

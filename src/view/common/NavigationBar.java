@@ -20,7 +20,7 @@ import view.components.RoundedPanel;
 public class NavigationBar {
 
     private JPanel navPanel;
-    private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, pfPanel;
+    private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, archPanel, pfPanel;
     private User currentUser;
 
     public RoundedPanel getSelectedPanel() { // still not sure what is the purpose of this
@@ -40,7 +40,7 @@ public class NavigationBar {
     }
 
     public void setOnArchivePanel(MouseAdapter action) {
-        reqPanel.addMouseListener(action);
+        archPanel.addMouseListener(action);
     }
 
     public void setOnProfilePanel(MouseAdapter action) {
@@ -74,6 +74,7 @@ public class NavigationBar {
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
         reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+        archPanel = createOption("/resources/images/icons/Archive.png", "Archive");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
         addPanel(homePanel, 0);
@@ -90,16 +91,18 @@ public class NavigationBar {
         // Recreate panels fresh
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
+        reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+        archPanel = createOption("/resources/images/icons/Archive.png", "Archive");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
         // Force revalidate of the navPanel to clear old constraints
         navPanel.setLayout(new GridBagLayout());
 
         if (user.getUserType().equals("Admin")) {
-            // Admin: 3 panels with equal weight
             addPanelWithWeight(homePanel, 0, 1.0);
             addPanelWithWeight(browsePanel, 1, 1.0);
-            addPanelWithWeight(pfPanel, 2, 1.0);
+            addPanelWithWeight(archPanel, 2, 1.0);
+            addPanelWithWeight(pfPanel, 3, 1.0);
         } else {
             reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
             addPanelWithWeight(homePanel, 0, 1.0);
