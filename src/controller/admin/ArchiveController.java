@@ -1,10 +1,12 @@
 package controller.admin;
 
 import controller.shared.RoomsController;
+import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
 import java.sql.SQLException;
 import model.Room;
+import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
 import utilities.DateTimeBuilder;
@@ -35,7 +37,22 @@ public class ArchiveController {
     }
 
     public void showArchiveForm(Schedule schedule, User user, Boolean viewArchives) throws SQLException {
-        RequestForm requestForm = new RequestForm(schedule, user, viewArchives);
+        
+        LookUpDAO lookUpDAO = new LookUpDAO();
+        String fullSectionName = lookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
+
+        
+        String requestorID = null;
+        String studentName = null;
+        if (schedule.getStatus().equals("3")) {
+            RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
+            RequestSchedule requestSchedule = requestScheduleDAO.getBySchedule(schedule);
+            requestorID = requestSchedule.getStudentRequested();
+            studentName = lookUpDAO.getFullStudentName(requestorID);
+        }
+
+        RequestForm requestForm = new RequestForm(schedule, user, viewArchives,
+                requestorID, studentName, fullSectionName);
 
         // Add to MainFrame
         MainFrame.addContentPanel(requestForm, "UnarchiveForm");
