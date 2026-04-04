@@ -65,7 +65,7 @@ public class RequestScheduleDAO {
         try {
             PreparedStatement stmt = connection
                     .prepareStatement(
-                            "SELECT * FROM RequestSchedule WHERE FacultyID = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+                            "SELECT * FROM RequestSchedule WHERE FacultyID = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ? AND IsArchived = 0");
             stmt.setString(1, facultyId);
             stmt.setString(2, date);
             ResultSet set = stmt.executeQuery();
@@ -91,7 +91,7 @@ public class RequestScheduleDAO {
         try {
             PreparedStatement stmt = connection
                     .prepareStatement(
-                            "SELECT * FROM RequestSchedule WHERE StudentNumber = ? AND (Status = 2 OR Status = 3)");
+                            "SELECT * FROM RequestSchedule WHERE StudentNumber = ? AND (Status = 2 OR Status = 3) AND IsArchived = 0");
             stmt.setString(1, studentNumber);
             ResultSet set = stmt.executeQuery();
 
@@ -116,7 +116,7 @@ public class RequestScheduleDAO {
         try {
             PreparedStatement stmt = connection
                     .prepareStatement(
-                            "SELECT * FROM RequestSchedule WHERE RoomCode = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+                            "SELECT * FROM RequestSchedule WHERE RoomCode = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ? AND IsArchived = 0");
             stmt.setString(1, roomCode);
             stmt.setString(2, date);
             ResultSet set = stmt.executeQuery();
@@ -141,7 +141,7 @@ public class RequestScheduleDAO {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
             PreparedStatement stmt = connection
-                    .prepareStatement("SELECT * FROM RequestSchedule WHERE SectionKey = ?");
+                    .prepareStatement("SELECT * FROM RequestSchedule WHERE SectionKey = ? AND IsArchived = 0");
             stmt.setInt(1, sectionKey);
             ResultSet set = stmt.executeQuery();
 
@@ -165,7 +165,7 @@ public class RequestScheduleDAO {
     public RequestSchedule getById(int requestKey) {
         try {
             PreparedStatement stmt = connection.prepareStatement(
-                    "SELECT * FROM RequestSchedule WHERE RequestKey = ?");
+                    "SELECT * FROM RequestSchedule WHERE RequestKey = ? AND IsArchived = 0");
             stmt.setInt(1, requestKey);
             ResultSet set = stmt.executeQuery();
 
@@ -196,7 +196,7 @@ public class RequestScheduleDAO {
         RequestSchedule requestSchedule = new RequestSchedule();
         try {
             PreparedStatement stmt = connection
-                    .prepareStatement("SELECT * FROM RequestSchedule WHERE RequestKey = ?");
+                    .prepareStatement("SELECT * FROM RequestSchedule WHERE RequestKey = ? AND IsArchived = 0");
             stmt.setInt(1, requestKey);
             ResultSet set = stmt.executeQuery();
 
