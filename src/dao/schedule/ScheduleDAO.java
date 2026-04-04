@@ -137,7 +137,7 @@ public List<Schedule> filterActiveSchedules(List<Schedule> schedules) {
 }
 
     public List<Section> getSectionByFacultyCourse(String courseCode, String facultyID) {
-        String query = "SELECT s.SectionKey, s.SectionID, s.ProgramCode FROM MasterSchedule m JOIN Section s ON s.SectionKey = m.SectionKey WHERE CourseCode = ? AND FacultyID = ?";
+        String query = "SELECT DISTINCT s.SectionKey, s.SectionID, s.ProgramCode FROM MasterSchedule m JOIN Section s ON s.SectionKey = m.SectionKey WHERE CourseCode = ? AND FacultyID = ?";
 
         List<Section> sections = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {

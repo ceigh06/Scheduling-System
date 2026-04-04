@@ -12,6 +12,7 @@ import dao.schedule.ScheduleDAO;
 import model.Building;
 import model.Course;
 import model.Room;
+import model.Section;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.Student;
@@ -38,18 +39,34 @@ public class SearchRoomsController {
     }
 
     void showSearch() throws SQLException {
+        boolean isFaculty = false;
+        if (user.getUserType().equals("Faculty"))
+            isFaculty = true;
+
         SearchRooms1 searchRooms = new SearchRooms1(user);
 
         BuildingDAO buildingDAO = new BuildingDAO();// dao
         List<Building> buildings = buildingDAO.getAllBuilding(); // model
         searchRooms.loadBuilding(buildings);
 
-        CourseDAO enrolledCoursesDAO = new CourseDAO();
-        List<Course> courses = enrolledCoursesDAO.getStudentCourse(user.getUserID());
+        List<Course> courses = new ArrayList<>();
+        CourseDAO courseDAO = new CourseDAO();
+        if (isFaculty) {
+            courses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+        } else {
+            courses = courseDAO.getStudentCourse(user.getUserID());
+        }
+
         searchRooms.loadCourse(courses);
 
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms");
+
+        if (isFaculty) {
+            searchRooms.setOnCourseChanged(e -> {
+                loadSection(searchRooms);
+            });
+        }
 
         searchRooms.setOnClearButton(e -> {
             searchRooms.clearAll();
@@ -60,7 +77,25 @@ public class SearchRoomsController {
         });
     }
 
+    void loadSection(SearchRooms1 searchRooms1) {
+        Course selectedCourse = searchRooms1.getCourse();
+        ScheduleDAO scheduleDAO = new ScheduleDAO();
+        List<Section> sections = scheduleDAO.getSectionByFacultyCourse(selectedCourse.getCode(), user.getUserID());
+        searchRooms1.loadSection(sections);
+    }
+
     void onConfirmClicked(SearchRooms1 searchRooms) {
+        if (searchRooms.getTimeIn() == null || searchRooms.getTimeOut() == null) {
+            System.out.println("Please put the necessary fields.");
+            return;
+        } else if (searchRooms.getCourse() == null) {
+            System.out.println("Please select a course");
+            return;
+        } else if ((searchRooms.getCourse() == null || searchRooms.getSection() == null)
+                && user.getUserType().equals("Faculty")) {
+            System.out.println("Please select a course and section");
+            return;
+        }
         try {
             RoomDAO roomDAO = new RoomDAO();
             List<Building> checkedBuildings = searchRooms.getChosenBuildings();
@@ -70,13 +105,14 @@ public class SearchRoomsController {
             int capacity = searchRooms.getCapacity();
             int floor = searchRooms.getFloorLevel();
 
-            buildRequestSchedule(timeIn, timeOut, course, capacity, floor);
+            buildRequestSchedule(timeIn, timeOut, course, capacity, floor, searchRooms);
 
             List<Room> availableRooms = new ArrayList<>();
             for (Building building : checkedBuildings) {
                 List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
                 for (Room room : roomsToCheck) {
-                    room.loadSchedules(new ScheduleDAO().getRoom(room.getRoomCode())); // load the schedules for each room to check
+                    room.loadSchedules(new ScheduleDAO().getRoom(room.getRoomCode())); // load the schedules for each
+                                                                                       // room to check
                     List<Schedule> schedules = room.getSchedules();
                     if (schedules == null) {
                         schedules = new ArrayList<>();
@@ -101,15 +137,26 @@ public class SearchRoomsController {
 
     }
 
-    void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor) { // process the request here
+    void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor, SearchRooms1 searchRooms1) { // process the
+                                                                                                       // request here
         requestSchedule = new RequestSchedule();
         Student student = new StudentDAO().get(user.getUserID());
         ScheduleDAO scheduleDAO = new ScheduleDAO();
-        requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(),
-                scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
-                timeIn, timeOut, DateTimeBuilder.getDayName(), "1", 0, DateTimeBuilder.getCurrentDate(),
-                student.getUserID()); // load the request schedule with the data from the search form. The ID and
-                                      // RoomCode are set to default values since they are not yet created.
+
+        if (user.getUserType().equals("Faculty")) {
+            requestSchedule.load(-1, "", String.valueOf(searchRooms1.getSection().getSectionKey()), course.getCode(),
+                    user.getUserID(),
+                    timeIn, timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(),
+                    user.getUserID()); // load the request schedule with the data from the search form. The ID and
+                                          // RoomCode are set to default values since they are not yet created.
+        } else {
+            requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(),
+                    scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
+                    timeIn, timeOut, DateTimeBuilder.getDayName(), "1", 0, DateTimeBuilder.getCurrentDate(),
+                    student.getUserID()); // load the request schedule with the data from the search form. The ID and
+                                          // RoomCode are set to default values since they are not yet created.
+        }
+
     }
 
     void showRoomBrowser(List<Room> availableRooms, Course course) throws SQLException {
