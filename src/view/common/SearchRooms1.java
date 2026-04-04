@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 
 import dao.BuildingDAO;
 import view.components.RoundedPanel;
@@ -41,10 +42,10 @@ import model.user.User;
 
 public class SearchRooms1 extends JPanel {
 	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel, timeInPanel,
-			timeOutPanel;
+			timeOutPanel, mainWrapper, sectionComboPanel;
 	JLabel selectSection, select, timeIn, timeOut, timeInLbl, timeOutLbl, selectCourseLbl, clickFilter, floorLbl,
 			capLbl;
-	JScrollPane selectBuilding;
+	JScrollPane selectBuilding, mainScrollPane;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
 
@@ -58,27 +59,28 @@ public class SearchRooms1 extends JPanel {
 	public SearchRooms1(User user) {
 
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
 		selectionWrapper = new JPanel(new BorderLayout());
 		selectionWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
 		selectionWrapper.setMaximumSize(new Dimension(450, 50));
 		// HEADER
 		select = new JLabel("SELECT BUILDING");
-		select.setFont(new Font("Arial", Font.BOLD, 15));
+		select.setFont(new Font("Arial", Font.BOLD, 20));
+		select.setForeground(new Color(91, 112, 121));
 		select.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		selectionWrapper.add(select, BorderLayout.NORTH);
 
 		// ROUNDED PANEL CONTAINER
-		RoundedPanel buildings = new RoundedPanel(30, 3, new Color(117, 144, 156), new BorderLayout());
-		buildings.setPreferredSize(new Dimension(380, 100));
-		buildings.setMaximumSize(new Dimension(380, 150));
+		RoundedPanel buildings = new RoundedPanel(50, 2, new Color(117, 144, 156), new BorderLayout());
+		buildings.setPreferredSize(new Dimension(380, 180));
+		buildings.setMaximumSize(new Dimension(380, 180));
+		buildings.setBackground(new Color(243, 244, 247));
 
 		// container for building choices
 		buildingContainer = new JPanel();
 		buildingContainer.setLayout(new GridLayout(0, 1, 5, 5));
-		buildingContainer.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 0)); 
 		buildingContainer.setOpaque(false);
 
 		// scrollpane for buildings
@@ -86,26 +88,28 @@ public class SearchRooms1 extends JPanel {
 		selectBuilding.setOpaque(false);
 		selectBuilding.getViewport().setOpaque(false);
 		selectBuilding.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		selectBuilding.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		selectBuilding.getVerticalScrollBar().setUnitIncrement(16); // adjust scroll speed
 		ScrollBarHelper.applySlimScrollBar(selectBuilding, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
-		selectBuilding.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+		selectBuilding.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 10));
 
 		buildings.add(selectBuilding, BorderLayout.CENTER);
 
 		selectionWrapper.add(buildings, BorderLayout.CENTER);
-		// adds it to the upper part ng panel para madali ma layout yung rest ng
-		// components
-		add(selectionWrapper, BorderLayout.NORTH);
 
 		// form panel
 		form = new JPanel();
 		form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 		form.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
-
+		form.setPreferredSize(new Dimension(400, 400)); // or whatever height you need
+		form.setMaximumSize(new Dimension(400, Integer.MAX_VALUE)); 
 		// time in
 		timeInLbl = new JLabel("TIME IN");
-		timeInLbl.setFont(new Font("Arial", Font.BOLD, 16));
+		timeInLbl.setFont(new Font("Arial", Font.BOLD, 20));
+		timeInLbl.setForeground(new Color(91, 122, 121));
 		timeInLbl.setAlignmentX(LEFT_ALIGNMENT);
 
+		form.add(Box.createVerticalStrut(10));
 		form.add(timeInLbl);
 		timeInPanel = timePanel();
 		form.add(timeInPanel);
@@ -113,9 +117,11 @@ public class SearchRooms1 extends JPanel {
 
 		// timeout
 		timeOutLbl = new JLabel("TIME OUT");
-		timeOutLbl.setFont(new Font("Arial", Font.BOLD, 16));
+		timeOutLbl.setFont(new Font("Arial", Font.BOLD, 20));
+		timeOutLbl.setForeground(new Color(91, 122, 121));
 		timeOutLbl.setAlignmentX(LEFT_ALIGNMENT);
 
+		form.add(Box.createVerticalStrut(10));
 		form.add(timeOutLbl);
 		timeOutPanel = timePanel();
 		form.add(timeOutPanel);
@@ -123,9 +129,11 @@ public class SearchRooms1 extends JPanel {
 
 		// select course
 		selectCourseLbl = new JLabel("SELECT COURSE");
-		selectCourseLbl.setFont(new Font("Arial", Font.BOLD, 16));
+		selectCourseLbl.setFont(new Font("Arial", Font.BOLD, 20));
+		selectCourseLbl.setForeground(new Color(91, 122, 121));
 		selectCourseLbl.setAlignmentX(LEFT_ALIGNMENT);
 
+		form.add(Box.createVerticalStrut(10));
 		form.add(selectCourseLbl);
 		// wrapper panel for combo box
 		comboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -134,37 +142,31 @@ public class SearchRooms1 extends JPanel {
 		courseCombo = new JComboBox<>();
 		courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
 		courseCombo.setPreferredSize(new Dimension(372, 25));
-
+		form.add(Box.createVerticalStrut(5));
 		comboPanel.add(courseCombo);
 
-		// section part
-		// HELP ME UI PLS
 		sectionCombo = new JComboBox<>();
 
 		// more filters clickable label
 		clickFilter = new JLabel("More Filters");
+		clickFilter.setForeground(new Color(91, 112, 121));	
 		clickFilter.setFont(new Font("Arial", Font.PLAIN, 13));
 		clickFilter.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		// get current font
 		Font font = clickFilter.getFont();
-		// copy attributes
 		Map<TextAttribute, Object> attributes = new HashMap<>(font.getAttributes());
-		// add underline
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		// apply new font
 		clickFilter.setFont(font.deriveFont(attributes));
 
 		form.add(comboPanel);
 		// i added the click filter here
+		showSectionCombo(true);
 		form.add(clickFilter);
-		// add it to the center of the main panel
-		add(form, BorderLayout.CENTER);
 		// end of default look--------------------------------------------------
 
 		// more filters panel wiwth buttons
 		moreFilter = new JPanel(new BorderLayout());
 		moreFilter.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-		// moreFilter.setPreferredSize(new Dimension(450, 190));
+		moreFilter.setPreferredSize(new Dimension(450, 130));
 
 		// container for the components
 		clicked = new JPanel();
@@ -173,48 +175,46 @@ public class SearchRooms1 extends JPanel {
 		clicked.setAlignmentX(LEFT_ALIGNMENT);
 		clicked.setVisible(false);
 
-		// FLOOR LEVEL
+		JPanel filterWrapper = new JPanel(new GridLayout(2,2, 40, 5));
+		filterWrapper.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+
+		//MODIFIED --START
+		// FLOOR LEVEL 
 		floorLbl = new JLabel("FLOOR LEVEL");
 		floorLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		floorLbl.setAlignmentX(LEFT_ALIGNMENT);
 
-		input = new JComboBox<>();
+		JComboBox<String> input = new JComboBox<>();
 		input.addItem("1st Floor");
 		input.addItem("2nd Floor");
 		input.addItem("3rd Floor");
 		input.addItem("4th Floor");
-		input.setMaximumSize(new Dimension(372, 25));
-		input.setPreferredSize(new Dimension(372, 25));
+		input.setMaximumSize(new Dimension(200, 20));
+		input.setPreferredSize(new Dimension(200, 20));
 		input.setAlignmentX(LEFT_ALIGNMENT);
 
 		// CAPACITY
 		capLbl = new JLabel("CAPACITY");
 		capLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		capLbl.setAlignmentX(LEFT_ALIGNMENT);
-
 		cap = new JSpinner(new SpinnerNumberModel(60, 1, 200, 1));
-		cap.setMaximumSize(new Dimension(100, 30));
+		cap.setMaximumSize(new Dimension(100, 20));
 		cap.setAlignmentX(LEFT_ALIGNMENT);
 
-		// ADD COMPONENTS
-		clicked.add(floorLbl);
-		clicked.add(Box.createVerticalStrut(5));
-		clicked.add(input);
-
-		clicked.add(Box.createVerticalStrut(5));// PADDING
-
-		clicked.add(capLbl);
-		clicked.add(Box.createVerticalStrut(5));
-		clicked.add(cap);
-
-		moreFilter.add(clicked, BorderLayout.NORTH);
+		filterWrapper.add(floorLbl);
+		filterWrapper.add(capLbl);		
+		filterWrapper.add(input);
+		filterWrapper.add(cap);
+		clicked.add(filterWrapper);
+    	moreFilter.add(clicked, BorderLayout.NORTH);
+    	//MODIFIED 
 
 		// buttons below
 		btnPanel = new JPanel();
 		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search",
 				new Color(91, 112, 121), 2,
 				new Color(91, 112, 121), 2);
-		btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+				confirmArea.setBackground(null);
 		btnPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
 
 		moreFilter.add(btnPanel, BorderLayout.SOUTH);
@@ -222,29 +222,62 @@ public class SearchRooms1 extends JPanel {
 		clickFilter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// toggle visibility
 				clicked.setVisible(!clicked.isVisible());
 				toggle = toggleFilters();
-				// re do
-				moreFilter.revalidate();
-				moreFilter.repaint();
+				
+				// Revalidate only the necessary panels
+				SwingUtilities.invokeLater(() -> {
+					moreFilter.revalidate();
+					moreFilter.repaint();
+				});
 			}
 		});
-
-		add(moreFilter, BorderLayout.SOUTH);
+//NEW PANEL --START
+		mainWrapper = new JPanel(new BorderLayout());
+		mainWrapper.setPreferredSize(new Dimension(420, 760));
+		mainWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		mainWrapper.add(selectionWrapper, BorderLayout.NORTH);
+		mainWrapper.add(form, BorderLayout.CENTER);
+		mainWrapper.add(moreFilter, BorderLayout.SOUTH);
+		
+		JScrollPane mainScrollPane = new JScrollPane(mainWrapper);
+		mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); 
+		ScrollBarHelper.applySlimScrollBar(mainScrollPane,10, 30, Color.GRAY, Color.LIGHT_GRAY);
+		add(mainScrollPane);
+		// END
 
 	}
 
-	public void showSectionCombo(boolean isFaculty) {
-		selectSection = new JLabel("selectSection");
-		selectSection.setFont(new Font("Arial", Font.BOLD, 16));
-		selectSection.setAlignmentX(LEFT_ALIGNMENT);
-		if (isFaculty) {
-			form.add(selectCourseLbl);
-			form.add(sectionCombo);
-		}
-	}
-
+public void showSectionCombo(boolean isFaculty) {
+    selectSection = new JLabel("SELECT SECTION");
+    selectSection.setFont(new Font("Arial", Font.BOLD, 20));
+    selectSection.setForeground(new Color(91, 112, 121));
+    selectSection.setAlignmentX(LEFT_ALIGNMENT);
+    
+    if (isFaculty) {
+        // Add vertical spacing
+        form.add(Box.createVerticalStrut(10));
+        // Add the section label
+        form.add(selectSection);
+        form.add(Box.createVerticalStrut(5));
+        
+        // Create wrapper panel for section combo (same structure as course combo)
+        JPanel sectionComboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        sectionComboPanel.setAlignmentX(LEFT_ALIGNMENT);
+        sectionComboPanel.setOpaque(false); // Match course combo panel styling
+        
+        // Configure section combo styling to match course combo
+        sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
+        sectionCombo.setPreferredSize(new Dimension(372, 25));
+		sectionCombo.setMaximumSize(new Dimension(372, 25));
+        
+        sectionComboPanel.add(sectionCombo);
+        form.add(sectionComboPanel);
+        
+    }
+}
 	private JPanel timePanel() {
 		// container ni extended form
 		JPanel container = new JPanel();
@@ -334,21 +367,19 @@ public class SearchRooms1 extends JPanel {
 		for (Section section : sections) {
 			sectionCombo.addItem(section);
 		}
-		sectionCombo.setBackground(Color.WHITE);
-		sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-		sectionCombo.setMaximumSize(new Dimension(400, 50));
 	}
 
 	public void loadBuilding(List<Building> buildings) {
 		for (Building building : buildings) {
 			// rounded panel for each choice
-			RoundedPanel choice = new RoundedPanel(20, 1, Color.BLACK, new BorderLayout());
-			choice.setBackground(new Color(221, 221, 219));
+			RoundedPanel choice = new RoundedPanel(70, 1, new Color(91, 112, 121), new BorderLayout());
+			choice.setBackground(new Color(117, 144, 156));
 			// choices
 			check = new JCheckBox(building.getName());
 			check.setName(building.getCode());
-			check.setFont(new Font("Arial", Font.PLAIN, 16));
-			check.setMargin(new Insets(3, 10, 2, 10));
+			check.setFont(new Font("Arial", Font.PLAIN, 20));
+			check.setForeground(Color.WHITE);
+			check.setMargin(new Insets(15, 15, 15, 10));
 			check.setOpaque(false);
 			// adds the choices to a rounded panel
 			choice.add(check, BorderLayout.CENTER);
