@@ -13,6 +13,7 @@ import utilities.DBConnection;
 public class RequestScheduleDAO {
 
     static Connection connection;
+    
 
     public RequestScheduleDAO() {
         try {
@@ -348,90 +349,90 @@ public class RequestScheduleDAO {
     }
 
     public static boolean archiveStudentSchedule(
-        String roomCode,
-        String courseCode,
-        String studentNumber,
-        String sectionKey,
-        String facultyID,
-        String timeIn,
-        String timeOut,
-        String scheduledDay) {
+            String roomCode,
+            String courseCode,
+            String studentNumber,
+            String sectionKey,
+            String facultyID,
+            String timeIn,
+            String timeOut,
+            String scheduledDay) {
 
-    String sql = "UPDATE RequestSchedule " +
-                 "SET IsArchived = 1 " +
-                 "WHERE RoomCode = ? " +
-                 "AND CourseCode = ? " +
-                 "AND StudentNumber = ? " +
-                 "AND SectionKey = ? " +
-                 "AND FacultyID = ? " +
-                 "AND TimeIn = ? " +
-                 "AND TimeOut = ? " +
-                 "AND ScheduledDay = ?";
+        String sql = "UPDATE RequestSchedule "
+                + "SET IsArchived = 1 "
+                + "WHERE RoomCode = ? "
+                + "AND CourseCode = ? "
+                + "AND StudentNumber = ? "
+                + "AND SectionKey = ? "
+                + "AND FacultyID = ? "
+                + "AND TimeIn = ? "
+                + "AND TimeOut = ? "
+                + "AND ScheduledDay = ?";
 
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, roomCode);
-        stmt.setString(2, courseCode);
-        stmt.setString(3, studentNumber);
-        stmt.setString(4, sectionKey);
-        stmt.setString(5, facultyID);
-        stmt.setString(6, timeIn);
-        stmt.setString(7, timeOut);
-        stmt.setString(8, scheduledDay);
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, roomCode);
+            stmt.setString(2, courseCode);
+            stmt.setString(3, studentNumber);
+            stmt.setString(4, sectionKey);
+            stmt.setString(5, facultyID);
+            stmt.setString(6, timeIn);
+            stmt.setString(7, timeOut);
+            stmt.setString(8, scheduledDay);
 
-        int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0;
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return false;
-}
-
-    public RequestSchedule getBySchedule(Schedule sched) {
-    try {
-        PreparedStatement stmt = connection.prepareStatement(
-            "SELECT * FROM RequestSchedule WHERE " +
-            "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ?");
-
-        stmt.setString(1, sched.getRoomCode());
-        stmt.setString(2, sched.getTimeIn());
-        stmt.setString(3, sched.getTimeOut());
-        stmt.setString(4, sched.getScheduledDay());
-
-        ResultSet set = stmt.executeQuery();
-
-        if (set.next()) {
-            RequestSchedule request = new RequestSchedule();
-
-            request.load(
-                set.getInt("RequestKey"),
-                set.getString("RoomCode"),
-                set.getString("SectionKey"),
-                set.getString("CourseCode"),
-                set.getString("FacultyID"),
-                set.getString("TimeIn"),
-                set.getString("TimeOut"),
-                set.getString("ScheduledDay"),
-                String.valueOf(set.getInt("Status")),
-                set.getInt("IsArchived"),
-                set.getString("DateRequested"),
-                set.getString("StudentNumber")
-            );
-
-            return request;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
 
-    return null;
-}
+    public RequestSchedule getBySchedule(Schedule sched) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT * FROM RequestSchedule WHERE "
+                    + "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ?");
+
+            stmt.setString(1, sched.getRoomCode());
+            stmt.setString(2, sched.getTimeIn());
+            stmt.setString(3, sched.getTimeOut());
+            stmt.setString(4, sched.getScheduledDay());
+
+            ResultSet set = stmt.executeQuery();
+
+            if (set.next()) {
+                RequestSchedule request = new RequestSchedule();
+
+                request.load(
+                        set.getInt("RequestKey"),
+                        set.getString("RoomCode"),
+                        set.getString("SectionKey"),
+                        set.getString("CourseCode"),
+                        set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"),
+                        set.getString("ScheduledDay"),
+                        String.valueOf(set.getInt("Status")),
+                        set.getInt("IsArchived"),
+                        set.getString("DateRequested"),
+                        set.getString("StudentNumber")
+                );
+
+                return request;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public void addRequest(RequestSchedule requestSchedule) {
         String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, StudentNumber, SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
-                +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, requestSchedule.getRoomCode());
@@ -449,5 +450,41 @@ public class RequestScheduleDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<RequestSchedule> getAllActiveRequests() {
+        List<RequestSchedule> requests = new ArrayList<>();
+
+        String sql = "SELECT * FROM RequestSchedule WHERE IsArchived = 0";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule req = new RequestSchedule();
+
+                req.load(
+                        set.getInt("RequestKey"),
+                        set.getString("RoomCode"),
+                        set.getString("SectionKey"),
+                        set.getString("CourseCode"),
+                        set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"),
+                        set.getString("ScheduledDay"),
+                        String.valueOf(set.getInt("Status")),
+                        set.getInt("IsArchived"),
+                        set.getString("DateRequested"),
+                        set.getString("StudentNumber")
+                );
+
+                requests.add(req);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return requests;
     }
 }

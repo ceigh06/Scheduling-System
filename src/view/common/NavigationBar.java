@@ -39,6 +39,10 @@ public class NavigationBar {
         reqPanel.addMouseListener(action);
     }
 
+    public void setOnArchivePanel(MouseAdapter action) {
+        reqPanel.addMouseListener(action);
+    }
+
     public void setOnProfilePanel(MouseAdapter action) {
         pfPanel.addMouseListener(action);
     }

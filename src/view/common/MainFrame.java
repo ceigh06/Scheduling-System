@@ -3,18 +3,10 @@ package view.common;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
@@ -128,6 +120,10 @@ public class MainFrame {
 
     public static void setOnRequestPanel(MouseAdapter action) {
         navBar.setOnRequestPanel(action);
+    }
+
+     public static void setOnArchivePanel(MouseAdapter action) {
+        navBar.setOnArchivePanel(action);
     }
 
     public static void setOnProfilePanel(MouseAdapter action) {

@@ -50,6 +50,17 @@ public class AdminController {
             }
         });
 
+        MainFrame.setOnArchivePanel(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    onArchiveClicked();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         MainFrame.setOnProfilePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -81,14 +92,14 @@ public class AdminController {
 
     public void onPeakReportClicked() {
         
-        // if (report3 == null) {
-        //     ReportThreeController reportThreeController = new ReportThreeController();
-        //     reportThreeController.loadData();
-        //     reportThreeController.initView();
-        //     report3 = reportThreeController.getView();
-        //     MainFrame.addContentPanel(report3, "Report3");
-        // }
-        // MainFrame.showPanel("Report3", "Peak Scheduling Hours");
+        if (report3 == null) {
+            ReportThreeController reportThreeController = new ReportThreeController();
+            reportThreeController.loadData();
+            reportThreeController.initView();
+            report3 = reportThreeController.getView();
+            MainFrame.addContentPanel(report3, "Report3");
+        }
+        MainFrame.showPanel("Report3", "Peak Scheduling Hours");
     }
 
     public void onBrowseClicked() throws SQLException {
@@ -97,6 +108,10 @@ public class AdminController {
 
     public void onHomeClicked() {
         MainFrame.showPanel("AdminLanding", "Home");
+    }
+
+    public void onArchiveClicked() throws SQLException {
+        new ArchiveController(user);
     }
 
     public void onProfileClicked() {
