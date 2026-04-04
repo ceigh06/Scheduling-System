@@ -170,7 +170,7 @@ public class ViewSchedule extends JPanel {
             boolean isMasterSchedule = true;
             if (schedule.getStatus().trim().equals("3"))
                 isMasterSchedule = false;
-
+            
             addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
         }
     }
@@ -538,21 +538,14 @@ public class ViewSchedule extends JPanel {
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        schedPanel.add(new JLabel(schedule.getSectionKey()) {
-            {
-                setFont(new Font("Arial", Font.BOLD, 20));
-            }
-        });
-        schedPanel.add(new JLabel(schedule.getFacultyID()) {
-            {
-                setFont(new Font("Arial", Font.BOLD, 16));
-            }
-        });
-        schedPanel.add(new JLabel(timeRange) {
-            {
-                setFont(new Font("Arial", Font.PLAIN, 16));
-            }
-        });
+        schedPanel.add(new JLabel(schedule.getSectionKey()){{
+            setFont(new Font("Arial", Font.BOLD, 20));}});
+        schedPanel.add(new JLabel(schedule.getRoomCode()){{
+            setFont(new Font("Arial", Font.BOLD, 16));}});
+        schedPanel.add(new JLabel(schedule.getFacultyID()){{
+            setFont(new Font("Arial", Font.BOLD, 16));}});
+        schedPanel.add(new JLabel(timeRange){{
+            setFont(new Font("Arial", Font.PLAIN, 16));}});
 
         schedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         schedPanel.addMouseListener(new MouseAdapter() {

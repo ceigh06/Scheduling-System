@@ -39,7 +39,8 @@ public class BookingController {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
+        List<Schedule> activeSchedules = scheduleDAO.filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        selectedRoom.loadSchedules(activeSchedules); // schedules for room
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
@@ -67,7 +68,8 @@ public class BookingController {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        selectedRoom.loadSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode())); // schedules for room
+        List<Schedule> activeSchedules = scheduleDAO.filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        selectedRoom.loadSchedules(activeSchedules); // schedules for room
         List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
 
         // doesnt catch if the courses is null.
@@ -196,6 +198,7 @@ public class BookingController {
     }
 
     public void onScheduleEditClicked(Schedule schedule, Room room) {
+
         new EditScheduleController(schedule, room, user);
     }
 }
