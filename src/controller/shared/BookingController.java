@@ -52,7 +52,7 @@ public class BookingController {
         MainFrame.showPanel("Schedule");
 
         viewSchedule.setOnConfirmClicked(e -> {
-            new RequestController(requestSchedule);
+            new RequestController(requestSchedule, user);
         });
 
     }
@@ -120,7 +120,7 @@ public class BookingController {
                 RequestSchedule requestSchedule = new RequestSchedule();
                 requestSchedule.load(-1, selectedRoom.getRoomCode(), String.valueOf(viewSchedule.getSection().getSectionKey()), viewSchedule.getCourse().getCode(), user.getUserID(), timeIn,timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(), user.getUserID());
 
-                new RequestController(requestSchedule);
+                new RequestController(requestSchedule, user);
             });
         } else {
             viewSchedule.setOnScheduleClicked(schedule -> {
