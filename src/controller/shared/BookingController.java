@@ -2,6 +2,7 @@ package controller.shared;
 
 import controller.admin.EditScheduleController;
 import dao.CourseDAO;
+import dao.StudentDAO;
 import dao.schedule.ScheduleDAO;
 
 import java.sql.Date;
@@ -12,6 +13,7 @@ import model.Room;
 import model.Section;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
+import model.user.Student;
 import model.user.User;
 import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
@@ -34,19 +36,21 @@ public class BookingController {
     }
 
     // for student workflow, no form just show the schedule and confirmation.
+    // search rooms
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
 
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        List<Schedule> activeSchedules = scheduleDAO.filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        List<Schedule> activeSchedules = scheduleDAO
+                .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
         selectedRoom.loadSchedules(activeSchedules); // schedules for room
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
         viewSchedule.loadClassSchedule(selectedRoom);
         viewSchedule.loadConfirmationPanel();
 
-        attachShowRoomScheduleListeners(viewSchedule);
+        attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
         MainFrame.showPanel("Schedule");
@@ -57,6 +61,7 @@ public class BookingController {
 
     }
 
+    // browse rooms
     // constructor for browse workflow.
     // needs to build a request schedule through the forms
     public BookingController(User user, Room selectedRoom) {
@@ -68,67 +73,16 @@ public class BookingController {
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         CourseDAO courseDAO = new CourseDAO();
 
-        List<Schedule> activeSchedules = scheduleDAO.filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        List<Schedule> activeSchedules = scheduleDAO
+                .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
         selectedRoom.loadSchedules(activeSchedules); // schedules for room
-        List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
 
         // doesnt catch if the courses is null.
 
         ViewSchedule viewSchedule = new ViewSchedule(selectedRoom);
         viewSchedule.loadClassSchedule(selectedRoom);
 
-        if (user.getUserType() != "Admin") {
-            viewSchedule.loadFormPanel();
-            viewSchedule.loadCourse(facultyCourses);
-            viewSchedule.loadConfirmationPanel();
-
-            attachShowRoomScheduleListeners(viewSchedule);
-
-            viewSchedule.setOnCourseChanged(e -> {
-                loadSection(viewSchedule);
-            });
-
-            viewSchedule.setOnHourChanged(e -> {
-                handleTimeChange(viewSchedule);
-                if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                    System.out.println("Overlaps with existing schedule at " + timeIn);
-                }
-            });
-
-            viewSchedule.setOnMinuteChanged(e -> {
-                handleTimeChange(viewSchedule);
-                if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                    System.out.println("Overlaps with existing schedule at" + timeIn);
-                }
-            });
-
-            viewSchedule.setOnMeridiemChanged(e -> {
-                handleTimeChange(viewSchedule);
-                if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                    System.out.println("Overlaps with existing schedule at " + timeIn);
-                }
-            });
-
-            MainFrame.addContentPanel(viewSchedule, "Schedule");
-            MainFrame.showPanel("Schedule");
-
-            viewSchedule.setOnConfirmClicked(e -> {
-                if (viewSchedule.getCourse() == null || viewSchedule.getSection() == null) {
-                    MainFrame.setNotification("Please Choose a Course and Section First");
-                    return;
-                }
-
-                if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                    MainFrame.setNotification("Your request overlaps with the room schedule!");
-                    return;
-                }
-
-                RequestSchedule requestSchedule = new RequestSchedule();
-                requestSchedule.load(-1, selectedRoom.getRoomCode(), String.valueOf(viewSchedule.getSection().getSectionKey()), viewSchedule.getCourse().getCode(), user.getUserID(), timeIn,timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(), user.getUserID());
-
-                new RequestController(requestSchedule, user);
-            });
-        } else {
+        if (user.getUserType().equals("Admin")) {
             viewSchedule.setOnScheduleClicked(schedule -> {
                 onScheduleEditClicked(schedule, selectedRoom);
             });
@@ -139,7 +93,34 @@ public class BookingController {
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
             MainFrame.showPanel("Schedule");
+            return;
         }
+
+        viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
+        attachShowRoomScheduleListeners(viewSchedule, selectedRoom,user.getUserType().equals("Faculty"));
+        // attaches form listeners
+        
+        System.out.println(user.getUserType());
+
+        if (user.getUserType().equals("Faculty")) {
+            List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+            viewSchedule.loadCourse(facultyCourses);
+            viewSchedule.loadConfirmationPanel();
+
+            viewSchedule.setOnCourseChanged(e -> {
+                loadSection(viewSchedule);
+            });
+
+        } else if (user.getUserType().equals("Student")) {
+            List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
+            viewSchedule.loadCourse(studentCourses);
+            viewSchedule.loadConfirmationPanel();
+
+        }
+
+        MainFrame.addContentPanel(viewSchedule, "Schedule");
+        MainFrame.showPanel("Schedule");
+
     }
 
     void loadSection(ViewSchedule viewSchedule) {
@@ -183,23 +164,94 @@ public class BookingController {
         viewSchedule.setTimeOut(timeOut);
     }
 
-    void attachShowRoomScheduleListeners(ViewSchedule viewSchedule) {
+    void attachShowRoomScheduleListeners(ViewSchedule viewSchedule, Room selectedRoom, boolean isFaculty) {
+
         viewSchedule.setOnBackClicked(e -> {
             MainFrame.showPanel("RoomBrowser");
-        });
-
-        viewSchedule.setOnConfirmClicked(e -> {
-
         });
 
         viewSchedule.setOnLabBtn(e -> {
             viewSchedule.setIsLec(false);
             handleTimeChange(viewSchedule);
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                System.out.println("Overlaps with existing schedule at " + timeIn);
+            }
         });
 
         viewSchedule.setOnLecBtn(e -> {
             viewSchedule.setIsLec(true);
             handleTimeChange(viewSchedule);
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                System.out.println("Overlaps with existing schedule at " + timeIn);
+            }
+        });
+
+        viewSchedule.setOnHourChanged(e -> {
+            handleTimeChange(viewSchedule);
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                System.out.println("Overlaps with existing schedule at " + timeIn);
+            }
+        });
+
+        viewSchedule.setOnMinuteChanged(e -> {
+            handleTimeChange(viewSchedule);
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                System.out.println("Overlaps with existing schedule at" + timeIn);
+            }
+        });
+
+        viewSchedule.setOnMeridiemChanged(e -> {
+            handleTimeChange(viewSchedule);
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                System.out.println("Overlaps with existing schedule at " + timeIn);
+            }
+        });
+
+      
+
+        viewSchedule.setOnConfirmClicked(e -> {
+            if (viewSchedule.getCourse() == null && !isFaculty) {
+                MainFrame.setNotification("Please Choose a Course");
+                return;
+            }
+
+            if ((viewSchedule.getCourse() == null || viewSchedule.getSection() == null) && isFaculty) {
+                MainFrame.setNotification("Please Choose a Course and Section First");
+                return;
+            }
+
+
+            if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                MainFrame.setNotification("Your request overlaps with the room schedule!");
+                return;
+            }
+
+            RequestSchedule requestSchedule = new RequestSchedule();
+            String status = "";
+            String section = "";
+            String facultyID = "";
+
+            if (isFaculty){
+                status = "3";
+                section = String.valueOf(viewSchedule.getSection().getSectionKey());
+                facultyID = user.getUserID();
+            } else{ 
+                StudentDAO studentDAO = new StudentDAO();
+                ScheduleDAO scheduleDAO = new ScheduleDAO();
+                Student student = studentDAO.get(user.getUserID());
+                status = "1";
+                section = String.valueOf(student.getSectionKey());
+                facultyID = scheduleDAO.getFacultyIDByStudentCourse(user.getUserID(), viewSchedule.getCourse().getCode());
+            }
+
+            requestSchedule.load(-1, selectedRoom.getRoomCode(),
+                    section, viewSchedule.getCourse().getCode(),
+                    facultyID, timeIn, timeOut, DateTimeBuilder.getDayName(), status, 0,
+                    DateTimeBuilder.getCurrentDate(), user.getUserID());
+
+            
+
+            new RequestController(requestSchedule, user);
         });
     }
 
