@@ -38,7 +38,7 @@ public class SearchRoomsController {
     }
 
     void showSearch() throws SQLException {
-        SearchRooms1 searchRooms = new SearchRooms1();
+        SearchRooms1 searchRooms = new SearchRooms1(user);
 
         BuildingDAO buildingDAO = new BuildingDAO();// dao
         List<Building> buildings = buildingDAO.getAllBuilding(); // model
@@ -101,7 +101,7 @@ public class SearchRoomsController {
 
     }
 
-    void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor) {
+    void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor) { // process the request here
         requestSchedule = new RequestSchedule();
         Student student = new StudentDAO().get(user.getUserID());
         ScheduleDAO scheduleDAO = new ScheduleDAO();
