@@ -227,7 +227,7 @@ public class ViewSchedule extends JPanel {
         container.add(southPanel, BorderLayout.SOUTH);
     }
 
-    public void loadFormPanel() {
+    public void loadFormPanel(boolean isFaculty) {
         // container panel of the forms below
         form = new JPanel();
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
@@ -250,8 +250,6 @@ public class ViewSchedule extends JPanel {
         unitBtnPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         unitBtnPanel.setBackground(Color.WHITE);
         unitBtnPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // test line
-
-        // BACKEND TO DO: Make functionalities for lecBtn and labBtn
 
         lecBtn.setPreferredSize(new Dimension(180, 60));
         lecBtn.setMaximumSize(new Dimension(180, 60));
@@ -304,11 +302,12 @@ public class ViewSchedule extends JPanel {
         courseCombo = new JComboBox<>();
         // SECTION COMBO BOX
         sectionCombo = new JComboBox<>();
+        sectionCombo.setVisible(isFaculty);
 
         form.add(selectCoursePanel);
         form.add(courseCombo);
         form.add(Box.createVerticalStrut(10));
-        showSectionCombo(true); // default for faculty, only shows when its faculty
+        showSectionCombo(isFaculty); // default for faculty, only shows when its faculty
         form.add(unitBtnPanel);
         form.add(timeInPanel);
         form.add(spinnerPan);
