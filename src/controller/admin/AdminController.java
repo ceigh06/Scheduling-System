@@ -59,7 +59,11 @@ public class AdminController {
         MainFrame.setOnArchivePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                onArchiveClicked();
+                try {
+                    onArchiveClicked();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -111,7 +115,7 @@ public class AdminController {
         MainFrame.showPanel("AdminLanding", "Home");
     }
 
-    public void onArchiveClicked() {
+    public void onArchiveClicked() throws SQLException {
         new ArchiveController(user);
     }
 

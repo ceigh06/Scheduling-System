@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -165,7 +166,7 @@ public class RequestForm extends JPanel {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-    public RequestForm(Schedule schedule, User user) {
+    public RequestForm(Schedule schedule, User user, Boolean viewArchives) throws SQLException {
         isRequest = false;
         studentNumber = null;
         if (user.getUserType().equals("Admin")) {
@@ -281,9 +282,11 @@ public class RequestForm extends JPanel {
             formsPanel.add(formsBottom);
             formsPanel.add(Box.createVerticalStrut(30));
 
+            String btn2Text = viewArchives ? "UNARCHIVE" : "ARCHIVE";
+
             // Confirm buttons
             reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
-                    "GO BACK", "ARCHIVE",
+                    "GO BACK", btn2Text,
                     new Color(91, 112, 121), 2,
                     new Color(91, 112, 121), 2);
 

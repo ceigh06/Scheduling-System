@@ -122,7 +122,7 @@ public class MainFrame {
         navBar.setOnRequestPanel(action);
     }
 
-    public static void setOnArchivePanel(MouseAdapter action) {
+     public static void setOnArchivePanel(MouseAdapter action) {
         navBar.setOnArchivePanel(action);
     }
 

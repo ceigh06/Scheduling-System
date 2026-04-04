@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.function.Consumer;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
 import model.Room;
 import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
@@ -92,6 +90,64 @@ public class RoomBrowser extends JPanel{
         roomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel roomTitle = new JLabel("Select a room to schedule.");
+        roomTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        roomPanel.add(roomTitle, BorderLayout.NORTH);
+
+        // roomCard = new JPanel(new GridLayout(rooms.size(), 1, 10, 10));
+		roomCard = new JPanel(); 
+		roomCard.setLayout(new BoxLayout(roomCard, BoxLayout.Y_AXIS));
+        roomCard.setBorder(new EmptyBorder(10, 0, 10, 0));
+
+		loadRooms(rooms);
+
+		roomPanel.add(roomCard, BorderLayout.CENTER);
+
+		confirmArea = new ConfirmPanel(MainFrame.getFrame(),
+			"GO BACK", "CONFIRM",
+			new Color(227,75,75), 2, 
+			new Color(77,139, 78),2);
+		confirmArea.setBtn1Color(new Color(255, 100, 100));
+		confirmArea.setBtn2Color(new Color(63, 193, 127));
+        roomPanel.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
+        wrapper.add(roomPanel);
+        
+        JScrollPane scrollPanel = new JScrollPane(wrapper);
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPanel.setBorder(null);
+        add(scrollPanel, BorderLayout.CENTER);
+        
+	}
+
+	public RoomBrowser(String bldgName,List<Room> rooms, boolean viewArchives) {
+		if (!viewArchives) return;
+		setLayout(new BorderLayout()); 
+		setBackground(new Color(250, 249, 246)); 
+		
+		JPanel wrapper = new JPanel();
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+        wrapper.setBackground(Color.WHITE);
+
+        JPanel welcomePanel = new JPanel();
+        welcomePanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 5, 10));
+
+		String header = "Welcome to " + bldgName;
+		
+		if(bldgName == null){
+			header = "Showing Available Rooms";
+		}
+
+        JLabel selectedBldg = new JLabel(header , JLabel.CENTER);
+        selectedBldg.setForeground(Color.BLACK);
+        selectedBldg.setFont(new Font("Georgia", Font.BOLD, 23));
+        welcomePanel.add(selectedBldg);
+        
+        wrapper.add(welcomePanel);
+
+        roomPanel = new JPanel(new BorderLayout());
+        roomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel roomTitle = new JLabel("Select a room to view archived schedules.");
         roomTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
         roomPanel.add(roomTitle, BorderLayout.NORTH);
 

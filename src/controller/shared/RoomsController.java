@@ -20,6 +20,11 @@ public class RoomsController {
         showBrowseBuilding();
     }
 
+    public RoomsController(User user, Boolean viewArchives) throws SQLException {
+        this.user = user;
+        showBrowseBuilding(viewArchives);
+    }
+
     // 1.1
     void showBrowseBuilding() throws SQLException {
         BrowseBuilding browseBuilding = new BrowseBuilding(); // view
@@ -32,6 +37,26 @@ public class RoomsController {
                                                           // clicked
             try {
                 showRoomBrowser(building);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+        MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
+        MainFrame.showPanel("BrowseBuilding");
+    }
+
+    void showBrowseBuilding(boolean viewArchives) throws SQLException {
+        BrowseBuilding browseBuilding = new BrowseBuilding(viewArchives); // view
+        BuildingDAO buildingDAO = new BuildingDAO();// dao
+        List<Building> buildings = buildingDAO.getAllBuilding(); // model
+
+        browseBuilding.loadBuilding(buildings);
+
+        browseBuilding.setOnBuildingClicked(building -> { // model is used as a reference to know which button is
+                                                          // clicked
+            try {
+                showRoomBrowser(building, viewArchives);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -62,6 +87,29 @@ public class RoomsController {
                 roomBrowser.clearSelection();
             }
             new BookingController(user, selectedRoom);
+        });
+
+    }
+     void showRoomBrowser(Building building, boolean viewArchives) throws SQLException {
+
+        RoomDAO roomDAO = new RoomDAO();
+        List<Room> rooms = roomDAO.getAllRooms(building.getCode().trim());
+        RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms, viewArchives);
+
+        MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
+        MainFrame.showPanel("RoomBrowser");
+
+        roomBrowser.setOnBackButton(e -> {
+            MainFrame.showPanel("BrowseBuilding");
+        });
+
+        roomBrowser.setOnConfirmButton(e -> {
+            Room selectedRoom = roomBrowser.getSelectedRoom();
+            if (selectedRoom == null) {
+                MainFrame.setNotification("Please Choose a Room First");
+                roomBrowser.clearSelection();
+            }
+            new BookingController(user, selectedRoom, viewArchives);
         });
 
     }

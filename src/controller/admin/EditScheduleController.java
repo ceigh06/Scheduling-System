@@ -16,7 +16,7 @@ public class EditScheduleController {
     private Room room;
     User user;
 
-    public EditScheduleController(Schedule schedule, Room room, User user) {
+    public EditScheduleController(Schedule schedule, Room room, User user) throws SQLException {
         this.schedule = schedule;
         this.room = room;
         this.user = user;
@@ -24,8 +24,8 @@ public class EditScheduleController {
 
     }
 
-    public void showArchiveForm(Schedule schedule, User user) {
-        RequestForm requestForm = new RequestForm(schedule, user);
+    public void showArchiveForm(Schedule schedule, User user) throws SQLException {
+        RequestForm requestForm = new RequestForm(schedule, user, false);
 
         // Add to MainFrame
         MainFrame.addContentPanel(requestForm, "ArchiveForm");

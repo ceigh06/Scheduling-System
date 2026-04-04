@@ -1,3 +1,4 @@
+
 package view.admin;
 
 import java.awt.BasicStroke;
