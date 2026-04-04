@@ -337,7 +337,7 @@ public class RequestHistory extends JPanel {
 		mainWrapper.repaint();
 	}
 
-	private List<String> handleTrimmingDates(List<String> dates, int index) {
+	public static List<String> handleTrimmingDates(List<String> dates, int index) {
 		List<String> trimmedDates = new ArrayList<>();
 		for (String date : dates) {
 			trimmedDates.add(date.split("-")[index]);
@@ -345,7 +345,7 @@ public class RequestHistory extends JPanel {
 		return trimmedDates;
 	}
 
-	private List<String> loadWeek() {
+	public static List<String> loadWeek() {
 		LocalDate today = LocalDate.now();
 		LocalDate date = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 

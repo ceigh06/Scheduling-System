@@ -3,6 +3,7 @@ package view.components;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -19,7 +20,7 @@ public class RoundedLabel extends JLabel {
     private int dimension = 0;
     private Color borderColor;
     private String text;
-    private JLabel label;
+    private JLabel innerLabel;
     private Color bgColor = new Color(255, 255, 255, 0); // Transparent background
 
     public RoundedLabel(ImageIcon icon, int borderThickness, Color borderColor, int dimension) {
@@ -33,15 +34,21 @@ public class RoundedLabel extends JLabel {
 
     public RoundedLabel(JLabel label, int borderThickness, Color borderColor, int dimension) {
     	this.dimension = dimension;
-        this.label = label;
+        this.innerLabel = innerLabel;
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
         setPreferredSize(new Dimension(dimension, dimension));
+        setOpaque(false); 
+
+        if(label != null && label.getText() != null) {
+        	this.text = label.getText();
+            setHorizontalAlignment(label.getHorizontalAlignment()); 
+        }
     }
 
     public RoundedLabel(String text,  int borderThickness, Color borderColor, int dimension) {
         this.text = text;
-        this.setBackground(bgColor);
+        // this.setBackground(bgColor);
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
         this.dimension = dimension;
@@ -64,21 +71,47 @@ public class RoundedLabel extends JLabel {
         Ellipse2D circle = new Ellipse2D.Float(x, y, diameter, diameter);
         g2.clip(circle);
 
-        // Draw image centered and scaled to fill the circle
-        if (image != null) {
-            g2.drawImage(image, x, y, diameter, diameter, this);
+        //lab rat 
+        if(getBackground() != null && getBackground().getAlpha() > 0) {
+        	g2.setColor(getBackground());
+        	g2.fill(circle);
         }
 
-        // Remove clip for border
-        g2.setClip(null);
+        // drawing of image on top of background color
+        if(image != null) {
+            g2.drawImage(image, x, y, diameter, diameter, this);
+        }
         
+        String displayText = text; 
+        if(displayText == null && innerLabel != null){
+            displayText = innerLabel.getText(); 
+        }
+
+        if(displayText != null && !displayText.isEmpty()) {
+            g2.setColor(getForeground() != null? getForeground() : Color.BLACK); 
+
+            if(innerLabel != null && innerLabel.getFont() != null){
+                g2.setFont(innerLabel.getFont());
+            } else if(getFont() != null){
+                g2.setFont(getFont());
+            }
+            
+            FontMetrics fm = g2.getFontMetrics(); 
+            int textWidth = fm.stringWidth(displayText);
+            int textHeight = fm.getAscent();
+            int textX = x + (diameter - textWidth) / 2;
+            int textY = y + (diameter + textHeight) / 2 - 3; // Adjust for better vertical centering
+            g2.drawString(displayText, textX, textY);
+        }
+
+        g2.setClip(null); 
+
         // Draw border
-        if (borderThickness > 0) {
+        if (borderThickness > 0 && borderColor != null) {
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(borderThickness));
             int offset = borderThickness / 2;
-            g2.drawOval(x + offset, y + offset, 
-                       diameter - borderThickness, diameter - borderThickness);
+            g2.drawOval(x + offset, y + offset, diameter - borderThickness, diameter - borderThickness);
         }
 
         g2.dispose();
