@@ -52,7 +52,7 @@ public class BookingController {
         MainFrame.showPanel("Schedule");
 
         viewSchedule.setOnConfirmClicked(e -> {
-            new RequestController(requestSchedule);
+            new RequestController(requestSchedule, user);
         });
 
     }
@@ -117,10 +117,16 @@ public class BookingController {
                     MainFrame.setNotification("Please Choose a Course and Section First");
                     return;
                 }
+
+                if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
+                    MainFrame.setNotification("Your request overlaps with the room schedule!");
+                    return;
+                }
+
                 RequestSchedule requestSchedule = new RequestSchedule();
                 requestSchedule.load(-1, selectedRoom.getRoomCode(), String.valueOf(viewSchedule.getSection().getSectionKey()), viewSchedule.getCourse().getCode(), user.getUserID(), timeIn,timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(), user.getUserID());
 
-                new RequestController(requestSchedule);
+                new RequestController(requestSchedule, user);
             });
         } else {
             viewSchedule.setOnScheduleClicked(schedule -> {
