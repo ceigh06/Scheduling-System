@@ -8,6 +8,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -23,9 +25,11 @@ import view.components.RoundedPanel;
 public class CheckRequests extends JPanel{
 	JScrollPane mainScrollPane;
 	JPanel reqNumPanel, requestsWrapper;
+	private static List<String> requestData = new ArrayList<>();
+	private int requestCount = 0;
 	
 	JLabel reqNum;
-	CheckRequests(){
+	public CheckRequests(){
 		setLayout(new BorderLayout());
 		
 		reqNumPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -53,11 +57,10 @@ public class CheckRequests extends JPanel{
 	}
 	
 	//UTILITY
-	public String[] setSchedRequest(String name, String section, String course, String reqTime, String roomCode, String time) {
-		String[] reqInfo = {name, section, course, reqTime, roomCode, time};
+	public void loadRequests(List<String> data) {
+		requestData = data;
 		//gets student information na need makita ni faculty 
 		//BACKEND TO DO: USE SETTERS AND SETTERS NA LANG FOR STUD INFO
-		return  reqInfo;
 	}
 	
 	//new request panel
@@ -170,7 +173,10 @@ public class CheckRequests extends JPanel{
 		requestsWrapper.add(wrapper);
 		requestsWrapper.revalidate();
 		requestsWrapper.repaint();
-		
+	}
+
+	public void setRequestCount(int requestCount) {
+		this.requestCount = requestCount;
 	}
 
 }

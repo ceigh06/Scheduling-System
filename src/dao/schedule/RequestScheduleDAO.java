@@ -60,6 +60,32 @@ public class RequestScheduleDAO {
         return requests;
     }
 
+    public List<RequestSchedule> getPendingRequestByFaculty(String facultyId, String date) {
+        List<RequestSchedule> facultyPendingRequests = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement(
+                            "SELECT * FROM RequestSchedule WHERE FacultyID = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+            stmt.setString(1, facultyId);
+            stmt.setString(2, date);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("SectionKey"), set.getString("CourseCode"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                facultyPendingRequests.add(requestSchedule);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return facultyPendingRequests;
+    }
+
     public List<RequestSchedule> getAppDecRequestOfStudent(String studentNumber) {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
