@@ -50,6 +50,13 @@ public class AdminController {
             }
         });
 
+        MainFrame.setOnArchivePanel(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onArchiveClicked();
+            }
+        });
+
         MainFrame.setOnProfilePanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -97,6 +104,10 @@ public class AdminController {
 
     public void onHomeClicked() {
         MainFrame.showPanel("AdminLanding", "Home");
+    }
+
+    public void onArchiveClicked() {
+        new ArchiveController(user);
     }
 
     public void onProfileClicked() {

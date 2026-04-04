@@ -46,7 +46,7 @@ public class BookingController {
                 .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
         selectedRoom.loadSchedules(activeSchedules); // schedules for room
 
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); // load the
+        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom); 
         viewSchedule.loadClassSchedule(selectedRoom);
         viewSchedule.loadConfirmationPanel();
 
@@ -60,6 +60,16 @@ public class BookingController {
         });
 
     }
+
+
+
+
+
+
+
+
+
+
 
     // browse rooms
     // constructor for browse workflow.
@@ -100,7 +110,7 @@ public class BookingController {
         attachShowRoomScheduleListeners(viewSchedule, selectedRoom,user.getUserType().equals("Faculty"));
         // attaches form listeners
         
-        System.out.println(user.getUserType());
+        
 
         if (user.getUserType().equals("Faculty")) {
             List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
