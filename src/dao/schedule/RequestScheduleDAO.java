@@ -111,6 +111,32 @@ public class RequestScheduleDAO {
         return sectionRequests;
     }
 
+    public List<RequestSchedule> getPendingRequestOfRoomToday(String roomCode, String date) {
+        List<RequestSchedule> roomPendingRequests = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement(
+                            "SELECT * FROM RequestSchedule WHERE RoomCode = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+            stmt.setString(1, roomCode);
+            stmt.setString(2, date);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("SectionKey"), set.getString("CourseCode"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                roomPendingRequests.add(requestSchedule);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roomPendingRequests;
+    }
+
     public List<RequestSchedule> getRequestOfSection(int sectionKey) {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
