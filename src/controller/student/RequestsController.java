@@ -42,7 +42,7 @@ public class RequestsController {
                 && (user.getUserID().equalsIgnoreCase(rs.getStudentRequested()))) {
             ControlNotifs page = new ControlNotifs();
             student = new StudentDAO().get(rs.getStudentRequested());
-            String section = lookUp.getFullSectionName(requestKey);
+            String section = lookUp.getFullSectionName(student.getSectionKey());
             String room = lookUp.getFullRoomName(rs.getRoomCode());
             String timeIn = handleTimeChange(rs.getTimeIn());
             String timeOut = handleTimeChange(rs.getTimeOut());
