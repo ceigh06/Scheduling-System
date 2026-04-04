@@ -14,6 +14,10 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
+import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -33,46 +37,54 @@ import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer; 
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.w3c.dom.events.MouseEvent;
 
+import dao.schedule.RequestScheduleDAO;
 import view.common.RequestHistory;
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
 
-public class Report3 extends JPanel{
+public class Report3 extends JPanel {
 
-    private JPanel calendar; 
-    List<String> dates, trimmedDates, day;
+    private JPanel calendar;
+    private JPanel lineGraphContainer;
+    private List<String> dates, trimmedDates, day;
     private static int dateTodayIdx = -1;
-	private static String dateSelected;
-    JLabel selectedDayLabel = null;
-	RoundedPanel selectedDatePanel = null;
+    private static String dateSelected;
+    private JLabel selectedDayLabel = null;
+    private RoundedPanel selectedDatePanel = null;
+    private static String weekRange;
 
-    public Report3() {
-        setLayout(new BorderLayout()); 
-        setBackground(Color.WHITE); 
+    public Report3() throws SQLException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d");
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today;
+        while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+            monday = monday.minusDays(1);
+        }
+        LocalDate saturday = monday.plusDays(5);
+        weekRange = formatter.format(monday) + " - " + formatter.format(saturday);
 
-        JPanel topPanel = createTopPanel(); 
-        add(topPanel, BorderLayout.NORTH);
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
 
-        // this is the main content panel that holds all the components of the Report3
+        JPanel topPanel = createTopPanel();
+
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.WHITE);
 
-        contentPanel.add(topPanel); 
+        contentPanel.add(topPanel);
 
         RoundedPanel heatMapPanel = new RoundedPanel(20, 2, new Color(117, 144, 156));
-        heatMapPanel.setPreferredSize(new Dimension(400,250));
-        heatMapPanel.setMaximumSize(new Dimension(400,250));
+        heatMapPanel.setPreferredSize(new Dimension(400, 250));
+        heatMapPanel.setMaximumSize(new Dimension(400, 250));
         heatMapPanel.setLayout(new BorderLayout());
         heatMapPanel.setBackground(Color.WHITE);
         heatMapPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // creating the heatMap panel and adding it to the content panel
         heatMapPanel.add(createHeatMap(), BorderLayout.CENTER);
 
         contentPanel.add(Box.createVerticalStrut(5));
@@ -84,24 +96,23 @@ public class Report3 extends JPanel{
         JLabel lineChartLbl = new JLabel("Time-of-Day Requests");
         lineChartLbl.setAlignmentX(CENTER_ALIGNMENT);
         lineChartLbl.setFont(new Font("Segoe UI", Font.BOLD, 16));
-
-        // creating the calendar panel and adding it to the content panel
-        contentPanel.add(loadCalendar());
-
-        RoundedPanel lineChartPanel = new RoundedPanel(20, 2, new Color(117, 144, 156));
-        lineChartPanel.setPreferredSize(new Dimension(400,250));
-        lineChartPanel.setMaximumSize(new Dimension(400,250));
-        lineChartPanel.setLayout(new BorderLayout());
-        lineChartPanel.setBackground(Color.WHITE);
-        lineChartPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        lineChartPanel.add(createLineGraph(), BorderLayout.CENTER);
-
-        contentPanel.add(Box.createVerticalStrut(5));
         contentPanel.add(lineChartLbl);
         contentPanel.add(Box.createVerticalStrut(5));
+
+        // Calendar
+        calendar = loadCalendar();
         contentPanel.add(calendar);
         contentPanel.add(Box.createVerticalStrut(5));
-        contentPanel.add(lineChartPanel);
+
+        // Line graph container
+        lineGraphContainer = new JPanel(new BorderLayout());
+        lineGraphContainer.setPreferredSize(new Dimension(400, 250));
+        lineGraphContainer.setBackground(Color.WHITE);
+
+        // Initial graph
+        lineGraphContainer.add(createLineGraph("Mon"), BorderLayout.CENTER);
+
+        contentPanel.add(lineGraphContainer);
         contentPanel.add(Box.createVerticalStrut(5));
 
         JScrollPane scrollPanel = new JScrollPane(contentPanel);
@@ -115,276 +126,275 @@ public class Report3 extends JPanel{
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-    public JPanel createHeatMap() {
-    //BACKEND TO DO: Replace with actual database data
-    double[][] data = {
-        {3.0, 5.0, 2.0, 1.0, 0.0, 1.0}, // Mon
-        {4.0, 8.0, 3.0, 2.0, 1.0, 0.0}, // Tue
-        {2.0, 6.0, 4.0, 3.0, 1.0, 0.0}, // Wed
-        {1.0, 4.0, 3.0, 2.0, 1.0, 1.0}, // Thu
-        {0.0, 3.0, 2.0, 2.0, 1.0, 0.0}, // Fri
-        {0.0, 1.0, 1.0, 1.0, 0.0, 0.0}  // Sat
-    };
+    public JPanel createHeatMap() throws SQLException {
+        RequestScheduleDAO dao = new RequestScheduleDAO();
+        double[][] data = dao.getWeeklyTimeSlotData();
 
-    String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-    String[] slots = {"7am-9am", "9am-11am", "11am-1pm", "1pm-3pm", "3pm-5pm", "5pm-7pm"};
+        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        String[] slots = {"7am-9am", "9am-11am", "11am-1pm", "1pm-3pm", "3pm-5pm", "5pm-7pm"};
 
-    JPanel heatMapPanel = new JPanel() {
-        @Override
-        // this is where the heatmap is drawn, using the data array for values and the days and slots arrays for labels
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g); 
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            
-            int marginLeft = 50; // this is to create space for the day labels on the left
-            int marginTop = 30; // this is to create space for the time slot labels at the top
-            int width = getWidth() - marginLeft;
-            int height = getHeight() - marginTop;
-            int rows = data.length;
-            int cols = data[0].length;
-            int cellWidth = width / cols;
-            int cellHeight = height / rows;
-            double maxValue = 10.0; // for color intensity scaling, can be dynamically calculated from data
-            // Draw cells
-            for (int i = 0; i < rows; i++) {
+        JPanel heatMapPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int marginLeft = 50;
+                int marginTop = 30;
+                int width = getWidth() - marginLeft;
+                int height = getHeight() - marginTop;
+                int rows = data.length;
+                int cols = data[0].length;
+                int cellWidth = width / cols;
+                int cellHeight = height / rows;
+                double maxValue = 10.0;
+
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        int x = marginLeft + j * cellWidth;
+                        int y = marginTop + i * cellHeight;
+                        double value = data[i][j];
+                        double intensity = Math.min(1.0, value / maxValue);
+                        int alpha = (int) (intensity * 255);
+
+                        g.setColor(new Color(91, 112, 121, alpha));
+                        g.fillRect(x, y, cellWidth, cellHeight);
+
+                        g.setColor(Color.BLACK);
+                        String val = String.format("%.0f", value);
+                        FontMetrics fm = g.getFontMetrics();
+                        int textX = x + (cellWidth - fm.stringWidth(val)) / 2;
+                        int textY = y + (cellHeight + fm.getAscent()) / 2 - 2;
+                        g.drawString(val, textX, textY);
+
+                        g.setColor(Color.GRAY);
+                        g.drawRect(x, y, cellWidth, cellHeight);
+                    }
+                }
+
+                g.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+                g.setColor(Color.BLACK);
+
+                for (int i = 0; i < rows; i++) {
+                    g.drawString(days[i], 10, marginTop + i * cellHeight + cellHeight / 2 + 5);
+                }
+
                 for (int j = 0; j < cols; j++) {
-                    // change logic for color intensity here to percentage of transparency 
-                    // based on max value in the data set (currently hardcoded to 10)
-                    int x = marginLeft + j * cellWidth;
-                    int y = marginTop + i * cellHeight;
-                    double value = data[i][j];
-                    double intensity = Math.min(1.0, value/maxValue);
-                    int alpha = (int)(intensity * 255);
-
-                    //blue gradient based on intensity (the transparency)
-                    g.setColor(new Color(91, 112, 121, alpha)); // this is the color for the cell, with alpha for transparency
-                    g.fillRect(x, y, cellWidth, cellHeight); // fill the cell with the color
-                    
-                    g.setColor(Color.BLACK);
-                    String val = String.format("%.0f", value); // this is tto show the whole number part only
-                    FontMetrics fm = g.getFontMetrics();
-                    int textX = x + (cellWidth - fm.stringWidth(val)) / 2;
-                    int textY = y + (cellHeight + fm.getAscent()) / 2 - 2;
-                    g.drawString(val, textX, textY);
-                    
-                    // Cell border
-                    g.setColor(Color.GRAY);
-                    g.drawRect(x, y, cellWidth, cellHeight);
+                    int x = marginLeft + j * cellWidth + cellWidth / 2;
+                    int textWidth = g.getFontMetrics().stringWidth(slots[j]);
+                    g.drawString(slots[j], x - textWidth / 2, 20);
                 }
             }
+        };
 
-            // Draw labels
-            // Draw day labels on the left, centered within each row
-            g.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-            g.setColor(Color.BLACK);
-            for (int i = 0; i < rows; i++) {
-                // adjust y position to be centered within the cell and to account for font height
-                g.drawString(days[i], 10, marginTop + i * cellHeight + cellHeight / 2 + 5);
-            }
+        heatMapPanel.setBackground(Color.WHITE);
+        heatMapPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        heatMapPanel.setPreferredSize(new Dimension(350, 200));
 
-            // Draw time slot labels at the top, centered within each column
-            for (int j = 0; j < cols; j++) {
-                int x = marginLeft + j * cellWidth + cellWidth / 2;
-                int textWidth = g.getFontMetrics().stringWidth(slots[j]);
-                g.drawString(slots[j], x - textWidth / 2, 20);
-            }
-        }
-    };
+        return heatMapPanel;
+    }
 
-    heatMapPanel.setBackground(Color.WHITE);
-    heatMapPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-    heatMapPanel.setPreferredSize(new Dimension(350, 200));
-    
-    return heatMapPanel;
-}
+    public JPanel createLineGraph(String scheduledDay) throws SQLException {
+        RequestScheduleDAO dao = new RequestScheduleDAO();
+        double[] counts = dao.getTimeSlotDataForDay(scheduledDay);
 
-    public JPanel createLineGraph(){
-        //BACKEND TO DO: Implement line graph generation logic here, using data from the database
-        JPanel lineGraphPanel = new JPanel(); 
+        JPanel lineGraphPanel = new JPanel();
         lineGraphPanel.setBackground(Color.WHITE);
         lineGraphPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        lineGraphPanel.setPreferredSize(new Dimension(350, 200)); //test line s
+        lineGraphPanel.setPreferredSize(new Dimension(350, 200));
 
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset(); 
-        String seriesName = "requests"; 
-        //BACKEND TO DO: Replace with actual database data (loops), this is for testing only 
-        dataset.addValue(3, seriesName, "7am-9am");
-        dataset.addValue(5, seriesName, "9am-11am");
-        dataset.addValue(2, seriesName, "11am-1pm");
-        dataset.addValue(1, seriesName, "1pm-3pm");
-        dataset.addValue(0, seriesName, "3pm-5pm");
-        dataset.addValue(1, seriesName, "5pm-7pm");
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        String seriesName = "requests";
+
+        String[] timeSlots = {"7am-9am", "9am-11am", "11am-1pm", "1pm-3pm", "3pm-5pm", "5pm-7pm"};
+
+        for (int i = 0; i < counts.length; i++) {
+            dataset.addValue(counts[i], seriesName, timeSlots[i]);
+        }
 
         JFreeChart lineChart = ChartFactory.createLineChart("Peak Schedule Hours",
-            "Time of Day", "Frequency", dataset, 
-            PlotOrientation.VERTICAL, false, false, false
-        ); 
-        
-        // this part is for customization of the line chart's appearance
-        CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
-        plot.setBackgroundPaint(Color.WHITE); 
-        plot.setOutlinePaint(Color.BLACK); 
-        plot.setOutlineStroke(new BasicStroke(1.5f)); 
-        plot.setRangeGridlinesVisible(false); 
+                "Time of Day", "Frequency", dataset,
+                PlotOrientation.VERTICAL, false, false, false
+        );
 
-        // this part is for customizing the y-axis to show percentage values and 
-        // to set the range from 0 to 100 with ticks every 20 units 
-        org.jfree.chart.axis.NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        CategoryPlot plot = (CategoryPlot) lineChart.getPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setOutlinePaint(Color.BLACK);
+        plot.setOutlineStroke(new BasicStroke(1.5f));
+        plot.setRangeGridlinesVisible(false);
+
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
         yAxis.setRange(0, 100);
         yAxis.setTickUnit(new NumberTickUnit(20));
-        yAxis.setAxisLineStroke(new BasicStroke(1.5f)); 
+        yAxis.setAxisLineStroke(new BasicStroke(1.5f));
         yAxis.setTickMarksVisible(true);
         yAxis.setTickLabelFont(new Font("Segoe UI", Font.PLAIN, 10));
 
-        // customize x-axis to show time slots and to rotate labels for better readability
         CategoryAxis xAxis = plot.getDomainAxis();
         xAxis.setAxisLineStroke(new BasicStroke(1.5f));
         xAxis.setTickMarksVisible(true);
         xAxis.setTickLabelFont(new Font("Segoe UI", Font.PLAIN, 10));
-        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // tilting the texts so it shows the whole thing
+        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 
-        // customize the line renderer to change the line color, thickness, and to show data points
         LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
         renderer.setSeriesPaint(0, new Color(91, 112, 121));
-        renderer.setSeriesStroke(0, new BasicStroke(2.0f)); 
+        renderer.setSeriesStroke(0, new BasicStroke(2.0f));
         renderer.setSeriesShapesVisible(0, true);
 
-        // customize the chart title
         lineChart.getTitle().setFont(new Font("Segoe UI", Font.BOLD, 17));
         lineChart.getTitle().setPaint(new Color(91, 112, 121));
 
-        // create a ChartPanel to display the chart 
-        ChartPanel chartPanel = new ChartPanel(lineChart);        
+        ChartPanel chartPanel = new ChartPanel(lineChart);
         chartPanel.setPreferredSize(new Dimension(400, 250));
         chartPanel.setBackground(Color.WHITE);
 
         lineGraphPanel.setLayout(new BorderLayout());
         lineGraphPanel.add(chartPanel, BorderLayout.CENTER);
 
-        return lineGraphPanel; 
+        return lineGraphPanel;
     }
 
-    private JPanel loadCalendar(){
+    private JPanel loadCalendar() {
         dates = RequestHistory.loadWeek();
-		trimmedDates = RequestHistory.handleTrimmingDates(dates, 2);
+        trimmedDates = RequestHistory.handleTrimmingDates(dates, 2);
         day = List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
 
-        calendar = new JPanel(new GridLayout(1, day.size(), 10, 0));
-        calendar.setBackground(Color.WHITE);
-		calendar.setPreferredSize(new Dimension(0, 90));
-		calendar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 83));
-		calendar.setMinimumSize(new Dimension(0, 83));
-        calendar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        JPanel calendarPanel = new JPanel(new GridLayout(1, day.size(), 10, 0));
+        calendarPanel.setBackground(Color.WHITE);
+        calendarPanel.setPreferredSize(new Dimension(0, 90));
+        calendarPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 83));
+        calendarPanel.setMinimumSize(new Dimension(0, 83));
+        calendarPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         for (int i = 0; i < trimmedDates.size(); i++) {
-			String dateString = dates.get(i);
+            String dateString = dates.get(i);
 
-			RoundedPanel clickableDate = new RoundedPanel(55, 2, new Color(91, 112, 121));
-			clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
-			clickableDate.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-			clickableDate.setPreferredSize(new Dimension(0, 75));
+            RoundedPanel clickableDate = new RoundedPanel(55, 2, new Color(91, 112, 121));
+            clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
+            clickableDate.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            clickableDate.setPreferredSize(new Dimension(0, 75));
 
-			JLabel dateLabel = new JLabel(trimmedDates.get(i), SwingConstants.CENTER);
-			RoundedLabel roundedDate = new RoundedLabel(dateLabel, 1, Color.WHITE, 35);
-			roundedDate.setBackground(Color.WHITE);
-			roundedDate.setPreferredSize(new Dimension(33, 35));
-			roundedDate.setMaximumSize(new Dimension(33, 35));
-			roundedDate.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JLabel dateLabel = new JLabel(trimmedDates.get(i), SwingConstants.CENTER);
+            RoundedLabel roundedDate = new RoundedLabel(dateLabel, 1, Color.WHITE, 35);
+            roundedDate.setBackground(Color.WHITE);
+            roundedDate.setPreferredSize(new Dimension(33, 35));
+            roundedDate.setMaximumSize(new Dimension(33, 35));
+            roundedDate.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-			JLabel dayLabel = new JLabel(day.get(i), SwingConstants.CENTER);
-			dayLabel.setFont(new Font("Arial", Font.BOLD, 12));
-			dayLabel.setForeground(Color.WHITE);
-			dayLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JLabel dayLabel = new JLabel(day.get(i), SwingConstants.CENTER);
+            dayLabel.setFont(new Font("Arial", Font.BOLD, 12));
+            dayLabel.setForeground(Color.WHITE);
+            dayLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-			clickableDate.add(Box.createVerticalStrut(3));
-			clickableDate.add(roundedDate);
-			clickableDate.add(Box.createVerticalStrut(10));
-			clickableDate.add(dayLabel);
-			clickableDate.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			clickableDate.setBackground(new Color(117, 144, 156));
-			clickableDate.setOpaque(false);
+            clickableDate.add(Box.createVerticalStrut(3));
+            clickableDate.add(roundedDate);
+            clickableDate.add(Box.createVerticalStrut(10));
+            clickableDate.add(dayLabel);
+            clickableDate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            clickableDate.setBackground(new Color(117, 144, 156));
+            clickableDate.setOpaque(false);
 
-			if (dateTodayIdx == i && selectedDatePanel == null) {
-				clickableDate.setBackground(new Color(255, 227, 85));
-				dayLabel.setForeground(Color.BLACK);
-				selectedDatePanel = clickableDate;
-				selectedDayLabel = dayLabel;
-			}
+            // highlight today's date
+            if (dateTodayIdx == i && selectedDatePanel == null) {
+                clickableDate.setBackground(new Color(255, 227, 85));
+                dayLabel.setForeground(Color.BLACK);
+                selectedDatePanel = clickableDate;
+                selectedDayLabel = dayLabel;
 
-			final RoundedPanel thisDatePanel = clickableDate;
-			final JLabel thisDayLabel = dayLabel;
-			final String thisSelectedDateString = dateString;
+                // Load initial line graph for today's day
+                try {
+                    lineGraphContainer.removeAll();
+                    lineGraphContainer.add(createLineGraph(day.get(i)), BorderLayout.CENTER);
+                    lineGraphContainer.revalidate();
+                    lineGraphContainer.repaint();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
 
-			clickableDate.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					if (selectedDatePanel != null && selectedDatePanel != thisDatePanel) {
-						selectedDatePanel.setBackground(new Color(117, 144, 156));
-						selectedDayLabel.setForeground(Color.WHITE);
-					}
+            final RoundedPanel thisDatePanel = clickableDate;
+            final JLabel thisDayLabel = dayLabel;
+            final String thisSelectedDateString = dateString;
+            final String dayOfWeek = day.get(i);
 
-					thisDatePanel.setBackground(new Color(255, 227, 85));
-					thisDayLabel.setForeground(Color.BLACK);
-					selectedDatePanel = thisDatePanel;
-					selectedDayLabel = thisDayLabel;
-					dateSelected = thisSelectedDateString;
-                    
-                    //BACKEND TO DO: Implements logics for line graph
-				}
-			});
+            clickableDate.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent e) {
+                    if (selectedDatePanel != null && selectedDatePanel != thisDatePanel) {
+                        selectedDatePanel.setBackground(new Color(117, 144, 156));
+                        selectedDayLabel.setForeground(Color.WHITE);
+                    }
 
-			calendar.add(clickableDate);
-		}
-        return calendar; 
+                    thisDatePanel.setBackground(new Color(255, 227, 85));
+                    thisDayLabel.setForeground(Color.BLACK);
+                    selectedDatePanel = thisDatePanel;
+                    selectedDayLabel = thisDayLabel;
+                    dateSelected = thisSelectedDateString;
+
+                    // Load line graph for selected day
+                    try {
+                        lineGraphContainer.removeAll();
+                        lineGraphContainer.add(createLineGraph(dayOfWeek), BorderLayout.CENTER);
+                        lineGraphContainer.revalidate();
+                        lineGraphContainer.repaint();
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
+            calendarPanel.add(clickableDate);
+        }
+
+        return calendarPanel;
     }
 
-    private JPanel createTopPanel(){
+    private JPanel createTopPanel() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBackground(Color.WHITE);
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10,10)); 
-        
-        JLabel titleLabel = new JLabel("Peak Scheduling Hours"); 
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel titleLabel = new JLabel("Peak Scheduling Hours");
         titleLabel.setAlignmentX(CENTER_ALIGNMENT);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 19));
-        
-        //BACKEND TO DO: Get actual date from database
-        JLabel weekSpan = new JLabel("March 16 - March 21"); 
+
+        JLabel weekSpan = new JLabel(weekRange);
         weekSpan.setAlignmentX(CENTER_ALIGNMENT);
         weekSpan.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-    
+
         JLabel visualTitle = new JLabel("Heatmap of Peak Scheduling Hours");
         visualTitle.setAlignmentX(CENTER_ALIGNMENT);
         visualTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        
+
         topPanel.add(titleLabel);
         topPanel.add(Box.createVerticalStrut(1));
         topPanel.add(weekSpan);
         topPanel.add(Box.createVerticalStrut(1));
         topPanel.add(visualTitle);
-        
+
         return topPanel;
     }
 
-    private JPanel createHeatmapLegend(){
-        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,5));
+    private JPanel createHeatmapLegend() {
+        JPanel legendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         legendPanel.setBackground(Color.WHITE);
 
-        JLabel legendTitle = new JLabel("Legends: "); 
+        JLabel legendTitle = new JLabel("Legends: ");
         legendTitle.setFont(new Font("Segoe UI", Font.BOLD, 12));
         legendPanel.add(legendTitle);
 
-        int[][] range = {{0,5}, {6,10}, {11,15}};
+        int[][] range = {{0, 5}, {6, 10}, {11, 15}};
         String[] labels = {"0-5 requests", "6-10 requests", "11-15 requests"};
 
-        for(int i=0; i<range.length; i++){
+        for (int i = 0; i < range.length; i++) {
             int avgValue = (range[i][0] + range[i][1]) / 2;
-            double intensity = Math.min(1.0, avgValue/15.0); //15 kasi yung max ngayon peor you can adjust it
-            int alpha = (int)(intensity * 255);
+            double intensity = Math.min(1.0, avgValue / 15.0);
+            int alpha = (int) (intensity * 255);
 
             JPanel colorBox = new JPanel();
-            colorBox.setPreferredSize(new Dimension(10,10));
-            colorBox.setMaximumSize(new Dimension(10,10)); 
+            colorBox.setPreferredSize(new Dimension(10, 10));
+            colorBox.setMaximumSize(new Dimension(10, 10));
             colorBox.setBackground(new Color(91, 112, 121, alpha));
             colorBox.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
@@ -393,10 +403,68 @@ public class Report3 extends JPanel{
             legendPanel.add(colorBox);
             legendPanel.add(rangeLabel);
 
-            if(i < range.length - 1){
+            if (i < range.length - 1) {
                 legendPanel.add(Box.createHorizontalStrut(10));
             }
         }
         return legendPanel;
+    }
+
+    public String getPeakTimeSlotOfWeek() {
+        try {
+            RequestScheduleDAO dao = new RequestScheduleDAO();
+
+            String[] dayAbbrevs = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+            String[] timeSlots = {
+                "7:00 AM - 9:00 AM",
+                "9:00 AM - 11:00 AM",
+                "11:00 AM - 1:00 PM",
+                "1:00 PM - 3:00 PM",
+                "3:00 PM - 5:00 PM",
+                "5:00 PM - 7:00 PM"
+            };
+
+            int peakDayIndex = 0;
+            int peakTimeIndex = 0;
+            double peakCount = -1;
+
+            // loop through all days
+            for (int d = 0; d < dayAbbrevs.length; d++) {
+                double[] counts = dao.getTimeSlotDataForDay(dayAbbrevs[d]);
+
+                // find peak slot for this day
+                for (int t = 0; t < counts.length; t++) {
+                    if (counts[t] > peakCount) {
+                        peakCount = counts[t];
+                        peakDayIndex = d;
+                        peakTimeIndex = t;
+                    }
+                }
+            }
+
+            // convert day abbreviation to full name
+            String fullDay = switch (dayAbbrevs[peakDayIndex]) {
+                case "Mon" ->
+                    "Monday";
+                case "Tue" ->
+                    "Tuesday";
+                case "Wed" ->
+                    "Wednesday";
+                case "Thu" ->
+                    "Thursday";
+                case "Fri" ->
+                    "Friday";
+                case "Sat" ->
+                    "Saturday";
+                default ->
+                    dayAbbrevs[peakDayIndex];
+            };
+
+            return fullDay + " " + timeSlots[peakTimeIndex];
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return "Error retrieving peak time";
+        }
     }
 }

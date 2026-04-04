@@ -400,90 +400,90 @@ public class RequestScheduleDAO {
     }
 
     public static boolean archiveStudentSchedule(
-        String roomCode,
-        String courseCode,
-        String studentNumber,
-        String sectionKey,
-        String facultyID,
-        String timeIn,
-        String timeOut,
-        String scheduledDay) {
+            String roomCode,
+            String courseCode,
+            String studentNumber,
+            String sectionKey,
+            String facultyID,
+            String timeIn,
+            String timeOut,
+            String scheduledDay) {
 
-    String sql = "UPDATE RequestSchedule " +
-                 "SET IsArchived = 1 " +
-                 "WHERE RoomCode = ? " +
-                 "AND CourseCode = ? " +
-                 "AND StudentNumber = ? " +
-                 "AND SectionKey = ? " +
-                 "AND FacultyID = ? " +
-                 "AND TimeIn = ? " +
-                 "AND TimeOut = ? " +
-                 "AND ScheduledDay = ?";
+        String sql = "UPDATE RequestSchedule "
+                + "SET IsArchived = 1 "
+                + "WHERE RoomCode = ? "
+                + "AND CourseCode = ? "
+                + "AND StudentNumber = ? "
+                + "AND SectionKey = ? "
+                + "AND FacultyID = ? "
+                + "AND TimeIn = ? "
+                + "AND TimeOut = ? "
+                + "AND ScheduledDay = ?";
 
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, roomCode);
-        stmt.setString(2, courseCode);
-        stmt.setString(3, studentNumber);
-        stmt.setString(4, sectionKey);
-        stmt.setString(5, facultyID);
-        stmt.setString(6, timeIn);
-        stmt.setString(7, timeOut);
-        stmt.setString(8, scheduledDay);
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, roomCode);
+            stmt.setString(2, courseCode);
+            stmt.setString(3, studentNumber);
+            stmt.setString(4, sectionKey);
+            stmt.setString(5, facultyID);
+            stmt.setString(6, timeIn);
+            stmt.setString(7, timeOut);
+            stmt.setString(8, scheduledDay);
 
-        int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0;
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return false;
-}
-
-    public RequestSchedule getBySchedule(Schedule sched) {
-    try {
-        PreparedStatement stmt = connection.prepareStatement(
-            "SELECT * FROM RequestSchedule WHERE " +
-            "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ?");
-
-        stmt.setString(1, sched.getRoomCode());
-        stmt.setString(2, sched.getTimeIn());
-        stmt.setString(3, sched.getTimeOut());
-        stmt.setString(4, sched.getScheduledDay());
-
-        ResultSet set = stmt.executeQuery();
-
-        if (set.next()) {
-            RequestSchedule request = new RequestSchedule();
-
-            request.load(
-                set.getInt("RequestKey"),
-                set.getString("RoomCode"),
-                set.getString("SectionKey"),
-                set.getString("CourseCode"),
-                set.getString("FacultyID"),
-                set.getString("TimeIn"),
-                set.getString("TimeOut"),
-                set.getString("ScheduledDay"),
-                String.valueOf(set.getInt("Status")),
-                set.getInt("IsArchived"),
-                set.getString("DateRequested"),
-                set.getString("StudentNumber")
-            );
-
-            return request;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
 
-    return null;
-}
+    public RequestSchedule getBySchedule(Schedule sched) {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT * FROM RequestSchedule WHERE "
+                    + "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ?");
+
+            stmt.setString(1, sched.getRoomCode());
+            stmt.setString(2, sched.getTimeIn());
+            stmt.setString(3, sched.getTimeOut());
+            stmt.setString(4, sched.getScheduledDay());
+
+            ResultSet set = stmt.executeQuery();
+
+            if (set.next()) {
+                RequestSchedule request = new RequestSchedule();
+
+                request.load(
+                        set.getInt("RequestKey"),
+                        set.getString("RoomCode"),
+                        set.getString("SectionKey"),
+                        set.getString("CourseCode"),
+                        set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"),
+                        set.getString("ScheduledDay"),
+                        String.valueOf(set.getInt("Status")),
+                        set.getInt("IsArchived"),
+                        set.getString("DateRequested"),
+                        set.getString("StudentNumber")
+                );
+
+                return request;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public void addRequest(RequestSchedule requestSchedule) {
         String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, StudentNumber, SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
-                +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, requestSchedule.getRoomCode());
@@ -502,4 +502,106 @@ public class RequestScheduleDAO {
             e.printStackTrace();
         }
     }
+
+    public double[][] getWeeklyTimeSlotData() throws SQLException {
+        double[][] data = new double[6][6]; // 6 days × 6 time slots
+
+        String query = """
+            SELECT 
+                ScheduledDay,
+                CASE 
+                    WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                    WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                    WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                    WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                    WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                    WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                END AS TimeSlot,
+                COUNT(*) AS Total
+            FROM RequestSchedule
+            WHERE IsArchived = 0
+            GROUP BY ScheduledDay,
+                CASE 
+                    WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                    WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                    WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                    WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                    WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                    WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                END
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String day = rs.getString("ScheduledDay");
+                int slot = rs.getInt("TimeSlot");
+                double count = rs.getDouble("Total");
+
+                int dayIndex = mapDayToIndex(day);
+                if (dayIndex != -1 && slot >= 0 && slot < 6) {
+                    data[dayIndex][slot] = count;
+                }
+            }
+        }
+        return data;
+    }
+
+    private int mapDayToIndex(String day) {
+        return switch (day.toLowerCase()) {
+            case "monday" ->
+                0;
+            case "tuesday" ->
+                1;
+            case "wednesday" ->
+                2;
+            case "thursday" ->
+                3;
+            case "friday" ->
+                4;
+            case "saturday" ->
+                5;
+            default ->
+                -1;
+        };
+    }
+
+   public double[] getTimeSlotDataForDay(String dayAbbrev) throws SQLException {
+    double[] counts = new double[6]; // 6 time slots
+    String day = convertDay(dayAbbrev); // Mon -> Monday
+
+    // Define time slot ranges as SQL TIME literals
+    String[] startTimes = {"07:00", "09:00", "11:00", "13:00", "15:00", "17:00"};
+    String[] endTimes   = {"09:00", "11:00", "13:00", "15:00", "17:00", "19:00"};
+
+    String sql = "SELECT COUNT(*) AS cnt FROM RequestSchedule "
+               + "WHERE ScheduledDay = ? AND TimeIn >= ? AND TimeIn < ? AND IsArchived = 0";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        for (int i = 0; i < 6; i++) {
+            ps.setString(1, day);
+            ps.setString(2, startTimes[i]); // TimeIn >= slot start
+            ps.setString(3, endTimes[i]);   // TimeIn < slot end
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                counts[i] = rs.getDouble("cnt");
+            }
+            rs.close();
+        }
+    }
+    return counts;
+}
+
+private String convertDay(String abbrev) {
+    switch (abbrev) {
+        case "Mon": return "Monday";
+        case "Tue": return "Tuesday";
+        case "Wed": return "Wednesday";
+        case "Thu": return "Thursday";
+        case "Fri": return "Friday";
+        case "Sat": return "Saturday";
+        default: return abbrev;
+    }
+}
+
 }
