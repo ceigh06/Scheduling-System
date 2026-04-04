@@ -11,12 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
+import java.sql.SQLException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import view.admin.Report3;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedTextField;
@@ -54,13 +56,13 @@ public class AdminLanding extends JPanel {
         searchBar.addMouseListener(action);
     }
 
-    public AdminLanding() {
+    public AdminLanding() throws SQLException {
         setLayout(new BorderLayout());
         setBackground(OFF_WHITE);
         add(createContentPanel(), BorderLayout.CENTER);
     }
 
-    private JScrollPane createContentPanel() {
+    private JScrollPane createContentPanel() throws SQLException {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(OFF_WHITE);
@@ -82,7 +84,7 @@ public class AdminLanding extends JPanel {
 
         // Create button for most vacancies report
         peakBtn = new RoundedButton("View Report", 20);
-        contentPanel.add(createReportSection("Most Vacancies Today", 397, 187, peakBtn));
+        contentPanel.add(createReportSection("Peak Scheduling Hours", 397, 187, peakBtn));
 
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
@@ -99,7 +101,7 @@ public class AdminLanding extends JPanel {
     // Takes buttons as parameters to identify which report they belong to
     private JPanel createSideBySideReportsSection(
             String title1, int width1, int height1, RoundedButton btn1,
-            String title2, int width2, int height2, RoundedButton btn2) {
+            String title2, int width2, int height2, RoundedButton btn2) throws SQLException {
 
         // Reduced gap from 15 to 5 pixels
         JPanel sectionPanel = new JPanel(new GridLayout(1, 2, 5, 0));
@@ -182,7 +184,7 @@ public class AdminLanding extends JPanel {
     }
 
     // Takes button as parameter
-    private JPanel createReportSection(String title, int width, int height, RoundedButton viewBtn) {
+    private JPanel createReportSection(String title, int width, int height, RoundedButton viewBtn) throws SQLException {
         JPanel sectionPanel = new JPanel(new BorderLayout());
         sectionPanel.setOpaque(false);
         sectionPanel.setBackground(OFF_WHITE);
@@ -208,9 +210,9 @@ public class AdminLanding extends JPanel {
                     ReportTwoController report2 = new ReportTwoController();
                     cardTitle = report2.getTopBuildingName();
                 break;
-            case "Most Vacancies Today":
-                    //ReportThreeController report3 = new ReportThreeController();
-                    //cardTitle = String.valueOf(report3.getMonthlyTotal());
+            case "Peak Scheduling Hours":
+                    Report3 report3 = new Report3();
+                    cardTitle = report3.getPeakTimeSlotOfWeek();
                 break;
         }
         

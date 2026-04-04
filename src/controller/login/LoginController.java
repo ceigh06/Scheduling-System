@@ -46,7 +46,11 @@ public class LoginController {
                 authenticatedUser = LoginValidator.getAuthenticatedUser();
                 
                 view.clearFields();
-                createUserDashBoard(); //redirect to dashboard
+                try {
+                    createUserDashBoard();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
 
             } else {
                 MainFrame.setNotification(LoginValidator.getErrorMessage());
@@ -54,7 +58,7 @@ public class LoginController {
         });
     }
 
-    void createUserDashBoard() {
+    void createUserDashBoard() throws SQLException {
         if (authenticatedUser.getUserType().equals("Student")) {
             System.out.println("Student");
             try {

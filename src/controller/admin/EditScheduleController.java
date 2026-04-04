@@ -2,6 +2,7 @@ package controller.admin;
 
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
+import java.sql.SQLException;
 import model.Room;
 import model.schedule.Schedule;
 import model.user.User;
@@ -74,7 +75,11 @@ public class EditScheduleController {
                 }
             }
 
-            new AdminController(user);
+            try {
+                new AdminController(user);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         });
     }
 
