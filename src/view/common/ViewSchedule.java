@@ -11,7 +11,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Desktop.Action;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -33,7 +32,6 @@ import model.Room;
 import model.Section;
 import model.schedule.Schedule;
 import view.components.RoundedButton;
-import view.components.RoundedComboBox;
 import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
 
