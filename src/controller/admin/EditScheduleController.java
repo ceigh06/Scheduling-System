@@ -6,8 +6,10 @@ import java.sql.SQLException;
 import model.Room;
 import model.schedule.Schedule;
 import model.user.User;
+import utilities.DateTimeBuilder;
 import view.common.ConfirmPanel;
 import view.common.MainFrame;
+import view.common.NotificationMessage;
 import view.common.RequestForm;
 
 public class EditScheduleController {
@@ -48,14 +50,17 @@ public class EditScheduleController {
                         requestForm.studentNumber,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        schedule.getTimeIn(),
-                        schedule.getTimeOut(),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
                         schedule.getScheduledDay()
                 )) {
-                    System.out.println(schedule.getID());
-                    System.out.println("Request Schedule archived successfully.");
+                    NotificationMessage notif = new NotificationMessage(null, "Request Schedule archived successfully.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 } else {
-                    System.out.println("Failed to archive Schedule.");
+                    NotificationMessage notif = new NotificationMessage(null, "Failed to archive Request Schedule.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 }
 
             } else {
@@ -65,21 +70,20 @@ public class EditScheduleController {
                         schedule.getCourseCode(),
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        schedule.getTimeIn(),
-                        schedule.getTimeOut(),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
                         schedule.getScheduledDay()
                 )) {
-                    System.out.println("Schedule archived successfully.");
+                    NotificationMessage notif = new NotificationMessage("", "Schedule archived successfully.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif");
                 } else {
-                    System.out.println("Failed to archive Schedule.");
+                    NotificationMessage notif = new NotificationMessage(null, "Failed to archive Schedule.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 }
             }
 
-            try {
-                new AdminController(user);
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
         });
     }
 

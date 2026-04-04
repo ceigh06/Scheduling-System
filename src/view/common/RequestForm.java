@@ -1,5 +1,6 @@
 package view.common;
 
+
 import dao.StudentDAO;
 import dao.schedule.RequestScheduleDAO;
 import java.awt.BorderLayout;
@@ -20,6 +21,7 @@ import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.Student;
 import model.user.User;
+import utilities.DateTimeBuilder;
 import view.components.RoundedTextField;
 import view.components.ScrollBarHelper;
 
@@ -183,11 +185,11 @@ public class RequestForm extends JPanel {
                 studentNumber = this.requestorID;
                 this.name = student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName();
             }
-
+            
             this.section = schedule.getSectionKey();
             this.roomCode = schedule.getRoomCode();
-            this.timeIn = schedule.getTimeIn();
-            this.timeOut = schedule.getTimeOut();
+            this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
+            this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
             this.course = schedule.getCourseCode();
             this.professor = schedule.getFacultyID();
 
