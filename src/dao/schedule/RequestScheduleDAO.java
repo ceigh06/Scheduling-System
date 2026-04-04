@@ -61,6 +61,32 @@ public class RequestScheduleDAO {
         return requests;
     }
 
+    public List<RequestSchedule> getPendingRequestByFaculty(String facultyId, String date) {
+        List<RequestSchedule> facultyPendingRequests = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement(
+                            "SELECT * FROM RequestSchedule WHERE FacultyID = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+            stmt.setString(1, facultyId);
+            stmt.setString(2, date);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("SectionKey"), set.getString("CourseCode"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                facultyPendingRequests.add(requestSchedule);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return facultyPendingRequests;
+    }
+
     public List<RequestSchedule> getAppDecRequestOfStudent(String studentNumber) {
         List<RequestSchedule> sectionRequests = new ArrayList<>();
         try {
@@ -84,6 +110,32 @@ public class RequestScheduleDAO {
             e.printStackTrace();
         }
         return sectionRequests;
+    }
+
+    public List<RequestSchedule> getPendingRequestOfRoomToday(String roomCode, String date) {
+        List<RequestSchedule> roomPendingRequests = new ArrayList<>();
+        try {
+            PreparedStatement stmt = connection
+                    .prepareStatement(
+                            "SELECT * FROM RequestSchedule WHERE RoomCode = ? AND Status = 1 AND CAST(DateRequested AS DATE) = ?");
+            stmt.setString(1, roomCode);
+            stmt.setString(2, date);
+            ResultSet set = stmt.executeQuery();
+
+            while (set.next()) {
+                RequestSchedule requestSchedule = new RequestSchedule();
+                requestSchedule.load(set.getInt("RequestKey"), set.getString("RoomCode"),
+                        set.getString("SectionKey"), set.getString("CourseCode"), set.getString("FacultyID"),
+                        set.getString("TimeIn"),
+                        set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
+                        set.getInt("isArchived"),
+                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                roomPendingRequests.add(requestSchedule);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roomPendingRequests;
     }
 
     public List<RequestSchedule> getRequestOfSection(int sectionKey) {
@@ -452,6 +504,7 @@ public class RequestScheduleDAO {
         }
     }
 
+<<<<<<< HEAD
     public List<RequestSchedule> getAllActiveRequests() {
         List<RequestSchedule> requests = new ArrayList<>();
 
@@ -487,4 +540,107 @@ public class RequestScheduleDAO {
 
         return requests;
     }
+=======
+    public double[][] getWeeklyTimeSlotData() throws SQLException {
+        double[][] data = new double[6][6]; // 6 days × 6 time slots
+
+        String query = """
+            SELECT 
+                ScheduledDay,
+                CASE 
+                    WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                    WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                    WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                    WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                    WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                    WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                END AS TimeSlot,
+                COUNT(*) AS Total
+            FROM RequestSchedule
+            WHERE IsArchived = 0
+            GROUP BY ScheduledDay,
+                CASE 
+                    WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                    WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                    WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                    WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                    WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                    WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                END
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String day = rs.getString("ScheduledDay");
+                int slot = rs.getInt("TimeSlot");
+                double count = rs.getDouble("Total");
+
+                int dayIndex = mapDayToIndex(day);
+                if (dayIndex != -1 && slot >= 0 && slot < 6) {
+                    data[dayIndex][slot] = count;
+                }
+            }
+        }
+        return data;
+    }
+
+    private int mapDayToIndex(String day) {
+        return switch (day.toLowerCase()) {
+            case "monday" ->
+                0;
+            case "tuesday" ->
+                1;
+            case "wednesday" ->
+                2;
+            case "thursday" ->
+                3;
+            case "friday" ->
+                4;
+            case "saturday" ->
+                5;
+            default ->
+                -1;
+        };
+    }
+
+   public double[] getTimeSlotDataForDay(String dayAbbrev) throws SQLException {
+    double[] counts = new double[6]; // 6 time slots
+    String day = convertDay(dayAbbrev); // Mon -> Monday
+
+    // Define time slot ranges as SQL TIME literals
+    String[] startTimes = {"07:00", "09:00", "11:00", "13:00", "15:00", "17:00"};
+    String[] endTimes   = {"09:00", "11:00", "13:00", "15:00", "17:00", "19:00"};
+
+    String sql = "SELECT COUNT(*) AS cnt FROM RequestSchedule "
+               + "WHERE ScheduledDay = ? AND TimeIn >= ? AND TimeIn < ? AND IsArchived = 0";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        for (int i = 0; i < 6; i++) {
+            ps.setString(1, day);
+            ps.setString(2, startTimes[i]); // TimeIn >= slot start
+            ps.setString(3, endTimes[i]);   // TimeIn < slot end
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                counts[i] = rs.getDouble("cnt");
+            }
+            rs.close();
+        }
+    }
+    return counts;
+}
+
+private String convertDay(String abbrev) {
+    switch (abbrev) {
+        case "Mon": return "Monday";
+        case "Tue": return "Tuesday";
+        case "Wed": return "Wednesday";
+        case "Thu": return "Thursday";
+        case "Fri": return "Friday";
+        case "Sat": return "Saturday";
+        default: return abbrev;
+    }
+}
+
+>>>>>>> e68d124ab622b8fe2fa9086798dee0cd663a8ee6
 }

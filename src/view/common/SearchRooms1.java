@@ -36,20 +36,26 @@ import view.components.RoundedPanel;
 import view.components.ScrollBarHelper;
 import model.Building;
 import model.Course;
+import model.Section;
+import model.user.User;
 
 public class SearchRooms1 extends JPanel {
 	JPanel buildingContainer, selectionWrapper, form, comboPanel, moreFilter, clicked, btnPanel, timeInPanel,
 			timeOutPanel;
-	JLabel select, timeIn, timeOut, timeInLbl, timeOutLbl, selectCourseLbl, clickFilter, floorLbl, capLbl;
+	JLabel selectSection, select, timeIn, timeOut, timeInLbl, timeOutLbl, selectCourseLbl, clickFilter, floorLbl,
+			capLbl;
 	JScrollPane selectBuilding;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
+
+	JComboBox<Section> sectionCombo;
 	JComboBox<Course> courseCombo;
+
 	private ConfirmPanel confirmArea;
 	JComboBox<String> input;
 	boolean toggle = false;
 
-	public SearchRooms1() {
+	public SearchRooms1(User user) {
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
@@ -65,7 +71,7 @@ public class SearchRooms1 extends JPanel {
 		selectionWrapper.add(select, BorderLayout.NORTH);
 
 		// ROUNDED PANEL CONTAINER
-		RoundedPanel buildings = new RoundedPanel(30, 3, new Color(117,144,156), new BorderLayout());
+		RoundedPanel buildings = new RoundedPanel(30, 3, new Color(117, 144, 156), new BorderLayout());
 		buildings.setPreferredSize(new Dimension(380, 100));
 		buildings.setMaximumSize(new Dimension(380, 150));
 
@@ -81,7 +87,7 @@ public class SearchRooms1 extends JPanel {
 		selectBuilding.getViewport().setOpaque(false);
 		selectBuilding.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		ScrollBarHelper.applySlimScrollBar(selectBuilding, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
-		selectBuilding.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+		selectBuilding.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
 		buildings.add(selectBuilding, BorderLayout.CENTER);
 
@@ -130,6 +136,10 @@ public class SearchRooms1 extends JPanel {
 		courseCombo.setPreferredSize(new Dimension(372, 25));
 
 		comboPanel.add(courseCombo);
+
+		// section part
+		// HELP ME UI PLS
+		sectionCombo = new JComboBox<>();
 
 		// more filters clickable label
 		clickFilter = new JLabel("More Filters");
@@ -225,6 +235,16 @@ public class SearchRooms1 extends JPanel {
 
 	}
 
+	public void showSectionCombo(boolean isFaculty) {
+		selectSection = new JLabel("selectSection");
+		selectSection.setFont(new Font("Arial", Font.BOLD, 16));
+		selectSection.setAlignmentX(LEFT_ALIGNMENT);
+		if (isFaculty) {
+			form.add(selectCourseLbl);
+			form.add(sectionCombo);
+		}
+	}
+
 	private JPanel timePanel() {
 		// container ni extended form
 		JPanel container = new JPanel();
@@ -309,6 +329,16 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
+	public void loadSection(List<Section> sections) {
+		sectionCombo.removeAllItems();
+		for (Section section : sections) {
+			sectionCombo.addItem(section);
+		}
+		sectionCombo.setBackground(Color.WHITE);
+		sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+		sectionCombo.setMaximumSize(new Dimension(400, 50));
+	}
+
 	public void loadBuilding(List<Building> buildings) {
 		for (Building building : buildings) {
 			// rounded panel for each choice
@@ -355,6 +385,10 @@ public class SearchRooms1 extends JPanel {
 
 	public Course getCourse() {
 		return (Course) courseCombo.getSelectedItem();
+	}
+
+	public Section getSection() {
+		return (Section) sectionCombo.getSelectedItem();
 	}
 
 	public int getFloorLevel() {

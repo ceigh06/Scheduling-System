@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import model.user.Faculty;
 import model.user.User;
+import view.common.CheckRequests;
 import view.common.MainFrame;
 import view.common.TitleHeader;
 import view.landing.Landing;
@@ -87,7 +88,7 @@ public class FacultyController {
     }
 
     public void onRequestClicked() {
-        new FacultyController(user);
+        new RequestsController(user);
     }
 
     public void onProfileClicked() {

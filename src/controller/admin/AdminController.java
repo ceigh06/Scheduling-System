@@ -19,7 +19,7 @@ public class AdminController {
     private Report2 report2;
     private Report3 report3;
 
-    public AdminController(User user) {
+    public AdminController(User user) throws SQLException {
         this.user = user;
 
         AdminLanding adminLanding = new AdminLanding();
@@ -30,7 +30,13 @@ public class AdminController {
 
         adminLanding.setOnTotalBtn(e -> onTotalReportClicked());
         adminLanding.setOnMostBtn(e -> onMostReportClicked());
-        adminLanding.setOnPeakBtn(e -> onPeakReportClicked());
+        adminLanding.setOnPeakBtn(e -> {
+            try {
+                onPeakReportClicked();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
 
         MainFrame.setOnBrowsePanel(new MouseAdapter() {
             @Override
@@ -90,11 +96,14 @@ public class AdminController {
         MainFrame.showPanel("Report2", "Most Requested Buildings");
     }
 
-    public void onPeakReportClicked() {
+    public void onPeakReportClicked() throws SQLException {
         
         if (report3 == null) {
             ReportThreeController reportThreeController = new ReportThreeController();
+<<<<<<< HEAD
             reportThreeController.loadData();
+=======
+>>>>>>> e68d124ab622b8fe2fa9086798dee0cd663a8ee6
             reportThreeController.initView();
             report3 = reportThreeController.getView();
             MainFrame.addContentPanel(report3, "Report3");
