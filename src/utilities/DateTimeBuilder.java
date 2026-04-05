@@ -32,6 +32,25 @@ public class DateTimeBuilder {
         return String.format("%d:%02d %s", hour12, minute, meridiem);
     }
 
+    public static String formatTo12Hour(String time24) {
+    // Split the input string to extract hours, minutes, and optionally seconds
+    String[] parts = time24.split(":");
+
+    int hour24 = Integer.parseInt(parts[0]);
+    int minute = Integer.parseInt(parts[1]);
+    // parts[2] (seconds + fractional) is intentionally ignored
+
+    // Normalize hour to 0-23 range
+    hour24 = hour24 % 24;
+
+    String meridiem = hour24 >= 12 ? "PM" : "AM";
+    int hour12 = hour24 % 12;
+    if (hour12 == 0)
+        hour12 = 12;
+
+    return String.format("%d:%02d %s", hour12, minute, meridiem);
+}
+
     public static String convertTo24Hour(String time12Hour) {
         if (time12Hour == null || time12Hour.trim().isEmpty()) {
             return null;

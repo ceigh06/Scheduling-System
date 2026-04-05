@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import model.Room;
 import model.schedule.Schedule;
 import model.user.User;
+import utilities.DateTimeBuilder;
 import view.common.ConfirmPanel;
 import view.common.MainFrame;
+import view.common.NotificationMessage;
 import view.common.RequestForm;
 
 public class ArchiveController {
@@ -56,14 +58,17 @@ public class ArchiveController {
                         requestForm.studentNumber,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        schedule.getTimeIn(),
-                        schedule.getTimeOut(),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
                         schedule.getScheduledDay()
                 )) {
-                    System.out.println(schedule.getID());
-                    System.out.println("Request Schedule unarchived successfully.");
+                    NotificationMessage notif = new NotificationMessage(null, "Request Schedule unarchived successfully.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 } else {
-                    System.out.println("Failed to unarchive Schedule.");
+                    NotificationMessage notif = new NotificationMessage(null, "Failed to unarchive Request Schedule.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 }
 
             } else {
@@ -73,21 +78,20 @@ public class ArchiveController {
                         schedule.getCourseCode(),
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        schedule.getTimeIn(),
-                        schedule.getTimeOut(),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
+                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
                         schedule.getScheduledDay()
                 )) {
-                    System.out.println("Schedule unarchived successfully.");
+                    NotificationMessage notif = new NotificationMessage("", "Schedule unarchived successfully.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif");
                 } else {
-                    System.out.println("Failed to unarchive Schedule.");
+                    NotificationMessage notif = new NotificationMessage(null, "Failed to unarchive Schedule.", user);
+                    MainFrame.addContentPanel(notif, "Notif");
+                    MainFrame.showPanel("Notif", "Notification");
                 }
             }
 
-            try {
-                new AdminController(user);
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
         });
     }
 }

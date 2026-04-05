@@ -3,11 +3,9 @@ package controller.student;
 import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-
 import model.user.Student;
 import model.user.User;
 import view.common.MainFrame;
@@ -24,7 +22,7 @@ public class StudentController {
         Landing landing = new Landing();
         MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(landing, "StudentLanding");
-        MainFrame.showPanel("StudentLanding");
+        MainFrame.showPanel("StudentLanding", "Student Page");
         Student student = new Student();
         MainFrame.setIconType(student);
         TitleHeader.addIconToHeader();

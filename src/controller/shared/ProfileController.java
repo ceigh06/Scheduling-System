@@ -1,9 +1,6 @@
 package controller.shared;
 
-import controller.admin.AdminController;
-import controller.faculty.FacultyController;
 import controller.login.LoginController;
-import controller.student.StudentController;
 import dao.FacultyDAO;
 import dao.StudentDAO;
 import java.sql.SQLException;
@@ -61,16 +58,16 @@ public class ProfileController {
         LoginValidator.clearAuthenticatedUser();
         MainFrame.setNavBarVisible(false);
         TitleHeader.removeIconFromHeader();
-        MainFrame.showPanel("login");
+        MainFrame.showPanel("login", "Login Page");
     }
 
     private void onBackClicked() throws SQLException {
         if (user.getUserType() == "Student") {
-            new StudentController(user);
+            MainFrame.showPanel("StudentLanding");
         } else if (user.getUserType() == "Faculty") {
-            new FacultyController(user);
+            MainFrame.showPanel("FacultyLanding");
         } else if (user.getUserType() == "Admin") {
-            new AdminController(user);
+            MainFrame.showPanel("AdminLanding");
         }
     }
 
