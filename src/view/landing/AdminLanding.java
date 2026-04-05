@@ -8,8 +8,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.sql.SQLException;
 import javax.swing.Box;
@@ -121,64 +119,31 @@ public class AdminLanding extends JPanel {
     private RoundedPanel createSearchSection() {
         RoundedPanel searchPanel = new RoundedPanel(0, 1, new BorderLayout());
         searchPanel.setBackground(OFF_WHITE);
-        searchPanel.setBorder(new EmptyBorder(10, 10, 20, 10));
+        searchPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JPanel wrapper = new JPanel();
+        JPanel wrapper = new JPanel(new BorderLayout());
         wrapper.setOpaque(false);
         wrapper.setBackground(OFF_WHITE);
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
+
+       
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setOpaque(false);
 
         JLabel title = new JLabel("Welcome back, ADMIN!");
         title.setFont(new Font("Segoe UI", Font.BOLD, 23));
         title.setAlignmentX(LEFT_ALIGNMENT);
-        wrapper.add(Box.createRigidArea(new Dimension(0, 2)));
 
-        JLabel subtitle = new JLabel("Search Rooms");
-        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 15));
+        JLabel subtitle = new JLabel("REPORTS");
+        subtitle.setFont(new Font("Segoe UI", Font.ITALIC, 20));
         subtitle.setAlignmentX(LEFT_ALIGNMENT);
 
-        wrapper.add(title, BorderLayout.NORTH);
-        wrapper.add(subtitle, BorderLayout.SOUTH);
-        wrapper.add(Box.createRigidArea(new Dimension(0, 15)));
+        textPanel.add(title);
+        textPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        textPanel.add(subtitle);
 
-        searchBar = new RoundedTextField(20, 25, 2,
-                new Color(220, 220, 220),
-                new Color(170, 20, 20)
-        );
+        wrapper.add(textPanel, BorderLayout.CENTER);
 
-        searchBar.setMaximumSize(new Dimension(440, 45));
-        searchBar.setPreferredSize(new Dimension(440, 45));
-        searchBar.setBackground(Color.WHITE);
-        searchBar.setAlignmentX(LEFT_ALIGNMENT);
-        searchBar.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-
-        String hintText = "Browse rooms by time...";
-        searchBar.setText(hintText);
-        searchBar.setForeground(Color.GRAY);
-
-        searchBar.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-                if (searchBar.getText().equals(hintText)) {
-                    searchBar.setText("");
-                    searchBar.setForeground(Color.BLACK);
-                }
-            }
-
-            public void focusLost(FocusEvent e) {
-                if (searchBar.getText().isEmpty()) {
-                    searchBar.setText(hintText);
-                    searchBar.setForeground(Color.GRAY);
-                }
-            }
-        });
-
-        searchBar.addActionListener(e -> {
-            if (onSearchAction != null) {
-                onSearchAction.actionPerformed(e);
-            }
-        });
-
-        wrapper.add(searchBar);
         searchPanel.add(wrapper, BorderLayout.CENTER);
         return searchPanel;
     }
@@ -203,19 +168,19 @@ public class AdminLanding extends JPanel {
         String cardTitle = "";
         switch (title) {
             case "Total Room Requests":
-                    ReportOneController report1 = new ReportOneController();
-                    cardTitle = String.valueOf(report1.getMonthlyTotal());
+                ReportOneController report1 = new ReportOneController();
+                cardTitle = String.valueOf(report1.getMonthlyTotal());
                 break;
             case "Most Requested Room":
-                    ReportTwoController report2 = new ReportTwoController();
-                    cardTitle = report2.getTopBuildingName();
+                ReportTwoController report2 = new ReportTwoController();
+                cardTitle = report2.getTopBuildingName();
                 break;
             case "Peak Scheduling Hours":
-                    Report3 report3 = new Report3();
-                    cardTitle = report3.getPeakTimeSlotOfWeek();
+                Report3 report3 = new Report3();
+                cardTitle = report3.getPeakTimeSlotOfWeek();
                 break;
         }
-        
+
         cardsContainer.add(createCard(cardTitle, width, height, viewBtn));
 
         sectionPanel.add(cardsContainer, BorderLayout.CENTER);
@@ -232,10 +197,10 @@ public class AdminLanding extends JPanel {
 
         JLabel nameLabel = new JLabel(roomName, JLabel.CENTER);
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        nameLabel.setForeground(new Color(91,112,121));
+        nameLabel.setForeground(new Color(91, 112, 121));
 
         viewBtn.setForeground(Color.WHITE);
-        viewBtn.setBackground(new Color(91,112,121));
+        viewBtn.setBackground(new Color(91, 112, 121));
         viewBtn.setPreferredSize(new Dimension(120, 35));
 
         roomCard.add(nameLabel, BorderLayout.CENTER);
