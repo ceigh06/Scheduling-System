@@ -82,7 +82,7 @@ public class SearchRooms1 extends JPanel {
 		// container for building choices
 		buildingContainer = new JPanel();
 		buildingContainer.setLayout(new GridLayout(0, 1, 5, 5));
-		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 0));
+		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		buildingContainer.setOpaque(false);
 
 		// scrollpane for buildings
@@ -383,8 +383,10 @@ public class SearchRooms1 extends JPanel {
 	public void loadBuilding(List<Building> buildings) {
 		for (Building building : buildings) {
 			// rounded panel for each choice
-			RoundedPanel choice = new RoundedPanel(70, 1, new Color(91, 112, 121), new BorderLayout());
+			RoundedPanel choice = new RoundedPanel(20, 1, new Color(91, 112, 121), new BorderLayout());
 			choice.setBackground(new Color(117, 144, 156));
+			choice.setPreferredSize(new Dimension(200, 55));
+			choice.setMaximumSize(new Dimension(200, 55));
 			// choices
 
 			ImageIcon uncheckedIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Unchecked.png"));
