@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeListener;
 
 import dao.BuildingDAO;
 import view.components.RoundedPanel;
@@ -50,6 +51,12 @@ public class SearchRooms1 extends JPanel {
 	JScrollPane selectBuilding, mainScrollPane;
 	JCheckBox check;
 	JSpinner hrs, mins, cap;
+
+	JSpinner timeInHrs, timeInMins;
+	JComboBox<String> timeInMeridiem;
+
+	JSpinner timeOutHrs, timeOutMins;
+	JComboBox<String> timeOutMeridiem;
 
 	JComboBox<Section> sectionCombo;
 	JComboBox<Course> courseCombo;
@@ -113,7 +120,7 @@ public class SearchRooms1 extends JPanel {
 
 		form.add(Box.createVerticalStrut(10));
 		form.add(timeInLbl);
-		timeInPanel = timePanel();
+		timeInPanel = timePanel(true);
 		form.add(timeInPanel);
 		form.add(Box.createVerticalStrut(10));// add space/padding
 
@@ -125,7 +132,7 @@ public class SearchRooms1 extends JPanel {
 
 		form.add(Box.createVerticalStrut(10));
 		form.add(timeOutLbl);
-		timeOutPanel = timePanel();
+		timeOutPanel = timePanel(false);
 		form.add(timeOutPanel);
 		form.add(Box.createVerticalStrut(10));
 
@@ -281,7 +288,7 @@ public class SearchRooms1 extends JPanel {
 		}
 	}
 
-	private JPanel timePanel() {
+	private JPanel timePanel(boolean isTimeIn) {
 		// container ni extended form
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
@@ -305,18 +312,27 @@ public class SearchRooms1 extends JPanel {
 		JPanel inputs = new JPanel(new GridLayout(1, 3, 15, 0));
 		inputs.setMaximumSize(new Dimension(330, 30));
 
-		hrs = new JSpinner(new SpinnerNumberModel(1, 1, 12, 1));
-		mins = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));
+		JSpinner hSpinner = new JSpinner(new SpinnerNumberModel(7, 1, 12, 1));
+		JSpinner mSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 59, 1));
+		JComboBox<String> mer = new JComboBox<>(new String[] { "AM", "PM" });
 
-		JComboBox<String> meridiem = new JComboBox<>(new String[] { "AM", "PM" });
+		// store references
+		if (isTimeIn) {
+			timeInHrs = hSpinner;
+			timeInMins = mSpinner;
+			timeInMeridiem = mer;
+		} else {
+			timeOutHrs = hSpinner;
+			timeOutMins = mSpinner;
+			timeOutMeridiem = mer;
+		}
 
-		inputs.add(hrs);
-		inputs.add(mins);
-		inputs.add(meridiem);
+		inputs.add(hSpinner);
+		inputs.add(mSpinner);
+		inputs.add(mer);
 
 		container.add(Box.createVerticalStrut(5));
 		container.add(labels);
-		// adds spacing lang to
 		container.add(Box.createVerticalStrut(3));
 		container.add(inputs);
 
@@ -413,6 +429,30 @@ public class SearchRooms1 extends JPanel {
 			buildingContainer.add(choice);
 		}
 
+	}
+
+	public void setTimeIn(int hour, int minute, String meridiem) {
+		timeInHrs.setValue(hour);
+		timeInMins.setValue(minute);
+		timeInMeridiem.setSelectedItem(meridiem);
+	}
+
+	public void setTimeOut(int hour, int minute, String meridiem) {
+		timeOutHrs.setValue(hour);
+		timeOutMins.setValue(minute);
+		timeOutMeridiem.setSelectedItem(meridiem);
+	}
+
+	public void setOnTimeInChanged(ChangeListener action) {
+		timeInHrs.addChangeListener(action);
+		timeInMins.addChangeListener(action);
+		timeInMeridiem.addActionListener(e -> action.stateChanged(new javax.swing.event.ChangeEvent(timeInMeridiem)));
+	}
+
+	public void setOnTimeOutChanged(ChangeListener action) {
+		timeOutHrs.addChangeListener(action);
+		timeOutMins.addChangeListener(action);
+		timeOutMeridiem.addActionListener(e -> action.stateChanged(new javax.swing.event.ChangeEvent(timeOutMeridiem)));
 	}
 
 	// returns the input data to main controller
