@@ -63,6 +63,7 @@ public class TitleHeader {
     }
 
     public static void removeIconFromHeader() {
+        headerButtonPanel.removeMouseListener(headerButtonPanel.getMouseListeners()[0]);
         headerButtonPanel.removeAll();
     }
 
