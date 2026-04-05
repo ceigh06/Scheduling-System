@@ -144,8 +144,8 @@ public class BrowseBuilding extends JPanel {
     }
 
     private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-        RoundedButton btn = new RoundedButton(bldgName, 25, Color.DARK_GRAY, 2);
-        btn.setForeground(Color.DARK_GRAY);
+        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(91,112,121), 3);
+        btn.setForeground(Color.WHITE);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 20));
         btn.setPreferredSize(new Dimension(120, 120));
         btn.setMaximumSize(new Dimension(120, 120));
