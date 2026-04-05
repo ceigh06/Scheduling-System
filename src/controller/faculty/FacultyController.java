@@ -3,14 +3,11 @@ package controller.faculty;
 import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-
 import model.user.Faculty;
 import model.user.User;
-import view.common.CheckRequests;
 import view.common.MainFrame;
 import view.common.TitleHeader;
 import view.landing.Landing;
@@ -25,7 +22,7 @@ public class FacultyController {
         MainFrame.setCurrentUser(user, true);
         Landing landing = new Landing();
         MainFrame.addContentPanel(landing, "FacultyLanding");
-        MainFrame.showPanel("FacultyLanding");
+        MainFrame.showPanel("FacultyLanding", "Faculty Page");
         Faculty faculty = new Faculty();
         MainFrame.setIconType(faculty);
         TitleHeader.addIconToHeader();
