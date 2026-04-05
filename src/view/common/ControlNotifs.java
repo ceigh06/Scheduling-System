@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
@@ -32,7 +34,7 @@ public class ControlNotifs extends JPanel {
         public ControlNotifs() {
                 setLayout(new BorderLayout());
                 setBackground(Color.WHITE);
-                
+
                 contentPanel = new JPanel(new BorderLayout());
                 contentPanel.setBackground(Color.WHITE);
 
@@ -99,7 +101,7 @@ public class ControlNotifs extends JPanel {
 
                 scrollPanel = new JScrollPane(contentPanel);
                 scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-                ScrollBarHelper.applySlimScrollBar(scrollPanel,10, 30, Color.GRAY, Color.LIGHT_GRAY);
+                ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
                 scrollPanel.setBorder(BorderFactory.createEmptyBorder());
                 scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
                 scrollPanel.getViewport().setBackground(Color.WHITE);
@@ -109,24 +111,24 @@ public class ControlNotifs extends JPanel {
 
         public JPanel addHeaderPanel(String classType) {
                 headerLabel = new JLabel(classType, JLabel.CENTER);
-		headerLabel.setFont(new Font("Segoe UI",Font.BOLD, 23));
-		headerLabel.setForeground(Color.WHITE);
+                headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 23));
+                headerLabel.setForeground(Color.WHITE);
 
-		headerPanel = new RoundedPanel(40, 4, new Color(91,112,121)); 
-		headerPanel.setLayout(new BorderLayout()); 
+                headerPanel = new RoundedPanel(40, 4, new Color(91, 112, 121));
+                headerPanel.setLayout(new BorderLayout());
                 headerPanel.setPreferredSize(new Dimension(200, 60));
                 headerPanel.setMaximumSize(new Dimension(200, 60));
-		headerPanel.setBackground(new Color(117,144,156));
-		headerPanel.add(headerLabel);
+                headerPanel.setBackground(new Color(117, 144, 156));
+                headerPanel.add(headerLabel);
 
-                JPanel headerWrapper = new JPanel();            //test line
+                JPanel headerWrapper = new JPanel(); // test line
                 headerWrapper.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
                 headerWrapper.setPreferredSize(new Dimension(300, 70));
                 headerWrapper.setMaximumSize(new Dimension(300, 70));
                 headerWrapper.setBackground(Color.WHITE);
                 headerWrapper.add(headerPanel);
-        return headerWrapper;
-	}
+                return headerWrapper;
+        }
 
         public void loadRequestStatusHeader(String status) {
                 JPanel statusHeader = addHeaderPanel(status.toUpperCase());
@@ -158,21 +160,29 @@ public class ControlNotifs extends JPanel {
                 formsBottom.add(RequestForm.labeledField("Faculty", faculty));
                 formsPanel.add(formsBottom);
                 formsPanel.add(Box.createVerticalStrut(20));
-                
+
                 if (status.equalsIgnoreCase("pending")) {
-                        
+
                         confirmArea = new ConfirmPanel(MainFrame.getFrame(),
-                                "GO BACK", "CANCEL REQUEST",
-                                new Color(91, 112, 121), 2,
-                                new Color(227, 75, 75), 2);
+                                        "GO BACK", "CANCEL REQUEST",
+                                        new Color(91, 112, 121), 2,
+                                        new Color(227, 75, 75), 2);
                         confirmArea.setBtn2Color(new Color(255, 100, 100));
-                       
+
                         formsPanel.add(confirmArea.getConfirmPanel());
                 }
 
                 formsPanel.revalidate();
                 formsPanel.repaint();
 
+        }
+
+        public void setOnCancelClicked(ActionListener action) {
+                confirmArea.setBtn2Action(action);
+        }
+
+        public void setOnBackClicked(ActionListener action) {
+                confirmArea.setBtn1Action(action);
         }
 
 }
