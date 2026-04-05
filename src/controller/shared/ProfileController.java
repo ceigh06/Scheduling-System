@@ -67,11 +67,11 @@ public class ProfileController {
 
     private void onLogoutClicked() {
         MainFrame.restoreNavBarDefaultState();
+        TitleHeader.removeIconFromHeader(user.getUserType());
         user = null;
         LoginController.clearLoginFields();
         LoginValidator.clearAuthenticatedUser();
         MainFrame.setNavBarVisible(false);
-        TitleHeader.removeIconFromHeader();
         MainFrame.showPanel("login", "Login Page");
     }
 
