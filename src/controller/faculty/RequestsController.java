@@ -35,7 +35,7 @@ public class RequestsController {
         JPanel page;
 
         if (pendingRequests.isEmpty()) {
-            page = new NotificationMessage("", "No student pending requests.");
+            page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png", "No student pending requests.");
         } else {
             checkRequests.loadRequestCount(pendingRequests.size());
 
@@ -81,7 +81,7 @@ public class RequestsController {
         }
 
         MainFrame.addContentPanel(page, "CheckStudentRequests");
-        MainFrame.showPanel("CheckStudentRequests");
+        MainFrame.showPanel("CheckStudentRequests", "Check Student Requests");
     }
 
     public void showConfirmationMessage(String message) {
