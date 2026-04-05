@@ -51,10 +51,22 @@ public class RequestsController {
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
 
+            page.setOnCancelClicked(e -> {
+                new RequestScheduleDAO().archive(requestKey);
+                NotificationMessage notif = new NotificationMessage("", "Request Cancelled");
+                MainFrame.addContentPanel(notif, "NotificationMessage");
+                MainFrame.showPanel("NotificationMessage");
+            });
+
+            page.setOnBackClicked(e -> {
+                MainFrame.showPanel("StudentLanding");
+            });
+
             panel = page;
         }
 
-        else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()), rs.getDateRequested())) {
+        else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()),
+                rs.getDateRequested())) {
             NotificationMessage notifPage = new NotificationMessage("",
                     "Your section has a pending request.");
             panel = notifPage;
@@ -66,6 +78,7 @@ public class RequestsController {
             NotificationMessage page = new NotificationMessage("", "Your section has no pending request.");
             panel = page;
         }
+
         MainFrame.addContentPanel(panel, "CheckRequest");
         MainFrame.showPanel("CheckRequest");
     }
