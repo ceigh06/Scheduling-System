@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -113,22 +114,22 @@ public class ViewProfile extends JPanel {
 	}
 
 
-	public void loadUser(Student user) {
+	public void loadUser(Student user, List<String> data) {
 		String[][] dataset = { { "Student Number", user.getUserID() },
-				{ "Full Name", user.getFirstName() + " " + user.getMiddleName() + " " + user.getLastName() },
-				{ "College", "N/A" },
-				{ "Program", "N/A" },
-				{ "Section", String.valueOf(user.getSectionKey()) } };
+				{ "Full Name", data.get(0)},
+				{ "College", data.get(1)},
+				{ "Program", data.get(2)},
+				{ "Section", data.get(3)} };
 
 		for (int i = 0; i < dataset.length; i++) {
 			contentLbl(dataset[i][0], dataset[i][1]);
 		}
 	}
 
-	public void loadUser(Faculty user) {
+	public void loadUser(Faculty user, List<String> data) {
 		String[][] dataset = { { "Employee Num", user.getUserID() },
-				{ "Full Name", user.getFirstName() + " " + user.getMiddleName() + " " + user.getLastName() },
-				{ "College", user.getCollegeCode() },
+				{ "Full Name", data.get(0) },
+				{ "College", data.get(1) },
 				{ "Position", user.getPosition() } };
 
 		for (int i = 0; i < dataset.length; i++) {
