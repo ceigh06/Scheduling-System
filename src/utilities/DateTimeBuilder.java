@@ -69,4 +69,21 @@ public class DateTimeBuilder {
             return null;
         }
     }
+
+    public static String convertTo24HourShort(String time12Hour) {
+    if (time12Hour == null || time12Hour.trim().isEmpty()) {
+        return null;
+    }
+    
+    try {
+        DateTimeFormatter parser = DateTimeFormatter.ofPattern("h:mm a");
+        LocalTime time = LocalTime.parse(time12Hour.trim().toUpperCase(), parser);
+        
+        return time.format(DateTimeFormatter.ofPattern("HH:mm"));
+        
+    } catch (DateTimeParseException e) {
+        System.err.println("Invalid time format: " + time12Hour);
+        return null;
+    }
+}
 }
