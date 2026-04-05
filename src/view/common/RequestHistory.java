@@ -75,6 +75,7 @@ public class RequestHistory extends JPanel {
 		mainScrollPane.setBorder(null);
 
 		add(mainScrollPane, BorderLayout.CENTER);
+
 	}
 
 	public void noRequests() {
@@ -103,7 +104,7 @@ public class RequestHistory extends JPanel {
 
 		ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
 		Image scaled = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 80);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(117, 144, 156), 80);
 		requestPanel.add(pfp, gbcPfp);
 		requestPanel.revalidate();	
 		requestPanel.repaint();
@@ -127,12 +128,14 @@ public class RequestHistory extends JPanel {
 					requestPanel.add(new JLabel(requestData.get(i)) {
 						{
 							setFont(new Font("Arial", Font.BOLD, 20));
+							setForeground(new Color(150, 150, 150));
 						}
 					}, gbcInfo);
 				} else {
 					requestPanel.add(new JLabel(requestData.get(i)) {
 						{
-							setFont(new Font("Arial", Font.BOLD, 15));
+							setFont(new Font("Arial", Font.PLAIN, 15));
+							setForeground(new Color(150, 150, 150));
 						}
 					}, gbcInfo);
 				}
@@ -147,6 +150,7 @@ public class RequestHistory extends JPanel {
 		requestPanel.add(new JLabel("ROOM CODE") {
 			{
 				setFont(new Font("Arial", Font.BOLD, 12));
+				setForeground(new Color(150, 150, 150));
 			}
 		}, gbcRoomCode);
 
@@ -158,6 +162,7 @@ public class RequestHistory extends JPanel {
 		requestPanel.add(new JLabel(requestData.get(5)) {
 			{
 				setFont(new Font("Arial", Font.BOLD, 12));
+				setForeground(new Color(91, 112, 121));
 			}
 		}, gbcRoomData);
 
@@ -169,6 +174,7 @@ public class RequestHistory extends JPanel {
 		requestPanel.add(new JLabel("TIME") {
 			{
 				setFont(new Font("Arial", Font.BOLD, 12));
+				setForeground(new Color(150, 150, 150));
 			}
 		}, gbcTimeLabel);
 
@@ -180,10 +186,11 @@ public class RequestHistory extends JPanel {
 		requestPanel.add(new JLabel(requestData.get(6)) {
 			{
 				setFont(new Font("Arial", Font.BOLD, 12));
+				setForeground(new Color(91, 112, 121));
 			}
 		}, gbcTimeData);
 
-		RoundedPanel mainPanel = new RoundedPanel(60, 3, new Color(91, 112, 121), new BorderLayout());
+		RoundedPanel mainPanel = new RoundedPanel(60, 2, new Color(91, 112, 121), new BorderLayout());
 		mainPanel.setOpaque(false);
 		mainPanel.setBackground(new Color(243, 244, 247));
 		mainPanel.setPreferredSize(new Dimension(400, 250));
