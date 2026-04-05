@@ -34,7 +34,7 @@ public class LoginController {
     }
 
     //
-     public static void clearLoginFields() {
+    public static void clearLoginFields() {
         if (loginView != null) {
             loginView.clearFields();
         }
