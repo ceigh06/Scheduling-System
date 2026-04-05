@@ -170,6 +170,7 @@ public class ControlNotifs extends JPanel {
                         confirmArea.setBtn2Color(new Color(255, 100, 100));
 
                         formsPanel.add(confirmArea.getConfirmPanel());
+                        
                 }
 
                 formsPanel.revalidate();

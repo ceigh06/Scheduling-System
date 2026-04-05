@@ -50,17 +50,18 @@ public class RequestsController {
             String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
+            if (status.equalsIgnoreCase("pending")) {
+                page.setOnCancelClicked(e -> {
+                    new RequestScheduleDAO().archive(requestKey);
+                    NotificationMessage notif = new NotificationMessage("", "Request Cancelled");
+                    MainFrame.addContentPanel(notif, "NotificationMessage");
+                    MainFrame.showPanel("NotificationMessage");
+                });
 
-            page.setOnCancelClicked(e -> {
-                new RequestScheduleDAO().archive(requestKey);
-                NotificationMessage notif = new NotificationMessage("", "Request Cancelled");
-                MainFrame.addContentPanel(notif, "NotificationMessage");
-                MainFrame.showPanel("NotificationMessage");
-            });
-
-            page.setOnBackClicked(e -> {
-                MainFrame.showPanel("StudentLanding");
-            });
+                page.setOnBackClicked(e -> {
+                    MainFrame.showPanel("StudentLanding");
+                });
+            }
 
             panel = page;
         }
