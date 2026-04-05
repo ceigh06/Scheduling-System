@@ -109,9 +109,7 @@ public class BrowseBuilding extends JPanel {
         if (viewArchives) {
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);
-
-            MainFrame.setNavBarVisible(true);
-
+            
             wrapper = new JPanel();
             wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
             wrapper.setBackground(Color.WHITE);

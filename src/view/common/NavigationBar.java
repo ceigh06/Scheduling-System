@@ -65,11 +65,13 @@ public class NavigationBar {
         addPanel(pfPanel, 3);
     }
 
+    //for admin 
     public NavigationBar(JFrame frame, User user) {
         this.currentUser = user;
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
-        navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
+        navPanel.setBorder(BorderFactory.createEmptyBorder(5, 1, 5, 1));
+
         navPanel.setBackground(Color.WHITE);
 
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
@@ -80,7 +82,7 @@ public class NavigationBar {
 
         addPanel(homePanel, 0);
         addPanel(browsePanel, 1);
-        addPanel(reqPanel, 2);
+        addPanel(archPanel, 2); // Admin doesn't have requests, so we add archive instead
         addPanel(pfPanel, 3);
     }
 
