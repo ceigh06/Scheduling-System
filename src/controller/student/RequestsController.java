@@ -16,6 +16,7 @@ import service.RequestValidatorService;
 import service.SectionRequestValidator;
 import view.common.ControlNotifs;
 import view.common.MainFrame;
+import view.common.NavigationBar;
 import view.common.NotificationMessage;
 
 public class RequestsController {
@@ -50,6 +51,7 @@ public class RequestsController {
             String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
+
             if (status.equalsIgnoreCase("pending")) {
                 page.setOnCancelClicked(e -> {
                     new RequestScheduleDAO().archive(requestKey);
@@ -62,7 +64,8 @@ public class RequestsController {
                     MainFrame.showPanel("StudentLanding");
                 });
             }
-
+            StudentController.setHasHistoryNotification(true);
+            StudentController.setHasRequestNotification(false);
             panel = page;
         }
 
@@ -71,12 +74,14 @@ public class RequestsController {
             NotificationMessage notifPage = new NotificationMessage("",
                     "Your section has a pending request.");
             panel = notifPage;
+            StudentController.setHasRequestNotification(false);
         }
 
         else {
             System.out.println(SectionRequestValidator.getLastUsedRequestKey());
             System.out.println(status);
             NotificationMessage page = new NotificationMessage("", "Your section has no pending request.");
+            StudentController.setHasRequestNotification(true);
             panel = page;
         }
 

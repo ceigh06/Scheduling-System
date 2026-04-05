@@ -79,6 +79,13 @@ public class MainFrame {
         frame.repaint();
     }
 
+    public static void setNotificationIcon(User user, String iconPath) {
+        navBar.setNotificationIcon(iconPath);
+        navBar.rebuildForUser(user);
+        frame.revalidate();
+        frame.repaint();
+    }
+
     public static JFrame getFrame() {
         return frame;
     }

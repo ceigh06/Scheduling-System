@@ -22,6 +22,7 @@ public class NavigationBar {
     private JPanel navPanel;
     private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, archPanel, pfPanel;
     private User currentUser;
+    private String notificationIconPath = "/resources/images/icons/Notification.png";
 
     public RoundedPanel getSelectedPanel() { // still not sure what is the purpose of this
         return selectedPanel;
@@ -55,7 +56,7 @@ public class NavigationBar {
 
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
-        reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+        reqPanel = createOption(notificationIconPath, "Requests");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
         addPanel(homePanel, 0);
@@ -91,7 +92,7 @@ public class NavigationBar {
         // Recreate panels fresh
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
         browsePanel = createOption("/resources/images/icons/Rooms.png", "Browse");
-        reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+        reqPanel = createOption(notificationIconPath, "Requests");
         archPanel = createOption("/resources/images/icons/Archive.png", "Archive");
         pfPanel = createOption("/resources/images/icons/Profile.png", "Profile");
 
@@ -104,7 +105,7 @@ public class NavigationBar {
             addPanelWithWeight(archPanel, 2, 1.0);
             addPanelWithWeight(pfPanel, 3, 1.0);
         } else {
-            reqPanel = createOption("/resources/images/icons/Notification.png", "Requests");
+            reqPanel = createOption(notificationIconPath, "Requests");
             addPanelWithWeight(homePanel, 0, 1.0);
             addPanelWithWeight(browsePanel, 1, 1.0);
             addPanelWithWeight(reqPanel, 2, 1.0);
@@ -217,6 +218,10 @@ public class NavigationBar {
 
     public JPanel getNavBar() {
         return navPanel;
+    }
+
+    public void setNotificationIcon(String path) {
+        notificationIconPath = path;
     }
 
 }

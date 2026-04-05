@@ -17,6 +17,8 @@ import view.landing.Landing;
 public class StudentController {
 
     User user;
+    private static boolean hasRequestNotification = false;
+    private static boolean hasHistoryNotification = false;
 
     public StudentController(User user) throws SQLException {
         this.user = user;
@@ -28,7 +30,23 @@ public class StudentController {
         Student student = new Student();
         MainFrame.setIconType(student);
         TitleHeader.addIconToHeader();
+
+        if(hasRequestNotification) {
+            MainFrame.setNotificationIcon(user, "/resources/images/icons/Alternate Notification.png");
+        }
+        else {
+            MainFrame.setNotificationIcon(user, "/resources/images/icons/Notification.png");
+        }
+
+        if(hasHistoryNotification) {
+            //set path to with red dot
+        }
+        else {
+            //set path default
+        }
+        //mainframe method inside if blocks to setnavbar button icon
         MainFrame.setNavBarVisible(true);
+
 
         landing.setOnSearchAction(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -62,6 +80,7 @@ public class StudentController {
         MainFrame.setOnRequestPanel(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                hasRequestNotification = false;
                 onRequestClicked();
             }
         });
@@ -104,5 +123,13 @@ public class StudentController {
 
     public void onRequestHistoryClicked() {
         new RequestHistoryController(user);
+    }
+
+    public static void setHasHistoryNotification(boolean status) {
+        hasRequestNotification = status;
+    }
+
+    public static void setHasRequestNotification(boolean status) {
+        hasRequestNotification = status;
     }
 }
