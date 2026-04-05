@@ -1,10 +1,17 @@
+
 package view.admin;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
@@ -19,6 +26,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import org.jfree.chart.JFreeChart;
@@ -38,6 +46,7 @@ import dao.schedule.RequestScheduleDAO;
 import view.common.RequestHistory;
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;
+import view.components.ScrollBarHelper;
 
 public class Report3 extends JPanel {
 
@@ -360,33 +369,10 @@ public class Report3 extends JPanel {
         visualTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         topPanel.add(titleLabel);
-        topPanel.add(Box.createVerticalStrut(5));
+        topPanel.add(Box.createVerticalStrut(1));
         topPanel.add(weekSpan);
-        topPanel.add(Box.createVerticalStrut(5));
+        topPanel.add(Box.createVerticalStrut(1));
         topPanel.add(visualTitle);
-        
-        add(topPanel, BorderLayout.NORTH); 
-
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(Color.WHITE);
-
-        // add here the heatmap components, this is for testing purposes only 
-        contentPanel.add(Box.createVerticalStrut(5));
-        contentPanel.add(createHeatMap());
-        contentPanel.add(Box.createVerticalStrut(10));
-
-        JLabel lineChartLbl = new JLabel("Time-of-Day Requests");
-        lineChartLbl.setAlignmentX(CENTER_ALIGNMENT);
-        lineChartLbl.setFont(new Font("Segoe UI", Font.BOLD, 16));
-
-        String[] date = { "22", "23", "24", "25", "26", "27" };
-	    //BACKEND TO DO/NOTE: always limit the date to 6 lang kasi here naka 
-	    //depend kung gano kadami mag aappear sa calendar
-	    String[] day = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-
-        JPanel calendar = new JPanel(new GridLayout(1, date.length, 10, 0));
-        calendar.setBackground(Color.RED); //test line, remove later, para lang kita mo saan ilalagay
 
         return topPanel;
     }
@@ -413,52 +399,16 @@ public class Report3 extends JPanel {
             colorBox.setBackground(new Color(91, 112, 121, alpha));
             colorBox.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        // ELDREI TO DO: Implement logic to populate the calendar with actual dates and corresponding data from the database, 
-        // and make the calendar interactive (clickable dates that show detailed info)
-        // this is not visible YET because the logic to populate the calendar with actual data from the database is not yet implemented
-        // and the spaces are different based on the size of your charts 
-
-        for (int i = 0; i < date.length; i++) {
-	        RoundedPanel clickableDate = new RoundedPanel(55, 5, Color.BLACK);
-	        clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
-	        clickableDate.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-	        clickableDate.setPreferredSize(new Dimension(350, 75));
-
-	        JLabel dateLabel = new JLabel(date[i], SwingConstants.CENTER);
-	        RoundedLabel roundedDate = new RoundedLabel(dateLabel, 0, Color.WHITE, 35);
-	        roundedDate.setBackground(Color.WHITE);
-	        roundedDate.setPreferredSize(new Dimension(33, 35));
-	        roundedDate.setMaximumSize(new Dimension(33, 35));
-	        roundedDate.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-	        JLabel dayLabel = new JLabel(day[i], SwingConstants.CENTER);
-	        dayLabel.setFont(new Font("Arial", Font.BOLD, 12));
-	        dayLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-	        clickableDate.add(Box.createVerticalStrut(3));
-	        clickableDate.add(roundedDate);
-	        clickableDate.add(Box.createVerticalStrut(10));
-	        clickableDate.add(dayLabel);
-
-	        clickableDate.setBackground(new Color(221, 221, 219));
-	        clickableDate.setOpaque(false);    
+            JLabel rangeLabel = new JLabel(labels[i]);
+            rangeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            legendPanel.add(colorBox);
+            legendPanel.add(rangeLabel);
 
             if (i < range.length - 1) {
                 legendPanel.add(Box.createHorizontalStrut(10));
             }
         }
-
-        contentPanel.add(Box.createVerticalStrut(5));
-        contentPanel.add(lineChartLbl);
-        contentPanel.add(Box.createVerticalStrut(5));
-        contentPanel.add(calendar);  //why is this not fucking working 
-        contentPanel.add(Box.createVerticalStrut(5));
-        contentPanel.add(createLineGraph());
-        contentPanel.add(Box.createVerticalStrut(5));
-        
-
-        add(contentPanel, BorderLayout.CENTER);
-
+        return legendPanel;
     }
 
     public String getPeakTimeSlotOfWeek() {

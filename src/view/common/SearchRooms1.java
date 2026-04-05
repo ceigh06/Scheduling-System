@@ -80,7 +80,7 @@ public class SearchRooms1 extends JPanel {
 		// container for building choices
 		buildingContainer = new JPanel();
 		buildingContainer.setLayout(new GridLayout(0, 1, 5, 5));
-		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 0)); 
+		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 0));
 		buildingContainer.setOpaque(false);
 
 		// scrollpane for buildings
@@ -102,7 +102,7 @@ public class SearchRooms1 extends JPanel {
 		form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
 		form.setBorder(BorderFactory.createEmptyBorder(0, 15, 5, 15));
 		form.setPreferredSize(new Dimension(400, 400)); // or whatever height you need
-		form.setMaximumSize(new Dimension(400, Integer.MAX_VALUE)); 
+		form.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
 		// time in
 		timeInLbl = new JLabel("TIME IN");
 		timeInLbl.setFont(new Font("Arial", Font.BOLD, 20));
@@ -149,7 +149,7 @@ public class SearchRooms1 extends JPanel {
 
 		// more filters clickable label
 		clickFilter = new JLabel("More Filters");
-		clickFilter.setForeground(new Color(91, 112, 121));	
+		clickFilter.setForeground(new Color(91, 112, 121));
 		clickFilter.setFont(new Font("Arial", Font.PLAIN, 13));
 		clickFilter.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		Font font = clickFilter.getFont();
@@ -159,7 +159,7 @@ public class SearchRooms1 extends JPanel {
 
 		form.add(comboPanel);
 		// i added the click filter here
-		showSectionCombo(true);
+		showSectionCombo(user.getUserType().equals("Faculty"));
 		form.add(clickFilter);
 		// end of default look--------------------------------------------------
 
@@ -175,11 +175,11 @@ public class SearchRooms1 extends JPanel {
 		clicked.setAlignmentX(LEFT_ALIGNMENT);
 		clicked.setVisible(false);
 
-		JPanel filterWrapper = new JPanel(new GridLayout(2,2, 40, 5));
+		JPanel filterWrapper = new JPanel(new GridLayout(2, 2, 40, 5));
 		filterWrapper.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
-		//MODIFIED --START
-		// FLOOR LEVEL 
+		// MODIFIED --START
+		// FLOOR LEVEL
 		floorLbl = new JLabel("FLOOR LEVEL");
 		floorLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		floorLbl.setAlignmentX(LEFT_ALIGNMENT);
@@ -202,19 +202,19 @@ public class SearchRooms1 extends JPanel {
 		cap.setAlignmentX(LEFT_ALIGNMENT);
 
 		filterWrapper.add(floorLbl);
-		filterWrapper.add(capLbl);		
+		filterWrapper.add(capLbl);
 		filterWrapper.add(input);
 		filterWrapper.add(cap);
 		clicked.add(filterWrapper);
-    	moreFilter.add(clicked, BorderLayout.NORTH);
-    	//MODIFIED 
+		moreFilter.add(clicked, BorderLayout.NORTH);
+		// MODIFIED
 
 		// buttons below
 		btnPanel = new JPanel();
 		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search",
 				new Color(91, 112, 121), 2,
 				new Color(91, 112, 121), 2);
-				confirmArea.setBackground(null);
+		confirmArea.setBackground(null);
 		btnPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
 
 		moreFilter.add(btnPanel, BorderLayout.SOUTH);
@@ -224,7 +224,7 @@ public class SearchRooms1 extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				clicked.setVisible(!clicked.isVisible());
 				toggle = toggleFilters();
-				
+
 				// Revalidate only the necessary panels
 				SwingUtilities.invokeLater(() -> {
 					moreFilter.revalidate();
@@ -232,52 +232,53 @@ public class SearchRooms1 extends JPanel {
 				});
 			}
 		});
-//NEW PANEL --START
+		// NEW PANEL --START
 		mainWrapper = new JPanel(new BorderLayout());
 		mainWrapper.setPreferredSize(new Dimension(420, 760));
 		mainWrapper.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		mainWrapper.add(selectionWrapper, BorderLayout.NORTH);
 		mainWrapper.add(form, BorderLayout.CENTER);
 		mainWrapper.add(moreFilter, BorderLayout.SOUTH);
-		
+
 		JScrollPane mainScrollPane = new JScrollPane(mainWrapper);
 		mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//		mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); 
-		ScrollBarHelper.applySlimScrollBar(mainScrollPane,10, 30, Color.GRAY, Color.LIGHT_GRAY);
+		// mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+		ScrollBarHelper.applySlimScrollBar(mainScrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
 		add(mainScrollPane);
 		// END
 
 	}
 
-public void showSectionCombo(boolean isFaculty) {
-    selectSection = new JLabel("SELECT SECTION");
-    selectSection.setFont(new Font("Arial", Font.BOLD, 20));
-    selectSection.setForeground(new Color(91, 112, 121));
-    selectSection.setAlignmentX(LEFT_ALIGNMENT);
-    
-    if (isFaculty) {
-        // Add vertical spacing
-        form.add(Box.createVerticalStrut(10));
-        // Add the section label
-        form.add(selectSection);
-        form.add(Box.createVerticalStrut(5));
-        
-        // Create wrapper panel for section combo (same structure as course combo)
-        JPanel sectionComboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        sectionComboPanel.setAlignmentX(LEFT_ALIGNMENT);
-        sectionComboPanel.setOpaque(false); // Match course combo panel styling
-        
-        // Configure section combo styling to match course combo
-        sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
-        sectionCombo.setPreferredSize(new Dimension(372, 25));
-		sectionCombo.setMaximumSize(new Dimension(372, 25));
-        
-        sectionComboPanel.add(sectionCombo);
-        form.add(sectionComboPanel);
-        
-    }
-}
+	public void showSectionCombo(boolean isFaculty) {
+		selectSection = new JLabel("SELECT SECTION");
+		selectSection.setFont(new Font("Arial", Font.BOLD, 20));
+		selectSection.setForeground(new Color(91, 112, 121));
+		selectSection.setAlignmentX(LEFT_ALIGNMENT);
+
+		if (isFaculty) {
+			// Add vertical spacing
+			form.add(Box.createVerticalStrut(10));
+			// Add the section label
+			form.add(selectSection);
+			form.add(Box.createVerticalStrut(5));
+
+			// Create wrapper panel for section combo (same structure as course combo)
+			JPanel sectionComboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			sectionComboPanel.setAlignmentX(LEFT_ALIGNMENT);
+			sectionComboPanel.setOpaque(false); // Match course combo panel styling
+
+			// Configure section combo styling to match course combo
+			sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
+			sectionCombo.setPreferredSize(new Dimension(372, 25));
+			sectionCombo.setMaximumSize(new Dimension(372, 25));
+
+			sectionComboPanel.add(sectionCombo);
+			form.add(sectionComboPanel);
+
+		}
+	}
+
 	private JPanel timePanel() {
 		// container ni extended form
 		JPanel container = new JPanel();
@@ -357,12 +358,20 @@ public void showSectionCombo(boolean isFaculty) {
 
 	// load data from database to components
 	public void loadCourse(List<Course> courses) {
+		ActionListener[] listeners = courseCombo.getActionListeners();
+		for (ActionListener al : listeners)
+			courseCombo.removeActionListener(al);
+
 		for (Course course : courses) {
 			courseCombo.addItem(course);
 		}
+
+		for (ActionListener al : listeners)
+			courseCombo.addActionListener(al);
 	}
 
 	public void loadSection(List<Section> sections) {
+		System.out.println("view.loadSection called, size: " + sections.size());
 		sectionCombo.removeAllItems();
 		for (Section section : sections) {
 			sectionCombo.addItem(section);
@@ -478,5 +487,12 @@ public void showSectionCombo(boolean isFaculty) {
 
 	public void setOnConfirmButton(ActionListener action) {
 		confirmArea.setBtn2Action(action);
+	}
+
+	public void setOnCourseChanged(ActionListener action) {
+		for (ActionListener al : courseCombo.getActionListeners()) {
+			courseCombo.removeActionListener(al);
+		}
+		courseCombo.addActionListener(action);
 	}
 }

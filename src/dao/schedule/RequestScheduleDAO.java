@@ -441,6 +441,47 @@ public class RequestScheduleDAO {
         return false;
     }
 
+    public static boolean unarchiveStudentSchedule(
+            String roomCode,
+            String courseCode,
+            String studentNumber,
+            String sectionKey,
+            String facultyID,
+            String timeIn,
+            String timeOut,
+            String scheduledDay) {
+
+        String sql = "UPDATE RequestSchedule "
+                + "SET IsArchived = 0 "
+                + "WHERE RoomCode = ? "
+                + "AND CourseCode = ? "
+                + "AND StudentNumber = ? "
+                + "AND SectionKey = ? "
+                + "AND FacultyID = ? "
+                + "AND TimeIn = ? "
+                + "AND TimeOut = ? "
+                + "AND ScheduledDay = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, roomCode);
+            stmt.setString(2, courseCode);
+            stmt.setString(3, studentNumber);
+            stmt.setString(4, sectionKey);
+            stmt.setString(5, facultyID);
+            stmt.setString(6, timeIn);
+            stmt.setString(7, timeOut);
+            stmt.setString(8, scheduledDay);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public RequestSchedule getBySchedule(Schedule sched) {
         try {
             PreparedStatement stmt = connection.prepareStatement(
@@ -504,43 +545,6 @@ public class RequestScheduleDAO {
         }
     }
 
-<<<<<<< HEAD
-    public List<RequestSchedule> getAllActiveRequests() {
-        List<RequestSchedule> requests = new ArrayList<>();
-
-        String sql = "SELECT * FROM RequestSchedule WHERE IsArchived = 0";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet set = stmt.executeQuery();
-
-            while (set.next()) {
-                RequestSchedule req = new RequestSchedule();
-
-                req.load(
-                        set.getInt("RequestKey"),
-                        set.getString("RoomCode"),
-                        set.getString("SectionKey"),
-                        set.getString("CourseCode"),
-                        set.getString("FacultyID"),
-                        set.getString("TimeIn"),
-                        set.getString("TimeOut"),
-                        set.getString("ScheduledDay"),
-                        String.valueOf(set.getInt("Status")),
-                        set.getInt("IsArchived"),
-                        set.getString("DateRequested"),
-                        set.getString("StudentNumber")
-                );
-
-                requests.add(req);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return requests;
-    }
-=======
     public double[][] getWeeklyTimeSlotData() throws SQLException {
         double[][] data = new double[6][6]; // 6 days × 6 time slots
 
@@ -630,7 +634,7 @@ public class RequestScheduleDAO {
     return counts;
 }
 
-private String convertDay(String abbrev) {
+private static String convertDay(String abbrev) {
     switch (abbrev) {
         case "Mon": return "Monday";
         case "Tue": return "Tuesday";
@@ -642,5 +646,42 @@ private String convertDay(String abbrev) {
     }
 }
 
->>>>>>> e68d124ab622b8fe2fa9086798dee0cd663a8ee6
+public static List<Schedule> getSchedulesByDay(String day) throws SQLException {
+    List<Schedule> schedules = new ArrayList<>();
+
+   
+    String fullDay = convertDay(day);
+
+    String sql = "SELECT * FROM RequestSchedule WHERE ScheduledDay = ? AND IsArchived = 1";
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setString(1, fullDay);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            RequestSchedule sched = new RequestSchedule();
+            sched.load(
+                rs.getInt("RequestKey"),
+                rs.getString("RoomCode"),
+                rs.getString("SectionKey"),
+                rs.getString("CourseCode"),
+                rs.getString("FacultyID"),
+                rs.getString("TimeIn"),
+                rs.getString("TimeOut"),
+                fullDay,
+                rs.getString("Status"),
+                rs.getInt("IsArchived"),
+                rs.getString("DateRequested"),
+                rs.getString("StudentNumber")
+            );
+            schedules.add(sched);
+        }
+    }
+
+    return schedules;
+}
+
 }

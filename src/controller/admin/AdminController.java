@@ -100,10 +100,6 @@ public class AdminController {
         
         if (report3 == null) {
             ReportThreeController reportThreeController = new ReportThreeController();
-<<<<<<< HEAD
-            reportThreeController.loadData();
-=======
->>>>>>> e68d124ab622b8fe2fa9086798dee0cd663a8ee6
             reportThreeController.initView();
             report3 = reportThreeController.getView();
             MainFrame.addContentPanel(report3, "Report3");

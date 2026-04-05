@@ -62,7 +62,6 @@ public class CourseDAO {
                 course.setUnits(set.getInt("Units"));
                 course.setMajor((set.getString("IsMajor").equals("1") ? true : false));
                 course.setIsArchived((set.getString("IsArchived").equals("1") ? true : false ));
-                course.setSection(set.getInt("SectionKey"));
                 courses.add(course);
             }
 
