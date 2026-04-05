@@ -2,8 +2,13 @@ package controller.shared;
 
 import controller.login.LoginController;
 import dao.FacultyDAO;
+import dao.LookUpDAO;
 import dao.StudentDAO;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
@@ -21,14 +26,23 @@ public class ProfileController {
         this.user = user;
         viewProfile = new ViewProfile();
         String registeredUser = user.getUserType();
+        LookUpDAO lookUp = new LookUpDAO();
         switch (registeredUser) {
             case "Student":
+                List<String> dataStudent = new ArrayList<>();
                 Student student = new StudentDAO().get(user.getUserID());
-                viewProfile.loadUser(student);
+                dataStudent.add(lookUp.getFullStudentName(student.getStudentID()));
+                dataStudent.add(lookUp.getFullCollege(student.getStudentID()));
+                dataStudent.add(lookUp.getFullProgramName(student.getStudentID()));
+                dataStudent.add(lookUp.getFullSectionName(student.getSectionKey()));
+                viewProfile.loadUser(student, dataStudent);
                 break;
             case "Faculty":
+                List<String> dataFaculty = new ArrayList<>();
                 Faculty faculty = new FacultyDAO().get(user.getUserID());
-                viewProfile.loadUser(faculty);
+                dataFaculty.add(lookUp.getFullFacultyName(faculty.getFacultyID()));
+                dataFaculty.add(lookUp.getFullCollegeFaculty(faculty.getCollegeCode()));
+                viewProfile.loadUser(faculty, dataFaculty);
                 break;
             case "Admin":
                 break;
