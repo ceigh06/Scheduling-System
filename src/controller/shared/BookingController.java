@@ -101,6 +101,7 @@ public class BookingController {
         viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
         attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
         // attaches form listeners
+        handleTimeChange(viewSchedule);
 
         if (user.getUserType().equals("Faculty")) {
             List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
