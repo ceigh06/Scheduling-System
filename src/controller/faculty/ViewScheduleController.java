@@ -9,7 +9,6 @@ import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
-import model.user.Faculty;
 import model.user.User;
 import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
@@ -84,16 +83,9 @@ public class ViewScheduleController {
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
         data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
 
-        String header = "";
-        if (ScheduleValidator.isOngoing(schedule.getTimeIn(), schedule.getTimeOut())){
-            header = "On going Requested Class";
-        } else if (ScheduleValidator.isIncoming(schedule.getTimeIn())){
-            header = "Up Coming Requested Class";
-        } else{
-            header = "Past Request Schedule";
-        }
-        boolean isPast = ScheduleValidator.isPast(schedule.getTimeIn());
+        String header = getHeader(requestSchedule.getDateRequested(),schedule.getTimeIn(), schedule.getTimeOut());
 
+        boolean isPast = ScheduleValidator.isPast(requestSchedule.getDateRequested(),schedule.getTimeOut());
 
         RequestForm form = new RequestForm(data, header, "Cancel");
         form.setGoBackOnClick(e -> {
@@ -102,7 +94,11 @@ public class ViewScheduleController {
 
         if (!isPast) {
             form.setSubmitOnClick(e -> {
-                submitCancelation();
+                submitCancelation(data, header);
+            });
+        } else{
+            form.setSubmitOnClick(e ->{
+                MainFrame.setNotification("Cannot cancel past requests");
             });
         }
 
@@ -110,7 +106,20 @@ public class ViewScheduleController {
         MainFrame.showPanel("Form");
     }
 
-    void submitCancelation(){
+    private String getHeader(String date, String timeIn, String timeOut) {
+    if (ScheduleValidator.isOngoing(date, timeIn, timeOut)) {
+        return "On going Requested Class";
+    } else if (ScheduleValidator.isIncoming(date, timeIn)) {
+        return "Up Coming Requested Class";
+    } else {
+        return "Past Request Schedule";
+    }
+}
+
+    void submitCancelation(List<String> data, String header) {
+        RequestForm form = new RequestForm(data, header, "Cancel");
+        MainFrame.addContentPanel(form, "Form");
+        MainFrame.showPanel("Form");
 
     }
 
