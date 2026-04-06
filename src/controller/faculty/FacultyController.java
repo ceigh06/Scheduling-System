@@ -3,6 +3,8 @@ package controller.faculty;
 import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
+import controller.student.RequestHistoryController;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -68,6 +70,13 @@ public class FacultyController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 onProfileClicked();
+            }
+        });
+
+        MainFrame.setOnViewSchedulePanel(user, new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new ViewScheduleController(user);
             }
         });
     }

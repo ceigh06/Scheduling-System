@@ -103,7 +103,7 @@ public class MainFrame {
     }
     
     //(Faculty-side) View my Schedule
-    public static void setOnViewSchedulePanel(Faculty user, MouseAdapter action) {
+    public static void setOnViewSchedulePanel(User user, MouseAdapter action) {
         titleHeader = new TitleHeader();
         titleHeader.setOnViewSchedulePanel(user, action);
     }
