@@ -18,9 +18,9 @@ public class RequestHistoryController {
     User user;
 
     public RequestHistoryController(User user) {
+        MainFrame.restoreNavBarDefaultState();
         this.user = user;
         showRequestHistory();
-
     }
 
     void showRequestHistory() {

@@ -65,7 +65,7 @@ public class NavigationBar {
         addPanel(pfPanel, 3);
     }
 
-    //for admin 
+    // for admin
     public NavigationBar(JFrame frame, User user) {
         this.currentUser = user;
         navPanel = new JPanel(new GridBagLayout());
@@ -194,25 +194,20 @@ public class NavigationBar {
     }
 
     public void resetToDefault() {
+        if (selectedPanel == null)
+            return;
+
         GridBagLayout layout = (GridBagLayout) navPanel.getLayout();
 
-        if (selectedPanel != null) {
-            JLabel lbl = (JLabel) selectedPanel.getComponent(0);
+        // component(1) is the text label — same as mouseClicked uses
+        selectedPanel.getComponent(1).setVisible(false);
+        selectedPanel.setBackground(new Color(91, 112, 121));
 
-            String text = lbl.getText();
-            if (text != null && text.length() > 0) {
-                lbl.setText(text.substring(0, 1));
-            }
+        GridBagConstraints gbc = layout.getConstraints(selectedPanel);
+        gbc.weightx = 1;
+        layout.setConstraints(selectedPanel, gbc);
 
-            lbl.setForeground(Color.WHITE);
-            selectedPanel.setBackground(new Color(91, 112, 121));
-
-            GridBagConstraints gbc = layout.getConstraints(selectedPanel);
-            gbc.weightx = 1;
-            layout.setConstraints(selectedPanel, gbc);
-
-            selectedPanel = null;
-        }
+        selectedPanel = null;
 
         navPanel.revalidate();
         navPanel.repaint();

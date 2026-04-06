@@ -4,6 +4,7 @@ import controller.shared.BookingController;
 import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
+import controller.shared.ViewScheduleController;
 import controller.student.RequestHistoryController;
 import dao.schedule.RequestScheduleDAO;
 

@@ -37,7 +37,7 @@ public class RequestsController {
         Student student = new StudentDAO().get(user.getUserID());
         RequestSchedule rs = new RequestScheduleDAO().getRequestSchedule(requestKey);
 
-        if (rs == null || rs.getDateRequested() == null) {
+        if (status.equalsIgnoreCase("standby")) {
             System.out.println(SectionRequestValidator.getLastUsedRequestKey());
             System.out.println(status);
             NotificationMessage page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png",
@@ -71,6 +71,7 @@ public class RequestsController {
 
                 page.setOnBackClicked(e -> {
                     MainFrame.showPanel("Landing", "RoomMate");
+                    MainFrame.restoreNavBarDefaultState();
                 });
             }
 

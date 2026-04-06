@@ -1,16 +1,16 @@
-package controller.faculty;
+package controller.shared;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import controller.admin.ArchiveController;
 import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
-import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RequestForm;
@@ -22,7 +22,7 @@ public class ViewScheduleController {
     User user;
     ViewSchedule view;
 
-    ViewScheduleController(User user) {
+    public ViewScheduleController(User user) {
         this.user = user;
 
         String today = DateTimeBuilder.getDayName().substring(0, 3);
@@ -40,19 +40,53 @@ public class ViewScheduleController {
 
         // controller handles schedule block clicks
         view.setOnScheduleClicked(schedule -> {
-            showSchedule(schedule);
+            try {
+                showSchedule(schedule);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
 
         MainFrame.addContentPanel(view, "ViewSchedule");
         MainFrame.showPanel("ViewSchedule");
     }
 
-    void showSchedule(Schedule schedule) {
+    public ViewScheduleController(User user, Room selectedRoom) {
+        this.user = user;
+
+        String today = DateTimeBuilder.getDayName().substring(0, 3);
+
+        // empty list on construction — reloadSchedule fills it
+        view = new ViewSchedule(new ArrayList<>());
+
+        // load today's schedule immediately
+        loadScheduleForDay(today);
+
+        // controller handles day clicks
+        view.setOnDayClicked(day -> {
+            loadScheduleForDay(day);
+        });
+
+        // controller handles schedule block clicks
+        view.setOnScheduleClicked(schedule -> {
+            try {
+                showSchedule(schedule);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+        MainFrame.addContentPanel(view, "ViewSchedule");
+        MainFrame.showPanel("ViewSchedule", "Schedule");
+    }
+
+    void showSchedule(Schedule schedule) throws SQLException {
         System.out.println(schedule.getStatus());
         schedule.setTimeIn(DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()));
         schedule.setTimeOut(DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()));
-        System.out.println(schedule.getTimeIn());
-        if (schedule.getStatus().equals("3")) { // request
+        if(user.getUserType().equals("Admin")){
+            new ArchiveController(user, schedule, true);
+        } else if (schedule.getStatus().equals("3")) { // request
             showRequestSchedule(schedule);
         } else {
             ViewFacultySched view = new ViewFacultySched("Original Schedule", schedule);
@@ -62,20 +96,22 @@ public class ViewScheduleController {
                 MainFrame.showPanel("ViewSchedule");
             });
         }
+
     }
 
     void showRequestSchedule(Schedule schedule) {
         RequestScheduleDAO dao = new RequestScheduleDAO();
         RequestSchedule requestSchedule = dao.getById(schedule.getID());
 
-        requestSchedule.setTimeIn(DateTimeBuilder.formatTo12Hour(requestSchedule.getTimeIn()));
-        requestSchedule.setTimeOut(DateTimeBuilder.formatTo12Hour(requestSchedule.getTimeOut()));
-
         LookUpDAO lookUp = new LookUpDAO();
         List<String> data = new ArrayList<>();
-        System.out.println("time in" + requestSchedule.getTimeIn());
+        System.out.println(requestSchedule.getTimeIn());
         data.add(requestSchedule.getStudentRequested());
-        data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
+        if (user.getUserType().equalsIgnoreCase("student")) {
+            data.add(lookUp.getFullStudentName(requestSchedule.getStudentRequested()));
+        } else {
+            data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
+        }
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
         data.add(String.valueOf(requestSchedule.getTimeIn()));
@@ -126,11 +162,17 @@ public class ViewScheduleController {
     private void loadScheduleForDay(String day) {
         try {
             ScheduleDAO dao = new ScheduleDAO();
-            List<Schedule> schedules = dao.getFacultySchedulesByDay(user, day);
+            List<Schedule> schedules;
+            if(user.getUserType().equals("Admin")){
+                schedules = dao.getArchivedSchedulesByDay(user, day);
+            } else {
+                schedules = dao.getFacultySchedulesByDay(user, day);
+            }
             System.out.println(schedules.isEmpty());
             view.reloadSchedule(schedules);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 }

@@ -8,7 +8,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -16,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
 import utilities.DateTimeBuilder;
@@ -173,8 +171,13 @@ public class RequestForm extends JPanel {
 
             this.section = fullSectionName;
             this.roomCode = schedule.getRoomCode();
-            this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
-            this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
+            if(viewArchives) {
+                this.timeIn = schedule.getTimeIn();
+                this.timeOut = schedule.getTimeOut();
+            } else {
+                this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
+                this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
+            }
             this.course = schedule.getCourseCode();
             this.professor = schedule.getFacultyID();
 
