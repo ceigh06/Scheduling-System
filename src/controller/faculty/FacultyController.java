@@ -1,13 +1,18 @@
 package controller.faculty;
 
+import controller.shared.BookingController;
 import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
 import controller.student.RequestHistoryController;
+import dao.schedule.RequestScheduleDAO;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.List;
+
+import model.Room;
 import model.user.Faculty;
 import model.user.User;
 import view.common.MainFrame;
@@ -23,6 +28,15 @@ public class FacultyController {
         this.user = user;
         MainFrame.setCurrentUser(user, true);
         Landing landing = new Landing();
+        List<Room> mostRequestedRooms = new RequestScheduleDAO().getMostRequestedRoomsThisWeek(5);
+        List<Room> mostAvailableRooms = new RequestScheduleDAO().getMostAvailableRooms(5);
+        landing.loadLandingContent();
+        landing.loadRooms("Most Requested Rooms This Week", mostRequestedRooms);
+        landing.loadRooms("Most Available Rooms Today", mostAvailableRooms);
+
+        landing.setOnRoomClicked(room -> {
+            new BookingController(user, room);
+        });
         MainFrame.addContentPanel(landing, "FacultyLanding");
         MainFrame.showPanel("FacultyLanding", "Faculty Page");
         Faculty faculty = new Faculty();
