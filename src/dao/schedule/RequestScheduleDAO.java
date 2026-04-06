@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
@@ -435,6 +434,7 @@ public class RequestScheduleDAO {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
+            System.out.println("Error: "+e);
             e.printStackTrace();
         }
 

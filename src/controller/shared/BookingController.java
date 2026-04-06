@@ -83,7 +83,7 @@ public class BookingController {
         if (user.getUserType().equals("Admin")) {
             viewSchedule.setOnScheduleClicked(schedule -> {
                 try {
-                    onScheduleEditClicked(schedule, selectedRoom);
+                    onScheduleEditClicked(schedule);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -189,54 +189,55 @@ public class BookingController {
 
         List<Schedule> inactiveSchedules = scheduleDAO
                 .filterInactiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
+        
         selectedRoom.loadSchedules(inactiveSchedules); // schedules for room
+        new ViewScheduleController(user, selectedRoom);
 
-        // doesnt catch if the courses is null.
+        // // doesnt catch if the courses is null.
 
-        ViewSchedule viewSchedule = new ViewSchedule(selectedRoom, viewArchives);
-        viewSchedule.loadClassSchedule(selectedRoom, viewArchives);
+        // ViewSchedule viewSchedule = new ViewSchedule(selectedRoom, viewArchives);
+        // viewSchedule.loadClassSchedule(selectedRoom, viewArchives);
 
-        if (user.getUserType().equals("Admin")) {
-            viewSchedule.setOnScheduleClicked(schedule -> {
-                try {
-                    onScheduleClicked(schedule, selectedRoom, viewArchives);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
+        // if (user.getUserType().equals("Admin")) {
+        //     viewSchedule.setOnScheduleClicked(schedule -> {
+        //         try {
+        //             onScheduleClicked(schedule, selectedRoom, viewArchives);
+        //         } catch (SQLException e) {
+        //             e.printStackTrace();
+        //         }
+        //     });
 
-            viewSchedule.setOnBackClicked(e -> {
-                MainFrame.showPanel("RoomBrowser", "Browse Room");
-            });
+        //     viewSchedule.setOnBackClicked(e -> {
+        //         MainFrame.showPanel("RoomBrowser", "Browse Room");
+        //     });
 
-            MainFrame.addContentPanel(viewSchedule, "Schedule");
-            MainFrame.showPanel("Schedule", "View Schedule");
-            return;
-        }
+        //     MainFrame.addContentPanel(viewSchedule, "Schedule");
+        //     MainFrame.showPanel("Schedule", "View Schedule");
+        //     return;
+        // }
 
-        viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
-        attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
-        // attaches form listeners
+        // viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
+        // attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
+        // // attaches form listeners
 
-        if (user.getUserType().equals("Faculty")) {
-            List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-            viewSchedule.loadCourse(facultyCourses);
-            viewSchedule.loadConfirmationPanel();
-            loadSection(viewSchedule);
+        // if (user.getUserType().equals("Faculty")) {
+        //     List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+        //     viewSchedule.loadCourse(facultyCourses);
+        //     viewSchedule.loadConfirmationPanel();
 
-            viewSchedule.setOnCourseChanged(e -> {
-                loadSection(viewSchedule);
-            });
+        //     viewSchedule.setOnCourseChanged(e -> {
+        //         loadSection(viewSchedule);
+        //     });
 
-        } else if (user.getUserType().equals("Student")) {
-            List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
-            viewSchedule.loadCourse(studentCourses);
-            viewSchedule.loadConfirmationPanel();
+        // } else if (user.getUserType().equals("Student")) {
+        //     List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
+        //     viewSchedule.loadCourse(studentCourses);
+        //     viewSchedule.loadConfirmationPanel();
 
-        }
+        // }
 
-        MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule", "View Schedule");
+        // MainFrame.addContentPanel(viewSchedule, "Schedule");
+        // MainFrame.showPanel("Schedule", "View Schedule");
 
     }
 
@@ -388,13 +389,13 @@ public class BookingController {
         });
     }
 
-    public void onScheduleEditClicked(Schedule schedule, Room room) throws SQLException {
+    public void onScheduleEditClicked(Schedule schedule) throws SQLException {
 
-        new EditScheduleController(schedule, room, user);
+        new EditScheduleController(schedule, user);
     }
 
     public void onScheduleClicked(Schedule schedule, Room room, Boolean viewArchives) throws SQLException {
 
-        new ArchiveController(user, schedule, room, viewArchives);
+        new ArchiveController(user, schedule, viewArchives);
     }
 }
