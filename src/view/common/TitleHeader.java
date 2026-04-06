@@ -62,7 +62,10 @@ public class TitleHeader {
         headerButtonPanel.add(createIconLabel());
     }
 
-    public static void removeIconFromHeader() {
+    public static void removeIconFromHeader(String userType) {
+        if(userType.equalsIgnoreCase("student") || userType.equalsIgnoreCase("faculty")) {
+            headerButtonPanel.removeMouseListener(headerButtonPanel.getMouseListeners()[0]);
+        }
         headerButtonPanel.removeAll();
     }
 
