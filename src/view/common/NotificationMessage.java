@@ -179,10 +179,9 @@ public class NotificationMessage extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (user == null) {
-                MainFrame.addContentPanel(new Landing(), "Landing");
-                MainFrame.showPanel("Landing", "RoomFindr");
+                MainFrame.showPanel("Landing", "RoomMate");
             } else {
-                MainFrame.showPanel("AdminLanding", "RoomFindr");
+                MainFrame.showPanel("AdminLanding", "RoomMate");
             }
         }
 

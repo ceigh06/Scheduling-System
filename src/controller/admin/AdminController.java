@@ -25,7 +25,7 @@ public class AdminController {
         AdminLanding adminLanding = new AdminLanding();
         MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(adminLanding, "AdminLanding");
-        MainFrame.showPanel("AdminLanding", "ROOMFINDR");
+        MainFrame.showPanel("AdminLanding", "RoomMate");
         MainFrame.setNavBarVisible(true);
 
         adminLanding.setOnTotalBtn(e -> onTotalReportClicked());

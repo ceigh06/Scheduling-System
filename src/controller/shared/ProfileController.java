@@ -77,9 +77,9 @@ public class ProfileController {
 
     private void onBackClicked() throws SQLException {
         if (user.getUserType() == "Student") {
-            MainFrame.showPanel("StudentLanding");
+            MainFrame.showPanel("Landing");
         } else if (user.getUserType() == "Faculty") {
-            MainFrame.showPanel("FacultyLanding");
+            MainFrame.showPanel("Landing");
         } else if (user.getUserType() == "Admin") {
             MainFrame.showPanel("AdminLanding");
         }

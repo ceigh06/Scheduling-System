@@ -70,7 +70,7 @@ public class RequestsController {
                 });
 
                 page.setOnBackClicked(e -> {
-                    MainFrame.showPanel("StudentLanding", "RoomMate");
+                    MainFrame.showPanel("Landing", "RoomMate");
                 });
             }
 
