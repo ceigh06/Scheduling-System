@@ -55,6 +55,9 @@ public class Report1 extends JPanel {
     private int[] weeklyDeclinedArr;
     private int[] weeklyVoidArr;
 
+    // Tracks which filter is active so the correct button stays highlighted on panel rebuilds
+    private String activeFilter = "All";
+
     public JToggleButton getAllBtn() {
         return allBtn;
     }
@@ -280,29 +283,42 @@ public class Report1 extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         buttonPanel.setBackground(Color.WHITE);
 
-        allBtn = new JToggleButton("All");
+        allBtn      = new JToggleButton("All");
         approvedBtn = new JToggleButton("Approved");
         declinedBtn = new JToggleButton("Declined");
-        voidedBtn = new JToggleButton("Voided");
+        voidedBtn   = new JToggleButton("Voided");
 
         JToggleButton[] buttons = {allBtn, approvedBtn, declinedBtn, voidedBtn};
+        String[]        labels  = {"All", "Approved", "Declined", "Voided"};
 
+        // setOpaque(true) forces Swing to honour setBackground regardless of the OS look-and-feel
         for (JToggleButton btn : buttons) {
+            btn.setOpaque(true);
+            btn.setFocusPainted(false);
             btn.setBackground(Color.WHITE);
             btn.setForeground(Color.BLACK);
-            btn.setFocusPainted(false);
         }
 
-        allBtn.setSelected(true);
-        allBtn.setBackground(new Color(139, 0, 0));
-        allBtn.setForeground(Color.WHITE);
+        // Apply the selected style to whichever button matches the current activeFilter
+        for (int i = 0; i < buttons.length; i++) {
+            if (labels[i].equals(activeFilter)) {
+                buttons[i].setSelected(true);
+                buttons[i].setBackground(new Color(139, 0, 0));
+                buttons[i].setForeground(Color.WHITE);
+            }
+        }
 
         ButtonGroup group = new ButtonGroup();
-        for (JToggleButton btn : buttons) {
+        for (int i = 0; i < buttons.length; i++) {
+            final JToggleButton btn   = buttons[i];
+            final String        label = labels[i];
             group.add(btn);
             buttonPanel.add(btn);
 
             btn.addActionListener(e -> {
+                // Persist the selection so rebuilds restore the right button
+                activeFilter = label;
+
                 for (JToggleButton b : buttons) {
                     if (b.isSelected()) {
                         b.setBackground(new Color(139, 0, 0));
@@ -314,15 +330,7 @@ public class Report1 extends JPanel {
                 }
 
                 if (onFilterChanged != null) {
-                    if (btn == allBtn) {
-                        onFilterChanged.accept("All");
-                    } else if (btn == approvedBtn) {
-                        onFilterChanged.accept("Approved");
-                    } else if (btn == declinedBtn) {
-                        onFilterChanged.accept("Declined");
-                    } else if (btn == voidedBtn) {
-                        onFilterChanged.accept("Voided");
-                    }
+                    onFilterChanged.accept(label);
                 }
             });
         }

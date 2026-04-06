@@ -11,7 +11,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,10 +18,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-
+import javax.swing.SwingConstants;
 import model.user.Faculty;
 import model.user.Student;
-import view.common.ConfirmPanel;
+import model.user.User;
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;
 
@@ -139,6 +138,24 @@ public class ViewProfile extends JPanel {
 			contentLbl(dataset[i][0], dataset[i][1]);
 		}
 	}
+
+	    public void loadUser(User user) {
+        
+        JLabel adminLabel = new JLabel("ADMIN", SwingConstants.CENTER);
+        adminLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        adminLabel.setForeground(new Color(91, 112, 121));
+        adminLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+ 
+        GridBagConstraints gbcName = new GridBagConstraints();
+        gbcName.gridx = 0;
+        gbcName.gridy = 1;
+        gbcName.anchor = GridBagConstraints.CENTER;
+        gbcName.insets = new Insets(0, 0, 10, 0);
+        picPanel.add(adminLabel, gbcName);
+        picPanel.revalidate();
+        picPanel.repaint();
+ 
+    }
 
 	public void setOnBackClicked(ActionListener action) {
 		btns.setBtn1Action(action);
