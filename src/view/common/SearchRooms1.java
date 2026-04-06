@@ -433,37 +433,51 @@ public class SearchRooms1 extends JPanel {
 
 	private boolean isUpdating = false;
 
-public void setTimeIn(int hour, int minute, String meridiem) {
-    isUpdating = true;
-    timeInHrs.setValue(hour);
-    timeInMins.setValue(minute);
-    timeInMeridiem.setSelectedItem(meridiem);
-    isUpdating = false;
-}
+	public void setTimeIn(int hour, int minute, String meridiem) {
+		isUpdating = true;
+		timeInHrs.setValue(hour);
+		timeInMins.setValue(minute);
+		timeInMeridiem.setSelectedItem(meridiem);
+		isUpdating = false;
+	}
 
-public void setTimeOut(int hour, int minute, String meridiem) {
-    isUpdating = true;
-    timeOutHrs.setValue(hour);
-    timeOutMins.setValue(minute);
-    timeOutMeridiem.setSelectedItem(meridiem);
-    isUpdating = false;
-}
+	public void setTimeOut(int hour, int minute, String meridiem) {
+		isUpdating = true;
+		timeOutHrs.setValue(hour);
+		timeOutMins.setValue(minute);
+		timeOutMeridiem.setSelectedItem(meridiem);
+		isUpdating = false;
+	}
 
-public void setOnTimeInChanged(ChangeListener action) {
-    timeInHrs.addChangeListener(e -> { if (!isUpdating) action.stateChanged(e); });
-    timeInMins.addChangeListener(e -> { if (!isUpdating) action.stateChanged(e); });
-    timeInMeridiem.addActionListener(e -> {
-        if (!isUpdating) action.stateChanged(new javax.swing.event.ChangeEvent(timeInMeridiem));
-    });
-}
+	public void setOnTimeInChanged(ChangeListener action) {
+		timeInHrs.addChangeListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(e);
+		});
+		timeInMins.addChangeListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(e);
+		});
+		timeInMeridiem.addActionListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(new javax.swing.event.ChangeEvent(timeInMeridiem));
+		});
+	}
 
-public void setOnTimeOutChanged(ChangeListener action) {
-    timeOutHrs.addChangeListener(e -> { if (!isUpdating) action.stateChanged(e); });
-    timeOutMins.addChangeListener(e -> { if (!isUpdating) action.stateChanged(e); });
-    timeOutMeridiem.addActionListener(e -> {
-        if (!isUpdating) action.stateChanged(new javax.swing.event.ChangeEvent(timeOutMeridiem));
-    });
-}
+	public void setOnTimeOutChanged(ChangeListener action) {
+		timeOutHrs.addChangeListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(e);
+		});
+		timeOutMins.addChangeListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(e);
+		});
+		timeOutMeridiem.addActionListener(e -> {
+			if (!isUpdating)
+				action.stateChanged(new javax.swing.event.ChangeEvent(timeOutMeridiem));
+		});
+	}
 
 	// returns the input data to main controller
 	public List<Building> getChosenBuildings() throws SQLException {

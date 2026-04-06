@@ -99,6 +99,10 @@ public class ViewSchedule extends JPanel {
         this.onScheduleClicked = action;
     }
 
+    public void setLabEnable(boolean isEnabled) {
+        labBtn.setEnabled(isEnabled);
+    }
+
     // register of listeners
     public void setOnLecBtn(ActionListener action) {
         lecBtn.addActionListener(action);
@@ -137,8 +141,10 @@ public class ViewSchedule extends JPanel {
     }
 
     public void setOnCourseChanged(ActionListener action) {
+        for (ActionListener al : courseCombo.getActionListeners()) {
+            courseCombo.removeActionListener(al);
+        }
         courseCombo.addActionListener(action);
-        sectionCombo.removeAllItems(); // reset then load again
     }
 
     public Course getCourse() {
@@ -156,9 +162,17 @@ public class ViewSchedule extends JPanel {
     }
 
     public void loadCourse(List<Course> courses) {
+        ActionListener[] listeners = courseCombo.getActionListeners();
+        for (ActionListener al : listeners)
+            courseCombo.removeActionListener(al);
+
+        courseCombo.removeAllItems();
         for (Course course : courses) {
             courseCombo.addItem(course);
         }
+
+        for (ActionListener al : listeners)
+            courseCombo.addActionListener(al);
     }
 
     public void loadSection(List<Section> sections) {
@@ -494,7 +508,7 @@ public class ViewSchedule extends JPanel {
         spinnerPan.add(noteLabel, gbc);
     }
 
-    public void showOverlappingMessage(boolean isOverlapping){
+    public void showOverlappingMessage(boolean isOverlapping) {
         noteLabel.setVisible(isOverlapping);
     }
 
@@ -816,9 +830,8 @@ public class ViewSchedule extends JPanel {
 
     }
 
-
-    // UTILITY 
-    //BACKEND NOTE: I changed the sched type to int
+    // UTILITY
+    // BACKEND NOTE: I changed the sched type to int
     public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");
@@ -852,17 +865,16 @@ public class ViewSchedule extends JPanel {
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
         schedPanel.setForeground(Color.BLACK);
 
-        //for schedule type
-        //0 - master schedule - orange 255, 169, 62
-        //1 - request schedule - 255, 245, 157
-        //2 - pending request schedule - light gray
-        switch(schedType) {
+        // for schedule type
+        // 0 - master schedule - orange 255, 169, 62
+        // 1 - request schedule - 255, 245, 157
+        // 2 - pending request schedule - light gray
+        switch (schedType) {
             case 0 -> schedPanel.setBackground(new Color(255, 169, 62));
             case 1 -> schedPanel.setBackground(new Color(255, 245, 157));
             case 2 -> schedPanel.setBackground(new Color(227, 227, 227));
             default -> schedPanel.setBackground(new Color(227, 149, 100));
         }
-
 
         schedPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
