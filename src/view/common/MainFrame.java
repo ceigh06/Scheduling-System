@@ -63,7 +63,7 @@ public class MainFrame {
     }
 
     // Add a content panel
-    // default header is always "RoomFindr"
+    // default header is always "RoomMate"
     public static void addContentPanel(JPanel panel, String name) {
         contentPanel.add(panel, name);
     }

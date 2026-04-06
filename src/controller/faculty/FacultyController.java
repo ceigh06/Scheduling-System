@@ -37,8 +37,8 @@ public class FacultyController {
         landing.setOnRoomClicked(room -> {
             new BookingController(user, room);
         });
-        MainFrame.addContentPanel(landing, "FacultyLanding");
-        MainFrame.showPanel("FacultyLanding", "Faculty Page");
+        MainFrame.addContentPanel(landing, "Landing");
+        MainFrame.showPanel("Landing", "Faculty Page");
         Faculty faculty = new Faculty();
         MainFrame.setIconType(faculty);
         TitleHeader.addIconToHeader();
@@ -104,7 +104,7 @@ public class FacultyController {
     }
 
     public void onHomeClicked() {
-        MainFrame.showPanel("FacultyLanding", "ROOMFINDR");
+        MainFrame.showPanel("Landing", "RoomMate");
     }
 
     public void onRequestClicked() {
