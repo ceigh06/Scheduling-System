@@ -383,10 +383,9 @@ public class RequestScheduleDAO {
     public int countActiveRequests(String sectionKey, String dateToday) {
         String sql = "SELECT COUNT(*) as Requests FROM RequestSchedule "
                 + "WHERE SectionKey = ? "
-                + "AND DateRequested = ? "
+                + "AND CAST(DateRequested AS DATE) = ? " // Cast to DATE only
                 + "AND Status = 1 "
-                + // not cancelled
-                "AND IsArchived = 0";
+                + "AND IsArchived = 0";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, sectionKey);
@@ -698,7 +697,8 @@ public class RequestScheduleDAO {
                                     "FROM RequestSchedule rs JOIN Room r ON r.RoomCode = rs.RoomCode " +
                                     "WHERE rs.IsArchived = 0 " +
                                     "AND rs.DateRequested >= DATEADD(day, -7, GETDATE()) " +
-                                    "GROUP BY r.RoomCode, r.BuildingCode, r.Floor, r.Capacity, r.Status, r.IsArchived " +
+                                    "GROUP BY r.RoomCode, r.BuildingCode, r.Floor, r.Capacity, r.Status, r.IsArchived "
+                                    +
                                     "ORDER BY RequestCount DESC");
             stmt.setInt(1, limit);
             ResultSet set = stmt.executeQuery();
