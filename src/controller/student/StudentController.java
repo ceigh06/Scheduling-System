@@ -38,7 +38,7 @@ public class StudentController {
 
         MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(landing, "StudentLanding");
-        MainFrame.showPanel("StudentLanding", "Student Page");
+        MainFrame.showPanel("StudentLanding", "ROOMFINDR");
         Student student = new Student();
         MainFrame.setIconType(student);
         TitleHeader.addIconToHeader();
@@ -105,7 +105,7 @@ public class StudentController {
     }
 
     public void onHomeClicked() {
-        MainFrame.showPanel("StudentLanding");
+        MainFrame.showPanel("StudentLanding", "ROOMFINDR");
     }
 
     public void onRequestClicked() {

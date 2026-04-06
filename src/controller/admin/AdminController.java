@@ -25,7 +25,7 @@ public class AdminController {
         AdminLanding adminLanding = new AdminLanding();
         MainFrame.setCurrentUser(user, true);
         MainFrame.addContentPanel(adminLanding, "AdminLanding");
-        MainFrame.showPanel("AdminLanding", "Admin Page");
+        MainFrame.showPanel("AdminLanding", "ROOMFINDR");
         MainFrame.setNavBarVisible(true);
 
         adminLanding.setOnTotalBtn(e -> onTotalReportClicked());
@@ -82,7 +82,7 @@ public class AdminController {
            report1 = reportOneController.getView();
            MainFrame.addContentPanel(report1, "Report1");
         }
-        MainFrame.showPanel("Report1", "Total Room Requests");
+        MainFrame.showPanel("Report1", "Admin Reports");
     }
 
     public void onMostReportClicked() {
@@ -93,7 +93,7 @@ public class AdminController {
             report2 = reportTwoController.getView();
             MainFrame.addContentPanel(report2, "Report2");
         }
-        MainFrame.showPanel("Report2", "Most Requested Buildings");
+        MainFrame.showPanel("Report2", "Admin Reports");
     }
 
     public void onPeakReportClicked() throws SQLException {
@@ -104,7 +104,7 @@ public class AdminController {
             report3 = reportThreeController.getView();
             MainFrame.addContentPanel(report3, "Report3");
         }
-        MainFrame.showPanel("Report3", "Peak Scheduling Hours");
+        MainFrame.showPanel("Report3", "Admin Reports");
     }
 
     public void onBrowseClicked() throws SQLException {
