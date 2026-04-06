@@ -63,6 +63,7 @@ public class SearchRoomsController {
         }
 
         searchRooms.loadCourse(courses);
+        loadSection(searchRooms); //default values
 
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms", "Search Rooms");
@@ -72,6 +73,7 @@ public class SearchRoomsController {
         searchRooms.setOnTimeInChanged(e -> handleTimeChange(searchRooms));
         searchRooms.setOnTimeOutChanged(e -> handleTimeChange(searchRooms));
 
+        
         if (isFaculty) {
             searchRooms.setOnCourseChanged(e -> {
                 loadSection(searchRooms);
