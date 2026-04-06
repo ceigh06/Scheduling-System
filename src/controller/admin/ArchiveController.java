@@ -5,11 +5,9 @@ import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
 import java.sql.SQLException;
-import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
-import utilities.DateTimeBuilder;
 import view.common.ConfirmPanel;
 import view.common.MainFrame;
 import view.common.NotificationMessage;
@@ -18,21 +16,19 @@ import view.common.RequestForm;
 public class ArchiveController {
 
     private Schedule schedule;
-    private Room room;
     User user;
 
     public ArchiveController(User user) throws SQLException {
         new RoomsController(user, true);
     }
 
-    public ArchiveController(User user, Schedule schedule, Room room, Boolean viewArchives) throws SQLException {
+    public ArchiveController(User user, Schedule schedule, Boolean viewArchives) throws SQLException {
         this.schedule = schedule;
-        this.room = room;
         this.user = user;
         if (viewArchives) {
             showArchiveForm(schedule, user, viewArchives);
         } else {
-            new EditScheduleController(schedule, room, user);
+            new EditScheduleController(schedule, user);
         }
     }
 
@@ -61,7 +57,7 @@ public class ArchiveController {
         ConfirmPanel confirmPanel = requestForm.getReqConfirm();
 
         confirmPanel.setBtn1Action(e -> {
-            MainFrame.showPanel("Schedule");
+            MainFrame.showPanel("ViewSchedule","Unarchive Schedule");
         });
 
         confirmPanel.setBtn2Action(e -> {
@@ -75,8 +71,8 @@ public class ArchiveController {
                         requestForm.studentNumber,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
-                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
+                        schedule.getTimeIn(),
+                        schedule.getTimeOut(),
                         schedule.getScheduledDay()
                 )) {
                     NotificationMessage notif = new NotificationMessage(null, "Request Schedule unarchived successfully.", user);
@@ -95,8 +91,8 @@ public class ArchiveController {
                         schedule.getCourseCode(),
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),
-                        DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()),
+                        schedule.getTimeIn(),
+                       schedule.getTimeOut(),
                         schedule.getScheduledDay()
                 )) {
                     NotificationMessage notif = new NotificationMessage("", "Schedule unarchived successfully.", user);

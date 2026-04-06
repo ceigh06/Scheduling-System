@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Section;
 import model.schedule.Schedule;
-import model.user.Faculty;
 import model.user.User;
 import utilities.DBConnection;
 
@@ -313,6 +312,74 @@ public class ScheduleDAO {
         stmt.setString(2, fullDay);
         stmt.setString(3, user.getUserID());
         stmt.setString(4, fullDay);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            Schedule sched = new Schedule();
+            System.out.println(rs.getInt("ID"));
+            sched.load(
+                    rs.getInt("ID"),
+                    rs.getString("RoomCode"),
+                    rs.getString("SectionKey"),
+                    rs.getString("CourseCode"),
+                    rs.getString("FacultyID"),
+                    rs.getString("TimeIn"),
+                    rs.getString("TimeOut"),
+                    fullDay,
+                    rs.getString("Status"),
+                    rs.getInt("IsArchived"));
+            schedules.add(sched);
+        }
+
+        return schedules;
+    }
+
+    public List<Schedule> getArchivedSchedulesByDay(User user, String day) throws SQLException {
+        List<Schedule> schedules = new ArrayList<>();
+
+        String fullDay;
+        switch (day) {
+            case "Mon":
+                fullDay = "Monday";
+                break;
+            case "Tue":
+                fullDay = "Tuesday";
+                break;
+            case "Wed":
+                fullDay = "Wednesday";
+                break;
+            case "Thu":
+                fullDay = "Thursday";
+                break;
+            case "Fri":
+                fullDay = "Friday";
+                break;
+            case "Sat":
+                fullDay = "Saturday";
+                break;
+            default:
+                fullDay = day;
+        }
+
+        // UNION of MasterSchedule and approved RequestSchedule for the faculty
+        String sql = "SELECT ScheduleID AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
+        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+        "FROM MasterSchedule " +
+        "WHERE ScheduledDay = ? AND IsArchived = 1" +
+        "UNION ALL " +
+        "SELECT RequestKey AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
+        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+        "FROM RequestSchedule " +
+        "WHERE ScheduledDay = ? AND Status = 3 AND IsArchived = 1" +
+        "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+        "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+        "ORDER BY TimeIn";
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+
+        stmt.setString(1, fullDay);
+        stmt.setString(2, fullDay);
 
         ResultSet rs = stmt.executeQuery();
 
