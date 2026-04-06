@@ -321,6 +321,7 @@ public class RequestForm extends JPanel {
                 BorderFactory.createEmptyBorder(8, 10, 8, 10)));
         field.setForeground(Color.DARK_GRAY);
         field.setEditable(false);
+        field.setFocusable(false); 
         field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
     }
 

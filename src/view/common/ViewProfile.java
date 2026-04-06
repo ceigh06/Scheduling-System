@@ -47,11 +47,12 @@ public class ViewProfile extends JPanel {
 	    gbcPfp.anchor = GridBagConstraints.CENTER;
 	    gbcPfp.insets = new Insets(20, 0, 10, 0);
 
-		rawIcon = new ImageIcon("/resources/images/icons/Profile.png");
-	    scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-	    pfp = new RoundedLabel(new ImageIcon(scaledImg), 2,new Color(117, 144, 156), 100);
-	    
-	    picPanel.add(pfp, gbcPfp);
+		ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
+		Image scaled = rawIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 100);
+		picPanel.add(pfp, gbcPfp);
+		picPanel.revalidate();	
+		picPanel.repaint();
 	    //personal information panel
 	    
 	    info = new JPanel();
@@ -74,8 +75,10 @@ public class ViewProfile extends JPanel {
 	    		"GO BACK", "LOG OUT",
 	    		new Color(91, 112 ,121), 2,
 	    		new Color(91, 112 ,121), 2);
-	    btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		btns.getConfirmPanel().setOpaque(false);
+	    btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 	    btnPanel.add(btns.getConfirmPanel(), BorderLayout.CENTER); 
+		
 	    
 	    add(btnPanel, BorderLayout.SOUTH);
 
