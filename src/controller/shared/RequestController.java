@@ -34,7 +34,7 @@ public class RequestController {
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
         data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
 
-        RequestForm requestForm = new RequestForm(data);
+        RequestForm requestForm = new RequestForm(data, "Request Schedule");
         MainFrame.addContentPanel(requestForm, "Form");
         MainFrame.showPanel("Form", "Request Form");
         requestForm.setGoBackOnClick(e -> {

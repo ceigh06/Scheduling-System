@@ -11,6 +11,7 @@ import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.Faculty;
 import model.user.User;
+import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RequestForm;
@@ -51,6 +52,7 @@ public class ViewScheduleController {
         System.out.println(schedule.getStatus());
         schedule.setTimeIn(DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()));
         schedule.setTimeOut(DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()));
+        System.out.println(schedule.getTimeIn());
         if (schedule.getStatus().equals("3")) { // request
             showRequestSchedule(schedule);
         } else {
@@ -61,29 +63,55 @@ public class ViewScheduleController {
                 MainFrame.showPanel("ViewSchedule");
             });
         }
-
     }
 
     void showRequestSchedule(Schedule schedule) {
         RequestScheduleDAO dao = new RequestScheduleDAO();
         RequestSchedule requestSchedule = dao.getById(schedule.getID());
 
+        requestSchedule.setTimeIn(DateTimeBuilder.formatTo12Hour(requestSchedule.getTimeIn()));
+        requestSchedule.setTimeOut(DateTimeBuilder.formatTo12Hour(requestSchedule.getTimeOut()));
+
         LookUpDAO lookUp = new LookUpDAO();
         List<String> data = new ArrayList<>();
-        System.out.println(requestSchedule.getTimeIn());
+        System.out.println("time in" + requestSchedule.getTimeIn());
         data.add(requestSchedule.getStudentRequested());
-        if (user.getUserType().equalsIgnoreCase("student")) {
-            data.add(lookUp.getFullStudentName(requestSchedule.getStudentRequested()));
-        } else {
-            data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
-        }
+        data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
         data.add(String.valueOf(requestSchedule.getTimeIn()));
         data.add(String.valueOf(requestSchedule.getTimeOut()));
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
         data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
-        RequestForm form = new RequestForm(data);
+
+        String header = "";
+        if (ScheduleValidator.isOngoing(schedule.getTimeIn(), schedule.getTimeOut())){
+            header = "On going Requested Class";
+        } else if (ScheduleValidator.isIncoming(schedule.getTimeIn())){
+            header = "Up Coming Requested Class";
+        } else{
+            header = "Past Request Schedule";
+        }
+        boolean isPast = ScheduleValidator.isPast(schedule.getTimeIn());
+
+
+        RequestForm form = new RequestForm(data, header, "Cancel");
+        form.setGoBackOnClick(e -> {
+            MainFrame.showPanel("ViewSchedule");
+        });
+
+        if (!isPast) {
+            form.setSubmitOnClick(e -> {
+                submitCancelation();
+            });
+        }
+
+        MainFrame.addContentPanel(form, "Form");
+        MainFrame.showPanel("Form");
+    }
+
+    void submitCancelation(){
+
     }
 
     private void loadScheduleForDay(String day) {
