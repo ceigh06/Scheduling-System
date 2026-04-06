@@ -25,7 +25,7 @@ public class FacultyController {
     User user;
 
     public FacultyController(User user) {
-
+        
         this.user = user;
         MainFrame.setCurrentUser(user, true);
         Landing landing = new Landing();

@@ -10,6 +10,7 @@ import org.jfree.chart.title.Title;
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
+import utilities.DateTimeBuilder;
 import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.common.TitleHeader;
@@ -17,14 +18,14 @@ import view.landing.Login;
 
 public class LoginController {
     User authenticatedUser;
-    //switch method to determine which login page to show
-        // user -> create controller pass the frame.
+    // switch method to determine which login page to show
+    // user -> create controller pass the frame.
 
-
-    private static Login loginView; // makes it sure that we can clear the fields from other controllers when logging out
+    private static Login loginView; // makes it sure that we can clear the fields from other controllers when
+                                    // logging out
 
     public LoginController() {
-        
+
         MainFrame.setNavBarVisible(false);
         loginView = new Login();
         MainFrame.addContentPanel(loginView, "login");
@@ -44,7 +45,7 @@ public class LoginController {
         view.setOnLoginButton(e -> {
             if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
                 authenticatedUser = LoginValidator.getAuthenticatedUser();
-                
+
                 view.clearFields();
                 try {
                     createUserDashBoard();
@@ -60,6 +61,10 @@ public class LoginController {
 
     void createUserDashBoard() throws SQLException {
         if (authenticatedUser.getUserType().equals("Student")) {
+            if (DateTimeBuilder.getDayName().equals("Sunday")) {
+                MainFrame.setNotification("Room scheduling is not available this time.");
+                return;
+            }
             System.out.println("Student");
             try {
                 new StudentController(authenticatedUser);
@@ -68,6 +73,10 @@ public class LoginController {
                 e.printStackTrace();
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
+            if (DateTimeBuilder.getDayName().equals("Sunday")) {
+                MainFrame.setNotification("Room scheduling is not available this time.");
+                return;
+            }
             System.out.println("Faculty");
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
