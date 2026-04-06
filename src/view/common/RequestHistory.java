@@ -121,6 +121,7 @@ public class RequestHistory extends JPanel {
 				requestPanel.add(new JLabel("Requested at: " + requestData.get(4)) {
 					{
 						setFont(new Font("Arial", Font.BOLD, 14));
+						setForeground(new Color(120, 120, 120));
 					}
 				}, gbcInfo);
 			} else {
@@ -128,14 +129,14 @@ public class RequestHistory extends JPanel {
 					requestPanel.add(new JLabel(requestData.get(i)) {
 						{
 							setFont(new Font("Arial", Font.BOLD, 20));
-							setForeground(new Color(150, 150, 150));
+							setForeground(new Color(80, 80, 80));
 						}
 					}, gbcInfo);
 				} else {
 					requestPanel.add(new JLabel(requestData.get(i)) {
 						{
 							setFont(new Font("Arial", Font.PLAIN, 15));
-							setForeground(new Color(150, 150, 150));
+							setForeground(new Color(100, 100, 100));
 						}
 					}, gbcInfo);
 				}

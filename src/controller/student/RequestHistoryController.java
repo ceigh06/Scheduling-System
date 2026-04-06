@@ -46,7 +46,7 @@ public class RequestHistoryController {
         requestHistory.loadRequests(allRequests, allCardData);
 
         MainFrame.addContentPanel(requestHistory, "RequestHistory");
-        MainFrame.showPanel("RequestHistory");
+        MainFrame.showPanel("RequestHistory", "Request History");
     }
 
     public String handleTimeFormatting(String dateTime) {

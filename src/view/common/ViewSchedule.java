@@ -811,7 +811,13 @@ public class ViewSchedule extends JPanel {
 
     }
 
+<<<<<<< Updated upstream
     // UTILITY
+=======
+
+    // UTILITY 
+    //BACKEND NOTE: I changed the sched type to int
+>>>>>>> Stashed changes
     public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");
@@ -844,6 +850,7 @@ public class ViewSchedule extends JPanel {
         JPanel schedPanel = new JPanel();
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
         schedPanel.setForeground(Color.BLACK);
+
         //for schedule type
         //0 - master schedule - orange 255, 169, 62
         //1 - request schedule - 255, 245, 157

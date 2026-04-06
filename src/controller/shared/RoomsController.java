@@ -74,10 +74,10 @@ public class RoomsController {
         RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms);
 
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
-        MainFrame.showPanel("RoomBrowser");
+        MainFrame.showPanel("RoomBrowser", "Browse Room");
 
         roomBrowser.setOnBackButton(e -> {
-            MainFrame.showPanel("BrowseBuilding");
+            MainFrame.showPanel("BrowseBuilding", "Browse Building");
         });
 
         roomBrowser.setOnConfirmButton(e -> {
@@ -97,10 +97,10 @@ public class RoomsController {
         RoomBrowser roomBrowser = new RoomBrowser(building.getName(), rooms, viewArchives);
 
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
-        MainFrame.showPanel("RoomBrowser");
+        MainFrame.showPanel("RoomBrowser", "Browse Room");
 
         roomBrowser.setOnBackButton(e -> {
-            MainFrame.showPanel("BrowseBuilding");
+            MainFrame.showPanel("BrowseBuilding", "Browse Building");
         });
 
         roomBrowser.setOnConfirmButton(e -> {

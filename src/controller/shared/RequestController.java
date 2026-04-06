@@ -36,7 +36,7 @@ public class RequestController {
 
         RequestForm requestForm = new RequestForm(data);
         MainFrame.addContentPanel(requestForm, "Form");
-        MainFrame.showPanel("Form");
+        MainFrame.showPanel("Form", "Request Form");
         requestForm.setGoBackOnClick(e -> {
             onGoBack();
         });
