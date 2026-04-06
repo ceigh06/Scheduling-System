@@ -62,7 +62,7 @@ public class ProfileController {
 
     void showProfile() {
         MainFrame.addContentPanel(viewProfile, "Profile");
-        MainFrame.showPanel("Profile");
+        MainFrame.showPanel("Profile", "My Profile");
     }
 
     private void onLogoutClicked() {
@@ -77,11 +77,11 @@ public class ProfileController {
 
     private void onBackClicked() throws SQLException {
         if (user.getUserType() == "Student") {
-            MainFrame.showPanel("Landing");
+            MainFrame.showPanel("Landing", "RoomMate");
         } else if (user.getUserType() == "Faculty") {
-            MainFrame.showPanel("Landing");
+            MainFrame.showPanel("Landing", "RoomMate");
         } else if (user.getUserType() == "Admin") {
-            MainFrame.showPanel("AdminLanding");
+            MainFrame.showPanel("AdminLanding", "RoomMate");
         }
     }
 
