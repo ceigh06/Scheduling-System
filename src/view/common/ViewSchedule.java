@@ -1,5 +1,6 @@
 package view.common;
 
+import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
 import java.awt.BorderLayout;
@@ -833,6 +834,7 @@ public class ViewSchedule extends JPanel {
     // UTILITY
     // BACKEND NOTE: I changed the sched type to int
     public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
+        LookUpDAO lookUp = new LookUpDAO();
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");
         System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
@@ -880,17 +882,17 @@ public class ViewSchedule extends JPanel {
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        schedPanel.add(new JLabel(schedule.getSectionKey()) {
+        schedPanel.add(new JLabel(lookUp.getFullSectionName(Integer.parseInt(schedule.getSectionKey()))) {
             {
                 setFont(new Font("Arial", Font.BOLD, 20));
             }
         });
-        schedPanel.add(new JLabel(schedule.getRoomCode()) {
+        schedPanel.add(new JLabel(lookUp.getFullRoomName(schedule.getRoomCode())) {
             {
                 setFont(new Font("Arial", Font.BOLD, 16));
             }
         });
-        schedPanel.add(new JLabel(schedule.getFacultyID()) {
+        schedPanel.add(new JLabel(lookUp.getFullFacultyName(schedule.getFacultyID())) {
             {
                 setFont(new Font("Arial", Font.BOLD, 16));
             }
