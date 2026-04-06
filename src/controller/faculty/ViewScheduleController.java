@@ -41,7 +41,6 @@ public class ViewScheduleController {
         // controller handles schedule block clicks
         view.setOnScheduleClicked(schedule -> {
             showSchedule(schedule);
-
         });
 
         MainFrame.addContentPanel(view, "ViewSchedule");
