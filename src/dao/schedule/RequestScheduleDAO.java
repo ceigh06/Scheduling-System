@@ -176,16 +176,16 @@ public class RequestScheduleDAO {
                 request.load(
                         set.getInt("RequestKey"),
                         set.getString("RoomCode"),
-                        set.getString("CourseCode"),
-                        set.getString("StudentNumber"),
                         set.getString("SectionKey"),
+                        set.getString("CourseCode"),
                         set.getString("FacultyID"),
                         set.getString("TimeIn"),
                         set.getString("TimeOut"),
                         set.getString("ScheduledDay"),
-                        set.getInt("Status"),
+                        set.getString("Status"),
+                        set.getInt("IsArchived"),
                         set.getDate("DateRequested").toString(),
-                        set.getBoolean("IsArchived") ? "1" : "0");
+                        set.getString("StudentNumber"));
                 return request;
             }
         } catch (SQLException e) {

@@ -48,7 +48,7 @@ public class RequestForm extends JPanel {
             course,
             professor;
 
-    public RequestForm(List<String> data) {
+    public RequestForm(List<String> data, String header, String buttonType) {
         studentNumber = null;
         isRequest = false;
 
@@ -63,7 +63,7 @@ public class RequestForm extends JPanel {
         formsPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
         formsPanel.setBackground(Color.WHITE);
 
-        JLabel sectionHeader = new JLabel("Confirm your request", JLabel.CENTER);
+        JLabel sectionHeader = new JLabel(header, JLabel.CENTER);
         sectionHeader.setForeground(Color.DARK_GRAY);
         sectionHeader.setFont(new Font("Segoe UI", Font.BOLD, 24));
         sectionHeader.setAlignmentX(CENTER_ALIGNMENT);
@@ -142,7 +142,7 @@ public class RequestForm extends JPanel {
 
         // Confirm buttons
         reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
-                "GO BACK", "SUBMIT",
+                "GO BACK", buttonType,
                 new Color(91, 112, 121), 2,
                 new Color(91, 112, 121), 2);
 

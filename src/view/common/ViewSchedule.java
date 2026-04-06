@@ -811,13 +811,9 @@ public class ViewSchedule extends JPanel {
 
     }
 
-<<<<<<< Updated upstream
-    // UTILITY
-=======
 
     // UTILITY 
     //BACKEND NOTE: I changed the sched type to int
->>>>>>> Stashed changes
     public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");

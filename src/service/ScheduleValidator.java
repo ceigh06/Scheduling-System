@@ -7,6 +7,8 @@ import model.schedule.Schedule;
 
 public class ScheduleValidator {
 
+    private static final DateTimeFormatter FORMAT_12H = DateTimeFormatter.ofPattern("h:mm a");
+
     public static boolean isOverlapping(String timeIn, String timeOut, List<Schedule> schedules) {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a");
         LocalTime timeStart = LocalTime.parse(timeIn, format);
@@ -26,5 +28,28 @@ public class ScheduleValidator {
                 return true;
         }
         return false;
+    }
+
+    public static boolean isIncoming(String timeIn) {
+        LocalTime start = LocalTime.parse(timeIn, FORMAT_12H);
+        return LocalTime.now().isBefore(start);
+    }
+
+    /**
+     * Check if schedule is currently ongoing - uses current system time
+     */
+    public static boolean isOngoing(String timeIn, String timeOut) {
+        LocalTime now = LocalTime.now();
+        LocalTime start = LocalTime.parse(timeIn, FORMAT_12H);
+        LocalTime end = LocalTime.parse(timeOut, FORMAT_12H);
+        return !now.isBefore(start) && !now.isAfter(end);
+    }
+
+    /**
+     * Check if schedule has ended - uses current system time
+     */
+    public static boolean isPast(String timeOut) {
+        LocalTime end = LocalTime.parse(timeOut, FORMAT_12H);
+        return LocalTime.now().isAfter(end);
     }
 }
