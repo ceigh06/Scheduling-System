@@ -57,7 +57,7 @@ public class ArchiveController {
         ConfirmPanel confirmPanel = requestForm.getReqConfirm();
 
         confirmPanel.setBtn1Action(e -> {
-            MainFrame.showPanel("Schedule");
+            MainFrame.showPanel("ViewSchedule","Unarchive Schedule");
         });
 
         confirmPanel.setBtn2Action(e -> {

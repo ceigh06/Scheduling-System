@@ -77,7 +77,7 @@ public class ViewScheduleController {
         });
 
         MainFrame.addContentPanel(view, "ViewSchedule");
-        MainFrame.showPanel("ViewSchedule");
+        MainFrame.showPanel("ViewSchedule", "Schedule");
     }
 
     void showSchedule(Schedule schedule) throws SQLException {
