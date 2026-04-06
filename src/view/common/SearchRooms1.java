@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -23,6 +24,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -80,7 +82,7 @@ public class SearchRooms1 extends JPanel {
 		// container for building choices
 		buildingContainer = new JPanel();
 		buildingContainer.setLayout(new GridLayout(0, 1, 5, 5));
-		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 0));
+		buildingContainer.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		buildingContainer.setOpaque(false);
 
 		// scrollpane for buildings
@@ -381,10 +383,25 @@ public class SearchRooms1 extends JPanel {
 	public void loadBuilding(List<Building> buildings) {
 		for (Building building : buildings) {
 			// rounded panel for each choice
-			RoundedPanel choice = new RoundedPanel(70, 1, new Color(91, 112, 121), new BorderLayout());
+			RoundedPanel choice = new RoundedPanel(20, 1, new Color(91, 112, 121), new BorderLayout());
 			choice.setBackground(new Color(117, 144, 156));
+			choice.setPreferredSize(new Dimension(200, 55));
+			choice.setMaximumSize(new Dimension(200, 55));
 			// choices
+
+			ImageIcon uncheckedIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Unchecked.png"));
+			ImageIcon checkedIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Checked.png"));
+			Image uncheckedImg = uncheckedIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+			Image checkedImg = checkedIcon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+
+			uncheckedIcon = new ImageIcon(uncheckedImg);
+			checkedIcon = new ImageIcon(checkedImg);
 			check = new JCheckBox(building.getName());
+			check.setIcon(uncheckedIcon);
+			check.setSelectedIcon(checkedIcon);
+			check.setBorderPainted(false);
+			check.setFocusPainted(false);
+			check.setContentAreaFilled(false);
 			check.setName(building.getCode());
 			check.setFont(new Font("Arial", Font.PLAIN, 20));
 			check.setForeground(Color.WHITE);
