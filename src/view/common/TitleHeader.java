@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 
 import model.user.Faculty;
 import model.user.Student;
+import model.user.User;
 
 public class TitleHeader {
     public static JPanel headerButtonPanel;
@@ -83,7 +84,7 @@ public class TitleHeader {
     }
 
     //faculty-side view my schedule
-    public void setOnViewSchedulePanel(Faculty user, MouseAdapter action) {
+    public void setOnViewSchedulePanel(User user, MouseAdapter action) {
         headerButtonPanel.addMouseListener(action);
     }
 }

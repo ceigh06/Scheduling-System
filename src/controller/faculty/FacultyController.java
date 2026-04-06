@@ -73,10 +73,10 @@ public class FacultyController {
             }
         });
 
-        MainFrame.setOnViewSchedulePanel(faculty, new MouseAdapter() {
+        MainFrame.setOnViewSchedulePanel(user, new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new ViewScheduleController(faculty);
+                new ViewScheduleController(user);
             }
         });
     }

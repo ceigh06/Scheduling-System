@@ -65,6 +65,7 @@ public class ViewSchedule extends JPanel {
     boolean isLec = true;
 
     private boolean onTimeChangedCallBack = false;
+    private Consumer<String> onDayClicked;
 
     private ConfirmPanel confirmArea;
     private JLabel roomLbl;
@@ -89,6 +90,10 @@ public class ViewSchedule extends JPanel {
     private JLabel selectedDayLabel = null;
     private RoundedPanel selectedDatePanel = null;
     private static String dateSelected;
+
+    public void setOnDayClicked(Consumer<String> action) {
+        this.onDayClicked = action;
+    }
 
     public void setOnScheduleClicked(Consumer<Schedule> action) {
         this.onScheduleClicked = action;
@@ -577,10 +582,18 @@ public class ViewSchedule extends JPanel {
         }
     }
 
-    private JPanel loadCalendar() {
+    private JPanel loadCalendar(String todayAbbrev) {
         dates = RequestHistory.loadWeek();
         trimmedDates = RequestHistory.handleTrimmingDates(dates, 2);
         day = List.of("Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+
+        // set today's index
+        for (int i = 0; i < day.size(); i++) {
+            if (day.get(i).equals(todayAbbrev)) {
+                dateTodayIdx = i;
+                break;
+            }
+        }
 
         JPanel calendarPanel = new JPanel(new GridLayout(1, day.size(), 10, 0));
         calendarPanel.setBackground(Color.WHITE);
@@ -617,15 +630,12 @@ public class ViewSchedule extends JPanel {
             clickableDate.setBackground(new Color(117, 144, 156));
             clickableDate.setOpaque(false);
 
-            // highlight today's date
+            // highlight today
             if (dateTodayIdx == i && selectedDatePanel == null) {
                 clickableDate.setBackground(new Color(255, 227, 85));
                 dayLabel.setForeground(Color.BLACK);
                 selectedDatePanel = clickableDate;
                 selectedDayLabel = dayLabel;
-
-                loadScheduleForDay(day.get(i));
-
             }
 
             final RoundedPanel thisDatePanel = clickableDate;
@@ -639,14 +649,16 @@ public class ViewSchedule extends JPanel {
                         selectedDatePanel.setBackground(new Color(117, 144, 156));
                         selectedDayLabel.setForeground(Color.WHITE);
                     }
-
                     thisDatePanel.setBackground(new Color(255, 227, 85));
                     thisDayLabel.setForeground(Color.BLACK);
                     selectedDatePanel = thisDatePanel;
                     selectedDayLabel = thisDayLabel;
                     dateSelected = thisSelectedDateString;
 
-                    loadScheduleForDay(dayOfWeek);
+                    // fire callback — no DB call here
+                    if (onDayClicked != null) {
+                        onDayClicked.accept(dayOfWeek);
+                    }
                 }
             });
 
@@ -654,6 +666,23 @@ public class ViewSchedule extends JPanel {
         }
 
         return calendarPanel;
+    }
+
+    public void reloadSchedule(List<Schedule> schedules) {
+        timeSched.removeAll();
+        occupied = new boolean[28][2];
+        loadScheduleLayout();
+
+        for (Schedule schedule : schedules) {
+            String formattedTimeIn = formatTime(schedule.getTimeIn());
+            String formattedTimeOut = formatTime(schedule.getTimeOut());
+            String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+            boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
+            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+        }
+
+        timeSched.revalidate();
+        timeSched.repaint();
     }
 
     void initializePage(Room room) {
@@ -702,19 +731,13 @@ public class ViewSchedule extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        // contains all the components of the view schedule frame
         container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         container.setAlignmentX(Component.CENTER_ALIGNMENT);
-        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0)); // test line
+        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0));
         container.setBackground(Color.WHITE);
 
-        // contains the information of the panel
-        // BACKEND TO DO: Make it so that the database is automatically giving the
-        // information
-        // of the class to this panel
         RoundedPanel labelPanel = new RoundedPanel(25, 0, new BorderLayout());
-
         JLabel headerLabel = new JLabel("My Schedule", SwingConstants.CENTER);
         headerLabel.setForeground(Color.WHITE);
         headerLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -727,13 +750,14 @@ public class ViewSchedule extends JPanel {
         labelPanel.add(headerLabel, BorderLayout.CENTER);
 
         container.add(labelPanel);
-        container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
+        container.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JPanel calendarPanel = loadCalendar();
+        // pass today so calendar highlights correctly
+        String todayAbbrev = utilities.DateTimeBuilder.getDayName().substring(0, 3);
+        JPanel calendarPanel = loadCalendar(todayAbbrev);
         container.add(calendarPanel);
 
         container.add(Box.createRigidArea(new Dimension(0, 10)));
-        // the time table of the schedule, not including the panels
         timeSched = new JPanel(new GridBagLayout());
         timeSched.setBackground(Color.WHITE);
         timeSched.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
@@ -743,7 +767,6 @@ public class ViewSchedule extends JPanel {
         container.add(timeSched);
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-
     }
 
     void initializePage(Room room, boolean viewArchives) {
@@ -780,7 +803,7 @@ public class ViewSchedule extends JPanel {
         container.add(labelPanel);
         container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
 
-        JPanel calendarPanel = loadCalendar();
+        JPanel calendarPanel = loadCalendar(utilities.DateTimeBuilder.getDayName().substring(0, 3));
         container.add(calendarPanel);
 
         container.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -940,54 +963,4 @@ public class ViewSchedule extends JPanel {
         }
     }
 
-    private void loadScheduleForDay(String dayOfWeek) {
-
-        timeSched.removeAll(); // clear old grid
-        occupied = new boolean[28][2]; // reset occupancy
-
-        loadScheduleLayout(); // redraw empty grid
-
-        try {
-
-            List<Schedule> schedules = ScheduleDAO.getSchedulesByDay(dayOfWeek);
-            System.out.println("test");
-            System.out.println(schedules.size());
-            for (Schedule schedule : schedules) {
-                if (schedule.getIsArchived() == 1) {
-                    String formattedTimeIn = formatTime(schedule.getTimeIn());
-                    String formattedTimeOut = formatTime(schedule.getTimeOut());
-                    String timeRange = formattedTimeIn + " - " + formattedTimeOut;
-
-                    boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
-
-                    addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
-                    System.out.println("Loading schedules for: " + dayOfWeek);
-                    System.out.println("Schedules found: " + schedules.size());
-                }
-            }
-            schedules = RequestScheduleDAO.getSchedulesByDay(dayOfWeek);
-            System.out.println("test");
-            System.out.println(schedules.size());
-            for (Schedule schedule : schedules) {
-                if (schedule.getIsArchived() == 1) {
-                    String formattedTimeIn = formatTime(schedule.getTimeIn());
-                    String formattedTimeOut = formatTime(schedule.getTimeOut());
-                    String timeRange = formattedTimeIn + " - " + formattedTimeOut;
-
-                    boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
-
-                    addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
-                    System.out.println("Loading schedules for: " + dayOfWeek);
-                    System.out.println("Schedules found: " + schedules.size());
-                }
-            }
-
-            timeSched.revalidate();
-            timeSched.repaint();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }
