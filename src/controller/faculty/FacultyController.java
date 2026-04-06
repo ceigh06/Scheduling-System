@@ -104,7 +104,7 @@ public class FacultyController {
     }
 
     public void onHomeClicked() {
-        MainFrame.showPanel("FacultyLanding");
+        MainFrame.showPanel("FacultyLanding", "ROOMFINDR");
     }
 
     public void onRequestClicked() {
