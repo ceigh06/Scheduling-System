@@ -49,7 +49,7 @@ public class BookingController {
         viewSchedule.loadConfirmationPanel();
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule");
+        MainFrame.showPanel("Schedule", "View Schedule");
 
         viewSchedule.setOnConfirmClicked(e -> {
             new RequestController(requestSchedule, user);
@@ -90,11 +90,11 @@ public class BookingController {
             });
 
             viewSchedule.setOnBackClicked(e -> {
-                MainFrame.showPanel("RoomBrowser");
+                MainFrame.showPanel("RoomBrowser", "Browse Room");
             });
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
-            MainFrame.showPanel("Schedule");
+            MainFrame.showPanel("Schedule", "View Schedule");
             return;
         }
 
@@ -119,7 +119,7 @@ public class BookingController {
         }
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule");
+        MainFrame.showPanel("Schedule", "View Schedule");
 
     }
 
@@ -158,11 +158,11 @@ public class BookingController {
             });
 
             viewSchedule.setOnBackClicked(e -> {
-                MainFrame.showPanel("RoomBrowser");
+                MainFrame.showPanel("RoomBrowser", "Browse Room");
             });
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
-            MainFrame.showPanel("Schedule");
+            MainFrame.showPanel("Schedule","View Schedule");
             return;
         }
 
@@ -187,7 +187,7 @@ public class BookingController {
         }
 
         MainFrame.addContentPanel(viewSchedule, "Schedule");
-        MainFrame.showPanel("Schedule");
+        MainFrame.showPanel("Schedule", "View Schedule");
 
     }
 
@@ -235,7 +235,7 @@ public class BookingController {
     void attachShowRoomScheduleListeners(ViewSchedule viewSchedule, Room selectedRoom, boolean isFaculty) {
 
         viewSchedule.setOnBackClicked(e -> {
-            MainFrame.showPanel("RoomBrowser");
+            MainFrame.showPanel("RoomBrowser", "Browse Room");
         });
 
         viewSchedule.setOnLabBtn(e -> {

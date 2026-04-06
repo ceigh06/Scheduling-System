@@ -65,7 +65,7 @@ public class SearchRoomsController {
         searchRooms.loadCourse(courses);
 
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
-        MainFrame.showPanel("SearchRooms");
+        MainFrame.showPanel("SearchRooms", "Search Rooms");
 
         handleTimeChangeSilent(searchRooms);
 
@@ -267,10 +267,10 @@ public class SearchRoomsController {
     void showRoomBrowser(List<Room> availableRooms, Course course) throws SQLException {
         RoomBrowser roomBrowser = new RoomBrowser(null, availableRooms);
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
-        MainFrame.showPanel("RoomBrowser");
+        MainFrame.showPanel("RoomBrowser", "Browse Room");
 
         roomBrowser.setOnBackButton(e -> {
-            MainFrame.showPanel("SearchRooms");
+            MainFrame.showPanel("SearchRooms", "Search Rooms");
         });
 
         roomBrowser.setOnConfirmButton(e -> {
