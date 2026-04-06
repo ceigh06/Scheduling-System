@@ -172,11 +172,25 @@ public class ViewSchedule extends JPanel {
             String formattedTimeIn = formatTime(schedule.getTimeIn());
             String formattedTimeOut = formatTime(schedule.getTimeOut());
             String timeRange = formattedTimeIn + " - " + formattedTimeOut;
-            
+
             boolean isMasterSchedule = true;
             if (schedule.getStatus().trim().equals("3"))
                 isMasterSchedule = false;
-            
+
+            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+        }
+    }
+
+    public void loadFacultySchedule(List<Schedule> schedules) {
+        for (Schedule schedule : schedules) {
+            String formattedTimeIn = formatTime(schedule.getTimeIn());
+            String formattedTimeOut = formatTime(schedule.getTimeOut());
+            String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+
+            boolean isMasterSchedule = true;
+            if (schedule.getStatus().trim().equals("3"))
+                isMasterSchedule = false;
+
             addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
         }
     }
@@ -190,16 +204,30 @@ public class ViewSchedule extends JPanel {
             boolean isMasterSchedule = true;
             if (schedule.getStatus().trim().equals("3"))
                 isMasterSchedule = false;
-            
+
             addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
         }
+    }
+
+    // for faculty view schedule
+    public ViewSchedule(List<Schedule> schedules) {
+        initializePage(schedules);
+        loadScheduleLayout();
+
+        scrollPanel = new JScrollPane(container);
+        scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPanel.setBorder(null);
+
+        add(scrollPanel, BorderLayout.CENTER);
     }
 
     public ViewSchedule(Room room) {
         initializePage(room);
 
         // Contains the time visible to the users
-        // FRONTEND TO BACKEND: No need to make this database connected
         loadScheduleLayout();
 
         confirmArea = new ConfirmPanel(MainFrame.getFrame(),
@@ -405,68 +433,68 @@ public class ViewSchedule extends JPanel {
         timeInPanel.add(timeinLbl);
 
         // Spinner panel with GridBagLayout
-spinnerPan = new JPanel(new GridBagLayout());
-spinnerPan.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-spinnerPan.setBackground(Color.WHITE);
-spinnerPan.setMaximumSize(new Dimension(400, 100));
+        spinnerPan = new JPanel(new GridBagLayout());
+        spinnerPan.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        spinnerPan.setBackground(Color.WHITE);
+        spinnerPan.setMaximumSize(new Dimension(400, 100));
 
-GridBagConstraints gbc = new GridBagConstraints();
-gbc.insets = new Insets(5, 10, 5, 10);  
-gbc.fill = GridBagConstraints.BOTH;     
-gbc.weightx = 1.0;                    
-gbc.weighty = 0;                       
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0;
 
-// Labels row
-hLbl = new JLabel("Hour");
-mLbl = new JLabel("Minute");
-mrdmLbl = new JLabel("AM/PM");
-hLbl.setHorizontalAlignment(JLabel.CENTER);
-mLbl.setHorizontalAlignment(JLabel.CENTER);
-mrdmLbl.setHorizontalAlignment(JLabel.CENTER);
+        // Labels row
+        hLbl = new JLabel("Hour");
+        mLbl = new JLabel("Minute");
+        mrdmLbl = new JLabel("AM/PM");
+        hLbl.setHorizontalAlignment(JLabel.CENTER);
+        mLbl.setHorizontalAlignment(JLabel.CENTER);
+        mrdmLbl.setHorizontalAlignment(JLabel.CENTER);
 
-// Spinners
-SpinnerNumberModel hrsModel = new SpinnerNumberModel(7, 1, 12, 1);
-hrsSpinner = new JSpinner(hrsModel);
+        // Spinners
+        SpinnerNumberModel hrsModel = new SpinnerNumberModel(7, 1, 12, 1);
+        hrsSpinner = new JSpinner(hrsModel);
 
-SpinnerNumberModel minModel = new SpinnerNumberModel(0, 0, 59, 1);
-minsSpinner = new JSpinner(minModel);
+        SpinnerNumberModel minModel = new SpinnerNumberModel(0, 0, 59, 1);
+        minsSpinner = new JSpinner(minModel);
 
-String[] meridiem = { "AM", "PM" };
-mrdmCombo = new JComboBox<>(meridiem);
+        String[] meridiem = { "AM", "PM" };
+        mrdmCombo = new JComboBox<>(meridiem);
 
-// Row 0: Labels
-gbc.gridy = 0;
-gbc.gridx = 0;
-gbc.gridwidth = 1;
-spinnerPan.add(hLbl, gbc);
+        // Row 0: Labels
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        gbc.gridwidth = 1;
+        spinnerPan.add(hLbl, gbc);
 
-gbc.gridx = 1;
-spinnerPan.add(mLbl, gbc);
+        gbc.gridx = 1;
+        spinnerPan.add(mLbl, gbc);
 
-gbc.gridx = 2;
-spinnerPan.add(mrdmLbl, gbc);
+        gbc.gridx = 2;
+        spinnerPan.add(mrdmLbl, gbc);
 
-// Row 1: Spinners
-gbc.gridy = 1;
-gbc.gridx = 0;
-spinnerPan.add(hrsSpinner, gbc);
+        // Row 1: Spinners
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        spinnerPan.add(hrsSpinner, gbc);
 
-gbc.gridx = 1;
-spinnerPan.add(minsSpinner, gbc);
+        gbc.gridx = 1;
+        spinnerPan.add(minsSpinner, gbc);
 
-gbc.gridx = 2;
-spinnerPan.add(mrdmCombo, gbc);
+        gbc.gridx = 2;
+        spinnerPan.add(mrdmCombo, gbc);
 
-// Row 2: JLabel spanning 3 columns
-JLabel noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
-noteLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
-noteLabel.setForeground(new Color(227, 75, 75));
-noteLabel.setHorizontalAlignment(JLabel.LEFT);
+        // Row 2: JLabel spanning 3 columns
+        JLabel noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
+        noteLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        noteLabel.setForeground(new Color(227, 75, 75));
+        noteLabel.setHorizontalAlignment(JLabel.LEFT);
 
-gbc.gridy = 2;
-gbc.gridx = 0;
-gbc.gridwidth = 3;  // **SPANS 3 COLUMNS**
-spinnerPan.add(noteLabel, gbc);
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridwidth = 3; // **SPANS 3 COLUMNS**
+        spinnerPan.add(noteLabel, gbc);
     }
 
     // GETTERS FOR VALUES
@@ -595,9 +623,9 @@ spinnerPan.add(noteLabel, gbc);
                 dayLabel.setForeground(Color.BLACK);
                 selectedDatePanel = clickableDate;
                 selectedDayLabel = dayLabel;
-               
-                    loadScheduleForDay(day.get(i));
-                
+
+                loadScheduleForDay(day.get(i));
+
             }
 
             final RoundedPanel thisDatePanel = clickableDate;
@@ -657,7 +685,7 @@ spinnerPan.add(noteLabel, gbc);
 
         container.add(labelPanel);
         container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
-        
+
         // the time table of the schedule, not including the panels
         timeSched = new JPanel(new GridBagLayout());
         timeSched.setBackground(Color.WHITE);
@@ -670,8 +698,59 @@ spinnerPan.add(noteLabel, gbc);
 
     }
 
+    void initializePage(List<Schedule> schedules) {
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
+
+        // contains all the components of the view schedule frame
+        container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        container.setAlignmentX(Component.CENTER_ALIGNMENT);
+        container.setBorder(BorderFactory.createEmptyBorder(20, -10, 20, 0)); // test line
+        container.setBackground(Color.WHITE);
+
+        // contains the information of the panel
+        // BACKEND TO DO: Make it so that the database is automatically giving the
+        // information
+        // of the class to this panel
+        RoundedPanel labelPanel = new RoundedPanel(25, 0, new BorderLayout());
+
+        JLabel headerLabel = new JLabel("My Schedule", SwingConstants.CENTER);
+        headerLabel.setForeground(Color.WHITE);
+        headerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        headerLabel.setOpaque(false);
+
+        labelPanel.setBackground(new Color(117, 144, 156));
+        labelPanel.setPreferredSize(new Dimension(200, 50));
+        labelPanel.setMaximumSize(new Dimension(200, 50));
+        labelPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        labelPanel.add(headerLabel, BorderLayout.CENTER);
+
+        container.add(labelPanel);
+        container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
+
+        JPanel calendarPanel = loadCalendar();
+        container.add(calendarPanel);
+
+        container.add(Box.createRigidArea(new Dimension(0, 10)));
+        // the time table of the schedule, not including the panels
+        timeSched = new JPanel(new GridBagLayout());
+        timeSched.setBackground(Color.WHITE);
+        timeSched.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        timeSched.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+        timeSched.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        container.add(timeSched);
+        gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+
+    }
+
     void initializePage(Room room, boolean viewArchives) {
-        if(!viewArchives) {initializePage(room); return;}
+        if (!viewArchives) {
+            initializePage(room);
+            return;
+        }
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -700,10 +779,10 @@ spinnerPan.add(noteLabel, gbc);
 
         container.add(labelPanel);
         container.add(Box.createRigidArea(new Dimension(0, 10))); // this is used for spacing
-        
+
         JPanel calendarPanel = loadCalendar();
         container.add(calendarPanel);
-        
+
         container.add(Box.createRigidArea(new Dimension(0, 10)));
         // the time table of the schedule, not including the panels
         timeSched = new JPanel(new GridBagLayout());
@@ -717,7 +796,6 @@ spinnerPan.add(noteLabel, gbc);
         gbc.fill = GridBagConstraints.BOTH;
 
     }
-
 
     // UTILITY
     public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
@@ -759,14 +837,26 @@ spinnerPan.add(noteLabel, gbc);
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        schedPanel.add(new JLabel(schedule.getSectionKey()){{
-            setFont(new Font("Arial", Font.BOLD, 20));}});
-        schedPanel.add(new JLabel(schedule.getRoomCode()){{
-            setFont(new Font("Arial", Font.BOLD, 16));}});
-        schedPanel.add(new JLabel(schedule.getFacultyID()){{
-            setFont(new Font("Arial", Font.BOLD, 16));}});
-        schedPanel.add(new JLabel(timeRange){{
-            setFont(new Font("Arial", Font.PLAIN, 16));}});
+        schedPanel.add(new JLabel(schedule.getSectionKey()) {
+            {
+                setFont(new Font("Arial", Font.BOLD, 20));
+            }
+        });
+        schedPanel.add(new JLabel(schedule.getRoomCode()) {
+            {
+                setFont(new Font("Arial", Font.BOLD, 16));
+            }
+        });
+        schedPanel.add(new JLabel(schedule.getFacultyID()) {
+            {
+                setFont(new Font("Arial", Font.BOLD, 16));
+            }
+        });
+        schedPanel.add(new JLabel(timeRange) {
+            {
+                setFont(new Font("Arial", Font.PLAIN, 16));
+            }
+        });
 
         schedPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         schedPanel.addMouseListener(new MouseAdapter() {
@@ -851,54 +941,53 @@ spinnerPan.add(noteLabel, gbc);
     }
 
     private void loadScheduleForDay(String dayOfWeek) {
-    
-    timeSched.removeAll();   // clear old grid
-    occupied = new boolean[28][2]; // reset occupancy
-    
-    loadScheduleLayout(); // redraw empty grid
 
-    try {
-       
-        List<Schedule> schedules = ScheduleDAO.getSchedulesByDay(dayOfWeek);
-        System.out.println("test");
-        System.out.println(schedules.size());
-        for (Schedule schedule : schedules) {
-            if (schedule.getIsArchived() == 1) { 
-                String formattedTimeIn = formatTime(schedule.getTimeIn());
-                String formattedTimeOut = formatTime(schedule.getTimeOut());
-                String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+        timeSched.removeAll(); // clear old grid
+        occupied = new boolean[28][2]; // reset occupancy
 
-                boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
+        loadScheduleLayout(); // redraw empty grid
 
-                addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
-                System.out.println("Loading schedules for: " + dayOfWeek);
-                System.out.println("Schedules found: " + schedules.size());
+        try {
+
+            List<Schedule> schedules = ScheduleDAO.getSchedulesByDay(dayOfWeek);
+            System.out.println("test");
+            System.out.println(schedules.size());
+            for (Schedule schedule : schedules) {
+                if (schedule.getIsArchived() == 1) {
+                    String formattedTimeIn = formatTime(schedule.getTimeIn());
+                    String formattedTimeOut = formatTime(schedule.getTimeOut());
+                    String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+
+                    boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
+
+                    addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+                    System.out.println("Loading schedules for: " + dayOfWeek);
+                    System.out.println("Schedules found: " + schedules.size());
+                }
             }
-        }
-        schedules = RequestScheduleDAO.getSchedulesByDay(dayOfWeek);
-        System.out.println("test");
-        System.out.println(schedules.size());
-        for (Schedule schedule : schedules) {
-            if (schedule.getIsArchived() == 1) { 
-                String formattedTimeIn = formatTime(schedule.getTimeIn());
-                String formattedTimeOut = formatTime(schedule.getTimeOut());
-                String timeRange = formattedTimeIn + " - " + formattedTimeOut;
+            schedules = RequestScheduleDAO.getSchedulesByDay(dayOfWeek);
+            System.out.println("test");
+            System.out.println(schedules.size());
+            for (Schedule schedule : schedules) {
+                if (schedule.getIsArchived() == 1) {
+                    String formattedTimeIn = formatTime(schedule.getTimeIn());
+                    String formattedTimeOut = formatTime(schedule.getTimeOut());
+                    String timeRange = formattedTimeIn + " - " + formattedTimeOut;
 
-                boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
+                    boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
 
-                addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
-                System.out.println("Loading schedules for: " + dayOfWeek);
-                System.out.println("Schedules found: " + schedules.size());
+                    addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+                    System.out.println("Loading schedules for: " + dayOfWeek);
+                    System.out.println("Schedules found: " + schedules.size());
+                }
             }
+
+            timeSched.revalidate();
+            timeSched.repaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        timeSched.revalidate();
-        timeSched.repaint();
-
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-
-    
-}
 }

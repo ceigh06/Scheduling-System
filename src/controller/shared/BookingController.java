@@ -21,7 +21,6 @@ import view.common.ViewSchedule;
 
 public class BookingController {
 
-    // 1.3
     private String timeIn = "";
     private String timeOut = "";
     private User user;
@@ -34,8 +33,8 @@ public class BookingController {
         showRoomSchedule(user, selectedRoom, requestSchedule);
     }
 
-    // for student workflow, no form just show the schedule and confirmation.
-    // search rooms
+    // OVERLOADED METHOD
+    // SEARCH ROOMS WORKFLOW
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
 
         ScheduleDAO scheduleDAO = new ScheduleDAO();
@@ -61,14 +60,10 @@ public class BookingController {
     // browse rooms
     // constructor for browse workflow.
     // needs to build a request schedule through the forms
+
     public BookingController(User user, Room selectedRoom) {
         this.user = user;
         showRoomSchedule(user, selectedRoom);
-    }
-
-    public BookingController(User user, Room selectedRoom, boolean viewArchives) {
-        this.user = user;
-        showRoomSchedule(user, selectedRoom, viewArchives);
     }
 
     void showRoomSchedule(User user, Room selectedRoom) {
@@ -77,7 +72,7 @@ public class BookingController {
 
         List<Schedule> activeSchedules = scheduleDAO
                 .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
-        
+
         selectedRoom.loadSchedules(activeSchedules); // schedules for room
 
         // doesnt catch if the courses is null.
@@ -104,10 +99,8 @@ public class BookingController {
         }
 
         viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
-        attachShowRoomScheduleListeners(viewSchedule, selectedRoom,user.getUserType().equals("Faculty"));
+        attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
         // attaches form listeners
-        
-        
 
         if (user.getUserType().equals("Faculty")) {
             List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
@@ -130,8 +123,16 @@ public class BookingController {
 
     }
 
-     void showRoomSchedule(User user, Room selectedRoom, boolean viewArchives) {
-        if(!viewArchives){
+    // ADMIN
+    // used for archiving schedule
+
+    public BookingController(User user, Room selectedRoom, boolean viewArchives) {
+        this.user = user;
+        showRoomSchedule(user, selectedRoom, viewArchives);
+    }
+
+    void showRoomSchedule(User user, Room selectedRoom, boolean viewArchives) {
+        if (!viewArchives) {
             showRoomSchedule(user, selectedRoom);
             return;
         }
