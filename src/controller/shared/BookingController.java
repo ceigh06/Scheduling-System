@@ -20,7 +20,7 @@ import view.common.MainFrame;
 import view.common.ViewSchedule;
 
 public class BookingController {
-
+    private boolean isOverlapping = false;
     private String timeIn = "";
     private String timeOut = "";
     private User user;
@@ -162,7 +162,7 @@ public class BookingController {
             });
 
             MainFrame.addContentPanel(viewSchedule, "Schedule");
-            MainFrame.showPanel("Schedule","View Schedule");
+            MainFrame.showPanel("Schedule", "View Schedule");
             return;
         }
 
@@ -242,37 +242,57 @@ public class BookingController {
             viewSchedule.setIsLec(false);
             handleTimeChange(viewSchedule);
             if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
+                isOverlapping = true;
+                viewSchedule.showOverlappingMessage(isOverlapping);
+                return;
             }
+            isOverlapping = false;
+            viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
         viewSchedule.setOnLecBtn(e -> {
             viewSchedule.setIsLec(true);
             handleTimeChange(viewSchedule);
             if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
+                isOverlapping = true;
+                viewSchedule.showOverlappingMessage(isOverlapping);
+                return;
             }
+            isOverlapping = false;
+            viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
         viewSchedule.setOnHourChanged(e -> {
             handleTimeChange(viewSchedule);
             if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
+                isOverlapping = true;
+                viewSchedule.showOverlappingMessage(isOverlapping);
+                return;
             }
+            isOverlapping = false;
+            viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
         viewSchedule.setOnMinuteChanged(e -> {
             handleTimeChange(viewSchedule);
             if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at" + timeIn);
+                isOverlapping = true;
+                viewSchedule.showOverlappingMessage(isOverlapping);
+                return;
             }
+            isOverlapping  = false;
+            viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
         viewSchedule.setOnMeridiemChanged(e -> {
             handleTimeChange(viewSchedule);
             if (ScheduleValidator.isOverlapping(timeIn, timeOut, selectedRoom.getSchedules())) {
-                System.out.println("Overlaps with existing schedule at " + timeIn);
-            }
+                isOverlapping = true;
+                viewSchedule.showOverlappingMessage(isOverlapping);
+                return;
+            } 
+            isOverlapping = false;
+            viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
         viewSchedule.setOnConfirmClicked(e -> {

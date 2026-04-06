@@ -58,7 +58,7 @@ public class ViewSchedule extends JPanel {
     private JLabel hLbl;
     private JLabel mLbl;
     private JLabel mrdmLbl;
-
+    private JLabel noteLabel;
     // lab or lec
     RoundedButton lecBtn;
     RoundedButton labBtn;
@@ -482,15 +482,20 @@ public class ViewSchedule extends JPanel {
         spinnerPan.add(mrdmCombo, gbc);
 
         // Row 2: JLabel spanning 3 columns
-        JLabel noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
+        noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
         noteLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
         noteLabel.setForeground(new Color(227, 75, 75));
         noteLabel.setHorizontalAlignment(JLabel.LEFT);
+        noteLabel.setVisible(false);
 
         gbc.gridy = 2;
         gbc.gridx = 0;
         gbc.gridwidth = 3; // **SPANS 3 COLUMNS**
         spinnerPan.add(noteLabel, gbc);
+    }
+
+    public void showOverlappingMessage(boolean isOverlapping){
+        noteLabel.setVisible(isOverlapping);
     }
 
     // GETTERS FOR VALUES
