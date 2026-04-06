@@ -11,8 +11,10 @@ import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
+import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
+import view.common.NotificationMessage;
 import view.common.RequestForm;
 import view.common.ViewSchedule;
 import view.faculty.ViewFacultySched;
@@ -84,7 +86,7 @@ public class ViewScheduleController {
         System.out.println(schedule.getStatus());
         schedule.setTimeIn(DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()));
         schedule.setTimeOut(DateTimeBuilder.formatTo12Hour(schedule.getTimeOut()));
-        if(user.getUserType().equals("Admin")){
+        if (user.getUserType().equals("Admin")) {
             new ArchiveController(user, schedule, true);
         } else if (schedule.getStatus().equals("3")) { // request
             showRequestSchedule(schedule);
@@ -104,7 +106,7 @@ public class ViewScheduleController {
         RequestSchedule requestSchedule = dao.getById(schedule.getID());
 
         LookUpDAO lookUp = new LookUpDAO();
-        List<String> data = new ArrayList<>();
+        List<String> data = new ArrayList<>(); // for printing only
         System.out.println(requestSchedule.getTimeIn());
         data.add(requestSchedule.getStudentRequested());
         if (user.getUserType().equalsIgnoreCase("student")) {
@@ -114,18 +116,70 @@ public class ViewScheduleController {
         }
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
-        data.add(String.valueOf(requestSchedule.getTimeIn()));
-        data.add(String.valueOf(requestSchedule.getTimeOut()));
+        data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeIn())));
+        data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeOut())));
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
         data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
-        RequestForm form = new RequestForm(data, "Head", "submit");
+
+        data.add(String.valueOf(requestSchedule.getID())); //request primary key
+
+
+        String header = getHeader(requestSchedule.getDateRequested(), schedule.getTimeIn(), schedule.getTimeOut());
+
+        boolean isPast = ScheduleValidator.isPast(requestSchedule.getDateRequested(), schedule.getTimeOut());
+
+        RequestForm form = new RequestForm(data, header, "Cancel");
+        form.setGoBackOnClick(e -> {
+            MainFrame.showPanel("ViewSchedule");
+        });
+
+        if (!isPast) {
+            form.setSubmitOnClick(e -> {
+                submitCancelation(data, header);
+            });
+        } else {
+            form.setSubmitOnClick(e -> {
+                MainFrame.setNotification("Cannot cancel past requests");
+            });
+        }
+
+        MainFrame.addContentPanel(form, "Form");
+        MainFrame.showPanel("Form");
+    }
+
+    private String getHeader(String date, String timeIn, String timeOut) {
+        if (ScheduleValidator.isOngoing(date, timeIn, timeOut)) {
+            return "On going Requested Class";
+        } else if (ScheduleValidator.isIncoming(date, timeIn)) {
+            return "Up Coming Requested Class";
+        } else {
+            return "Past Request Schedule";
+        }
+    }
+
+    void submitCancelation(List<String> data, String header) {
+        RequestForm form = new RequestForm(data, header, "Cancel");
+        MainFrame.addContentPanel(form, "Form");
+        MainFrame.showPanel("Form");
+
+        form.setGoBackOnClick(e -> {
+            MainFrame.showPanel("Form");
+        });
+
+        form.setSubmitOnClick(e -> {
+            new RequestScheduleDAO().archive(Integer.parseInt(data.getLast()));
+            NotificationMessage notif = new NotificationMessage("", header + " Cancelled");
+            MainFrame.addContentPanel(notif, "NotificationMessage");
+            MainFrame.showPanel("NotificationMessage", "Check Requests");
+        });
+
     }
 
     private void loadScheduleForDay(String day) {
         try {
             ScheduleDAO dao = new ScheduleDAO();
             List<Schedule> schedules;
-            if(user.getUserType().equals("Admin")){
+            if (user.getUserType().equals("Admin")) {
                 schedules = dao.getArchivedSchedulesByDay(user, day);
             } else {
                 schedules = dao.getFacultySchedulesByDay(user, day);
