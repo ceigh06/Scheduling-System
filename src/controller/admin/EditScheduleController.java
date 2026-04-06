@@ -5,7 +5,6 @@ import dao.StudentDAO;
 import dao.schedule.RequestScheduleDAO;
 import dao.schedule.ScheduleDAO;
 import java.sql.SQLException;
-import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
@@ -18,12 +17,10 @@ import view.common.RequestForm;
 public class EditScheduleController {
 
     private Schedule schedule;
-    private Room room;
     User user;
 
-    public EditScheduleController(Schedule schedule, Room room, User user) throws SQLException {
+    public EditScheduleController(Schedule schedule, User user) throws SQLException {
         this.schedule = schedule;
-        this.room = room;
         this.user = user;
         showArchiveForm(schedule, user);
 
@@ -59,7 +56,7 @@ public class EditScheduleController {
         });
 
         confirmPanel.setBtn2Action(e -> {
-
+            
             if (requestForm.isRequest) {
                 RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
 
