@@ -37,6 +37,17 @@ public class RequestsController {
         Student student = new StudentDAO().get(user.getUserID());
         RequestSchedule rs = new RequestScheduleDAO().getRequestSchedule(requestKey);
 
+        if (rs == null || rs.getDateRequested() == null) {
+            System.out.println(SectionRequestValidator.getLastUsedRequestKey());
+            System.out.println(status);
+            NotificationMessage page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png",
+                    "Your section has no pending request.");
+            panel = page;
+            MainFrame.addContentPanel(panel, "CheckRequest");
+            MainFrame.showPanel("CheckRequest", "Check Requests");
+            return;
+        }
+
         if ((status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
                 || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void"))
                 && (user.getUserID().equalsIgnoreCase(rs.getStudentRequested()))) {
@@ -67,18 +78,12 @@ public class RequestsController {
         }
 
         else if (RequestValidatorService.hasExceededMaxRequests(String.valueOf(student.getSectionKey()),
-                rs.getDateRequested())) {
-                    // This means that the student has a pending request, but it is not the most recent one.
+                rs.getDateRequested().split(" ")[0])) {
+            // This means that the student has a pending request, but it is not the most
+            // recent one.
             NotificationMessage notifPage = new NotificationMessage("/resources/images/icons/sameSectionIcon.png",
                     "Your section has a pending request.");
             panel = notifPage;
-        }
-
-        else {
-            System.out.println(SectionRequestValidator.getLastUsedRequestKey());
-            System.out.println(status);
-            NotificationMessage page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png", "Your section has no pending request.");
-            panel = page;
         }
 
         MainFrame.addContentPanel(panel, "CheckRequest");

@@ -1,5 +1,6 @@
 package controller.shared;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
 import model.schedule.RequestSchedule;
 import model.user.User;
+import service.RequestValidatorService;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.NotificationMessage;
@@ -16,6 +18,11 @@ public class RequestController {
     User user;
 
     public RequestController(RequestSchedule requestSchedule, User user) {
+        // guard clause so that the student can only request one time
+        if (user.getUserType().equals("Student") && RequestValidatorService.hasExceededMaxRequests(requestSchedule.getSectionKey(), DateTimeBuilder.getCurrentDate())){
+            MainFrame.setNotification("Your Section has Exceeded Request Limit");
+            return;
+        }
         this.user = user;
         LookUpDAO lookUp = new LookUpDAO();
         List<String> data = new ArrayList<>();
