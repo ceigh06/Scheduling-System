@@ -9,7 +9,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.TextArea;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,9 +18,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
 
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;
+import view.components.ScrollBarHelper;
 
 @SuppressWarnings("serial")
 public class CheckRequests extends JPanel {
@@ -42,15 +43,18 @@ public class CheckRequests extends JPanel {
 
     public CheckRequests() {
         setLayout(new BorderLayout());
+		setBackground(Color.WHITE);
 
         requestsWrapper = new JPanel();
         requestsWrapper.setLayout(new BoxLayout(requestsWrapper, BoxLayout.Y_AXIS));
+		// requestsWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         requestsWrapper.setOpaque(false);
 
         mainScrollPane = new JScrollPane(requestsWrapper);
         mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		ScrollBarHelper.applySlimScrollBar(mainScrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         mainScrollPane.setBorder(null);
         add(mainScrollPane, BorderLayout.CENTER);
     }
@@ -58,147 +62,156 @@ public class CheckRequests extends JPanel {
     public void loadRequestCount(int requestCount) {
         reqNumPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         reqNum = new JLabel(requestCount + " Classroom Schedule Requests");
+		reqNum.setForeground(new Color(91, 112, 121	));
         reqNum.setFont(new Font("Arial", Font.PLAIN, 20));
         reqNumPanel.add(reqNum);
         requestsWrapper.add(reqNumPanel);
     }
 
     public void loadRequests(List<String> data, String requestKey) {
-        requestPanel = new JPanel(new GridBagLayout());
-		requestPanel.setFont(new Font("Arial", Font.BOLD, 20));
-		requestPanel.setBackground(new Color(221, 221, 219));
+    // Expected data structure:
+    // 0: Name (Jessie Claire C. Santos)
+    // 1: Program/Section (BSIT - 2A-G2)
+    // 2: Subject (IT 203)
+    // 3: Request time (10:00 AM)
+    // 4: Room Code (MH - APP 101)
+    // 5: Schedule Time (3:00PM - 6:00PM)
+    
+    requestPanel = new JPanel(new GridBagLayout());
+    requestPanel.setBackground(new Color(243, 244, 247)); // Light gray background
+    requestPanel.setOpaque(true);
 
-		GridBagConstraints gbcPfp = new GridBagConstraints();
-		gbcPfp.gridx = 0;
-		gbcPfp.gridy = 0;
-		gbcPfp.gridheight = 4;   
-		gbcPfp.weightx = 0.1;
-		gbcPfp.weighty = 0;             
-		gbcPfp.insets = new Insets(5, 5, 0, 0);
-		gbcPfp.anchor = GridBagConstraints.NORTH;
+    // COLUMN 0: Profile pic and room code (fixed width, doesn't expand)
+    GridBagConstraints gbcCol0 = new GridBagConstraints();
+    gbcCol0.gridx = 0;
+    gbcCol0.anchor = GridBagConstraints.WEST;
+    gbcCol0.fill = GridBagConstraints.NONE;
+    gbcCol0.weightx = 0.1; 
+	
 
-		ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
+    // COLUMN 1: Name, time (can expand)
+    GridBagConstraints gbcCol1 = new GridBagConstraints();
+    gbcCol1.gridx = 1;
+    gbcCol1.anchor = GridBagConstraints.WEST;
+    gbcCol1.fill = GridBagConstraints.HORIZONTAL;
+    gbcCol1.weightx = 0.9;  // Take remaining space
+
+    // Profile Picture (rows 0-3, column 0)
+    gbcCol0.gridy = 0;
+    gbcCol0.gridheight = 4;
+    gbcCol0.insets = new Insets(5, 5, 0, 15);
+    
+    ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
 		Image scaled = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
 		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 80);
-		requestPanel.add(pfp, gbcPfp);
+		requestPanel.add(pfp, gbcCol0);
 		requestPanel.revalidate();	
 		requestPanel.repaint();
 
-		for (int i = 1; i < 5; i++) {
-			GridBagConstraints gbcInfo = new GridBagConstraints();
-			gbcInfo.gridx = 1;
-    		gbcInfo.gridy = i - 1;      
-    		gbcInfo.weightx = 0.9;
-    		gbcInfo.weighty = 0;         
-    		gbcInfo.anchor = GridBagConstraints.WEST;
-    		gbcInfo.insets = new Insets(i == 1 ? 5 : 2, 20, 2, 5);  
-			if (i == 4) {
-				requestPanel.add(new JLabel("Requested at: " + data.get(4)) {
-					{
-						setFont(new Font("Arial", Font.BOLD, 14));
-					}
-				}, gbcInfo);
-			} else {
-				if (i == 1) {
-					requestPanel.add(new JLabel(data.get(i)) {
-						{
-							setFont(new Font("Arial", Font.BOLD, 20));
-						}
-					}, gbcInfo);
-				} else {
-					requestPanel.add(new JLabel(data.get(i)) {
-						{
-							setFont(new Font("Arial", Font.BOLD, 15));
-						}
-					}, gbcInfo);
-				}
-			}
-		}
+    // Reset gridheight for labels
+    gbcCol0.gridheight = 1;
+    gbcCol1.gridheight = 1;
 
-		GridBagConstraints gbcRoomCode = new GridBagConstraints();
-		gbcRoomCode.gridx = 0;
-		gbcRoomCode.gridy = 5;
-		gbcRoomCode.anchor = GridBagConstraints.WEST;
-		gbcRoomCode.insets = new Insets(15, 15, 0, 5);
-		requestPanel.add(new JLabel("ROOM CODE") {
-			{
-				setFont(new Font("Arial", Font.BOLD, 12));
-			}
-		}, gbcRoomCode);
+    // Name (row 0, column 1)
+    gbcCol1.gridy = 0;
+    gbcCol1.insets = new Insets(2, 10, 2, 10);
+    JLabel nameLabel = new JLabel(data.get(0));
+    nameLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    nameLabel.setForeground(new Color(80, 80, 80));
+    requestPanel.add(nameLabel, gbcCol1);
 
-		GridBagConstraints gbcRoomData = new GridBagConstraints();
-		gbcRoomData.gridx = 0;
-		gbcRoomData.gridy = 6;
-		gbcRoomData.anchor = GridBagConstraints.WEST;
-		gbcRoomData.insets = new Insets(5,15, 15, 5);
-		requestPanel.add(new JLabel(data.get(5)) {
-			{
-				setFont(new Font("Arial", Font.BOLD, 12));
-			}
-		}, gbcRoomData);
+    // Program/Section (row 1, column 1)
+    gbcCol1.gridy = 1;
+    JLabel programLabel = new JLabel(data.get(1));
+    programLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+    programLabel.setForeground(new Color(100, 100, 100));
+    requestPanel.add(programLabel, gbcCol1);
 
-		GridBagConstraints gbcTimeLabel = new GridBagConstraints();
-		gbcTimeLabel.gridx = 1;
-		gbcTimeLabel.gridy = 5;
-		gbcTimeLabel.anchor = GridBagConstraints.WEST;
-		gbcTimeLabel.insets = new Insets(15, 20, 0, 5);
-		requestPanel.add(new JLabel("TIME") {
-			{
-				setFont(new Font("Arial", Font.BOLD, 12));
-			}
-		}, gbcTimeLabel);
+    // Subject (row 2, column 1)
+    gbcCol1.gridy = 2;
+    JLabel subjectLabel = new JLabel(data.get(2));
+    subjectLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+    subjectLabel.setForeground(new Color(100, 100, 100));
+    requestPanel.add(subjectLabel, gbcCol1);
 
-		GridBagConstraints gbcTimeData = new GridBagConstraints();
-		gbcTimeData.gridx = 1;
-		gbcTimeData.gridy = 6;
-		gbcTimeData.anchor = GridBagConstraints.WEST;
-		gbcTimeData.insets = new Insets(5, 20, 15, 5);
-		requestPanel.add(new JLabel(data.get(6)) {
-			{
-				setFont(new Font("Arial", Font.BOLD, 12));
-			}
-		}, gbcTimeData);
+    // Requested at (row 3, column 1)
+    gbcCol1.gridy = 3;
+    gbcCol1.insets = new Insets(8, 10, 15, 10);
+    JLabel requestedLabel = new JLabel("REQUESTED AT: " + data.get(3));
+    requestedLabel.setFont(new Font("Arial", Font.BOLD, 12));
+    requestedLabel.setForeground(new Color(120, 120, 120));
+    requestPanel.add(requestedLabel, gbcCol1);
 
-		RoundedPanel mainPanel = new RoundedPanel(60, 3, new Color(91, 112, 121), new BorderLayout());
-		mainPanel.setOpaque(false);
-		mainPanel.setBackground(new Color(243, 244, 247));
-		mainPanel.setPreferredSize(new Dimension(400, 250));
+    // ROOM CODE label (row 4, column 0)
+    gbcCol0.gridy = 4;
+    gbcCol0.insets = new Insets(15, 15, 2, 10);
+    JLabel roomTitleLabel = new JLabel("ROOM CODE");
+    roomTitleLabel.setFont(new Font("Arial", Font.BOLD, 11));
+    roomTitleLabel.setForeground(new Color(150, 150, 150));
+    requestPanel.add(roomTitleLabel, gbcCol0);
+
+    // TIME label (row 4, column 1)
+    gbcCol1.gridy = 4;
+    gbcCol1.insets = new Insets(15, 10, 2, 10);
+    JLabel timeTitleLabel = new JLabel("TIME");
+    timeTitleLabel.setFont(new Font("Arial", Font.BOLD, 11));
+    timeTitleLabel.setForeground(new Color(150, 150, 150));
+    requestPanel.add(timeTitleLabel, gbcCol1);
+
+    // Room Code value (row 5, column 0) - allow natural width
+    gbcCol0.gridy = 5;
+    gbcCol0.insets = new Insets(2, 15, 5, 10);
+    JLabel roomValueLabel = new JLabel(data.get(4));
+    roomValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    roomValueLabel.setForeground(new Color(91, 112, 121));
+    // Remove fixed size - let it be natural but column won't expand
+    requestPanel.add(roomValueLabel, gbcCol0);
+
+    // Time value (row 5, column 1)
+    gbcCol1.gridy = 5;
+    gbcCol1.insets = new Insets(2, 10, 5, 10);
+    JLabel timeValueLabel = new JLabel(data.get(5));
+    timeValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    timeValueLabel.setForeground(new Color(91, 112, 121));
+    requestPanel.add(timeValueLabel, gbcCol1);
+
+    RoundedPanel mainPanel = new RoundedPanel(50, 2, new Color(91, 112, 121), new BorderLayout());
+    mainPanel.setBackground(new Color(243, 244, 247));
+		mainPanel.setPreferredSize(new Dimension(400, 240));
 		mainPanel.setMaximumSize(new Dimension(400, 250));
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		requestPanel.setOpaque(false);
+    mainPanel.add(requestPanel, BorderLayout.CENTER);
 
-        ConfirmPanel confirmBtns = new ConfirmPanel(
-                requestPanel,
-                "DECLINE", "ACCEPT",
-                new Color(227, 75, 75), 2,
-                new Color(77, 139, 78), 2);
-        confirmBtns.setBtn1Color(new Color(255, 100, 100));
-        confirmBtns.setBtn2Color(new Color(63, 193, 127));
-        confirmBtns.getConfirmPanel().setOpaque(false);
+    ConfirmPanel confirmBtns = new ConfirmPanel(
+            requestPanel,
+            "DECLINE", "ACCEPT",
+            new Color(227, 75, 75), 2,
+            new Color(77, 139, 78), 2);
+    confirmBtns.setBtn1Color(new Color(255, 100, 100));
+    confirmBtns.setBtn2Color(new Color(63, 193, 127));
+    confirmBtns.getConfirmPanel().setOpaque(false);
 
-        confirmBtns.setBtn1Action(e -> {
-            if (onDecline != null)
-                onDecline.accept(requestKey);
-        });
+    confirmBtns.setBtn1Action(e -> {
+        if (onDecline != null)
+            onDecline.accept(requestKey);
+    });
 
-        confirmBtns.setBtn2Action(e -> {
-            if (onAccept != null)
-                onAccept.accept(requestKey);
-        });
+    confirmBtns.setBtn2Action(e -> {
+        if (onAccept != null)
+            onAccept.accept(requestKey);
+    });
 
-        requestPanel.setOpaque(false);
-        confirmBtns.getConfirmPanel().setOpaque(false);
+    mainPanel.add(confirmBtns.getConfirmPanel(), BorderLayout.SOUTH);
 
-        mainPanel.add(requestPanel, BorderLayout.NORTH);
-        mainPanel.add(confirmBtns.getConfirmPanel(), BorderLayout.SOUTH);
+    // Wrapper
+    JPanel wrapper = new JPanel(new FlowLayout());
+    wrapper.setOpaque(false);
+	wrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+    wrapper.add(mainPanel);
 
-        JPanel wrapper = new JPanel(new FlowLayout());
-        wrapper.setOpaque(false);
-        wrapper.add(mainPanel);
-
-        requestsWrapper.add(wrapper);
-        requestsWrapper.revalidate();
-        requestsWrapper.repaint();
-    }
+    requestsWrapper.add(wrapper);
+    requestsWrapper.revalidate();
+    requestsWrapper.repaint();
+}
 }
