@@ -105,17 +105,64 @@ public class BookingController {
 
         if (user.getUserType().equals("Faculty")) {
             List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-            viewSchedule.loadCourse(facultyCourses);
             viewSchedule.loadConfirmationPanel();
+            viewSchedule.loadCourse(facultyCourses); // ← first course selected here
+            loadSection(viewSchedule);
+
+            Course firstCourse = viewSchedule.getCourse();
+            if (firstCourse != null) {
+                if (firstCourse.isMajor()) {
+                    viewSchedule.setLabEnable(true);
+                    viewSchedule.setIsLec(true);
+                } else {
+                    viewSchedule.setLabEnable(false);
+                    viewSchedule.setIsLec(true);
+                }
+                handleTimeChange(viewSchedule);
+            }
 
             viewSchedule.setOnCourseChanged(e -> {
                 loadSection(viewSchedule);
+
+                if (viewSchedule.getCourse().isMajor()) {
+                    viewSchedule.setLabEnable(true);
+                    viewSchedule.setIsLec(true);
+                    handleTimeChange(viewSchedule);
+                } else {
+                    viewSchedule.setLabEnable(false);
+                    viewSchedule.setIsLec(true);
+                    handleTimeChange(viewSchedule);
+                }
             });
 
         } else if (user.getUserType().equals("Student")) {
             List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
             viewSchedule.loadCourse(studentCourses);
             viewSchedule.loadConfirmationPanel();
+
+            Course firstCourse = viewSchedule.getCourse();
+            if (firstCourse != null) {
+                if (firstCourse.isMajor()) {
+                    viewSchedule.setLabEnable(true);
+                    viewSchedule.setIsLec(true);
+                } else {
+                    viewSchedule.setLabEnable(false);
+                    viewSchedule.setIsLec(true);
+                }
+                handleTimeChange(viewSchedule);
+            }
+
+            viewSchedule.setOnCourseChanged(e -> {
+                if (viewSchedule.getCourse().isMajor()) {
+                    viewSchedule.setLabEnable(true);
+                    viewSchedule.setIsLec(true);
+                    handleTimeChange(viewSchedule);
+                } else {
+                    viewSchedule.setLabEnable(false);
+                    viewSchedule.setIsLec(true);
+                    handleTimeChange(viewSchedule);
+                }
+            });
 
         }
 
@@ -175,6 +222,7 @@ public class BookingController {
             List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
             viewSchedule.loadCourse(facultyCourses);
             viewSchedule.loadConfirmationPanel();
+            loadSection(viewSchedule);
 
             viewSchedule.setOnCourseChanged(e -> {
                 loadSection(viewSchedule);
@@ -195,12 +243,12 @@ public class BookingController {
     void loadSection(ViewSchedule viewSchedule) {
         // will be loaded ones the courses are picked
         Course selectedCourse = viewSchedule.getCourse();
+        
+        if (selectedCourse == null) return; // guard clause
+
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         List<Section> sections = scheduleDAO.getSectionByFacultyCourse(selectedCourse.getCode(), user.getUserID());
         viewSchedule.loadSection(sections);
-        if (selectedCourse != null) {
-            viewSchedule.loadSection(sections);
-        }
     }
 
     void handleTimeChange(ViewSchedule viewSchedule) {
@@ -213,7 +261,7 @@ public class BookingController {
             hour24 += 12;
         }
 
-        int duration = viewSchedule.getIsLec() ? 1 : 3;
+        int duration = viewSchedule.getIsLec() ? 2 : 3;
 
         // Clamp to school hours: 7 AM (7) to 8 PM (20)
         if (hour24 < 7) {
@@ -281,7 +329,7 @@ public class BookingController {
                 viewSchedule.showOverlappingMessage(isOverlapping);
                 return;
             }
-            isOverlapping  = false;
+            isOverlapping = false;
             viewSchedule.showOverlappingMessage(isOverlapping);
         });
 
@@ -291,7 +339,7 @@ public class BookingController {
                 isOverlapping = true;
                 viewSchedule.showOverlappingMessage(isOverlapping);
                 return;
-            } 
+            }
             isOverlapping = false;
             viewSchedule.showOverlappingMessage(isOverlapping);
         });
