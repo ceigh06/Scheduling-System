@@ -50,7 +50,8 @@ public class NavigationBar {
     public NavigationBar(JFrame frame) {
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
-        navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
+        // navPanel.setBorder(BorderFactory.createEmptyBorder(-10, 1, -10, 1));
+        navPanel.setBorder(BorderFactory.createEmptyBorder(5, 1, 5, 1));
         navPanel.setBackground(Color.WHITE);
 
         homePanel = createOption("/resources/images/icons/Home.png", "Home");
@@ -64,7 +65,7 @@ public class NavigationBar {
         addPanel(pfPanel, 3);
     }
 
-     public NavigationBar(JFrame frame, User user) {
+    public NavigationBar(JFrame frame, User user) {
         this.currentUser = user;
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));

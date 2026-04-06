@@ -46,7 +46,7 @@ public class ViewProfile extends JPanel {
 	    gbcPfp.anchor = GridBagConstraints.CENTER;
 	    gbcPfp.insets = new Insets(20, 0, 10, 0);
 
-		rawIcon = new ImageIcon("pfp.png");
+		rawIcon = new ImageIcon("/resources/images/icons/Profile.png");
 	    scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
 	    pfp = new RoundedLabel(new ImageIcon(scaledImg), 2,new Color(117, 144, 156), 100);
 	    

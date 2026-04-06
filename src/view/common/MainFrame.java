@@ -3,6 +3,7 @@ package view.common;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -43,8 +44,15 @@ public class MainFrame {
         navBar = new NavigationBar(frame);
         navPanel = navBar.getNavBar();
         // Assemble frame
+
+        JPanel centerWrapper = new JPanel(new BorderLayout());
+        centerWrapper.setBackground(Color.BLUE);
+        centerWrapper.setPreferredSize(new Dimension(450, 520));
+        centerWrapper.add(contentPanel, BorderLayout.CENTER);
+        frame.add(centerWrapper, BorderLayout.CENTER);
+
         frame.add(topPanel, BorderLayout.NORTH);
-        frame.add(contentPanel, BorderLayout.CENTER);
+        frame.add(centerWrapper, BorderLayout.CENTER);
         frame.add(navPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);

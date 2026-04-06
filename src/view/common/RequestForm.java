@@ -1,8 +1,6 @@
 package view.common;
 
 
-import dao.StudentDAO;
-import dao.schedule.RequestScheduleDAO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
-import model.user.Student;
 import model.user.User;
 import utilities.DateTimeBuilder;
 import view.components.RoundedTextField;
@@ -168,30 +165,25 @@ public class RequestForm extends JPanel {
         add(scrollPanel, BorderLayout.CENTER);
     }
 
-    public RequestForm(Schedule schedule, User user, Boolean viewArchives) throws SQLException {
+    public RequestForm(Schedule schedule, User user, Boolean viewArchives,
+                   String requestorID, String studentName, String fullSectionName) throws SQLException {
         isRequest = false;
         studentNumber = null;
         if (user.getUserType().equals("Admin")) {
             isRequest = schedule.getStatus().equals("3");
 
-            if (isRequest) {
-                RequestSchedule requestSchedule = new RequestSchedule();
-                RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
-                StudentDAO studentDAO = new StudentDAO();
-                requestSchedule = requestScheduleDAO.getBySchedule(schedule);
-                System.out.println(requestSchedule.getStudentRequested());
-                Student student = studentDAO.get(requestSchedule.getStudentRequested());
-                this.requestorID = requestSchedule.getStudentRequested();
-                studentNumber = this.requestorID;
-                this.name = student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName();
-            }
-            
-            this.section = schedule.getSectionKey();
-            this.roomCode = schedule.getRoomCode();
-            this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
-            this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
-            this.course = schedule.getCourseCode();
-            this.professor = schedule.getFacultyID();
+        if (isRequest) {
+            this.requestorID = requestorID;
+            studentNumber = this.requestorID;
+            this.name = studentName;
+        }
+
+        this.section = fullSectionName; 
+        this.roomCode = schedule.getRoomCode();
+        this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
+        this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
+        this.course = schedule.getCourseCode();
+        this.professor = schedule.getFacultyID();
 
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);

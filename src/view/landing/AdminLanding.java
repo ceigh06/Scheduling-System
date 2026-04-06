@@ -68,6 +68,9 @@ public class AdminLanding extends JPanel {
         contentPanel.add(createSearchSection());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
+        peakBtn = new RoundedButton("View Report", 20);
+        contentPanel.add(createReportSection("Peak Scheduling Hours", 407, 187, peakBtn));
+
         // Create buttons for side by side reports
         totalBtn = new RoundedButton("View Report", 20);
         mostBtn = new RoundedButton("View Report", 20);
@@ -81,8 +84,7 @@ public class AdminLanding extends JPanel {
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Create button for most vacancies report
-        peakBtn = new RoundedButton("View Report", 20);
-        contentPanel.add(createReportSection("Peak Scheduling Hours", 397, 187, peakBtn));
+        
 
         contentPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
