@@ -178,11 +178,8 @@ public class ViewSchedule extends JPanel {
             String formattedTimeOut = formatTime(schedule.getTimeOut());
             String timeRange = formattedTimeIn + " - " + formattedTimeOut;
 
-            boolean isMasterSchedule = true;
-            if (schedule.getStatus().trim().equals("3"))
-                isMasterSchedule = false;
-
-            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+            int schedType = Integer.parseInt(schedule.getStatus());
+            addScheduleBlock(1, timeRange, schedType, schedule);
         }
     }
 
@@ -192,11 +189,8 @@ public class ViewSchedule extends JPanel {
             String formattedTimeOut = formatTime(schedule.getTimeOut());
             String timeRange = formattedTimeIn + " - " + formattedTimeOut;
 
-            boolean isMasterSchedule = true;
-            if (schedule.getStatus().trim().equals("3"))
-                isMasterSchedule = false;
-
-            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+            int schedType = Integer.parseInt(schedule.getStatus());
+            addScheduleBlock(1, timeRange, schedType, schedule);
         }
     }
 
@@ -206,11 +200,8 @@ public class ViewSchedule extends JPanel {
             String formattedTimeOut = formatTime(schedule.getTimeOut());
             String timeRange = formattedTimeIn + " - " + formattedTimeOut;
 
-            boolean isMasterSchedule = true;
-            if (schedule.getStatus().trim().equals("3"))
-                isMasterSchedule = false;
-
-            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+            int schedType = Integer.parseInt(schedule.getStatus());
+            addScheduleBlock(1, timeRange, schedType, schedule);
         }
     }
 
@@ -677,8 +668,8 @@ public class ViewSchedule extends JPanel {
             String formattedTimeIn = formatTime(schedule.getTimeIn());
             String formattedTimeOut = formatTime(schedule.getTimeOut());
             String timeRange = formattedTimeIn + " - " + formattedTimeOut;
-            boolean isMasterSchedule = !schedule.getStatus().trim().equals("3");
-            addScheduleBlock(1, timeRange, isMasterSchedule, schedule);
+            int schedType = Integer.parseInt(schedule.getStatus());
+            addScheduleBlock(1, timeRange, schedType, schedule);
         }
 
         timeSched.revalidate();
