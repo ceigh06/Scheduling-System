@@ -81,13 +81,21 @@ public class CheckRequests extends JPanel {
     requestPanel.setBackground(new Color(243, 244, 247)); // Light gray background
     requestPanel.setOpaque(true);
 
-    // COLUMN 0: Profile pic and room code (fixed width, doesn't expand)
-    GridBagConstraints gbcCol0 = new GridBagConstraints();
-    gbcCol0.gridx = 0;
-    gbcCol0.anchor = GridBagConstraints.WEST;
-    gbcCol0.fill = GridBagConstraints.NONE;
-    gbcCol0.weightx = 0.1; 
-	
+    GridBagConstraints gbcPfp = new GridBagConstraints();
+		gbcPfp.gridx = 0;
+		gbcPfp.gridy = 0;
+		gbcPfp.gridheight = 4;   
+		gbcPfp.weightx = 0.1;
+		gbcPfp.weighty = 0;             
+		gbcPfp.insets = new Insets(5, 5, 0, 0);
+		gbcPfp.anchor = GridBagConstraints.NORTH;
+
+		ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
+		Image scaled = rawIcon.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 70);
+		requestPanel.add(pfp, gbcPfp);
+		requestPanel.revalidate();	
+		requestPanel.repaint();
 
     // COLUMN 1: Name, time (can expand)
     GridBagConstraints gbcCol1 = new GridBagConstraints();
@@ -95,21 +103,6 @@ public class CheckRequests extends JPanel {
     gbcCol1.anchor = GridBagConstraints.WEST;
     gbcCol1.fill = GridBagConstraints.HORIZONTAL;
     gbcCol1.weightx = 0.9;  // Take remaining space
-
-    // Profile Picture (rows 0-3, column 0)
-    gbcCol0.gridy = 0;
-    gbcCol0.gridheight = 4;
-    gbcCol0.insets = new Insets(5, 5, 0, 15);
-    
-    ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
-		Image scaled = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 80);
-		requestPanel.add(pfp, gbcCol0);
-		requestPanel.revalidate();	
-		requestPanel.repaint();
-
-    // Reset gridheight for labels
-    gbcCol0.gridheight = 1;
     gbcCol1.gridheight = 1;
 
     // Name (row 0, column 1)
@@ -123,14 +116,14 @@ public class CheckRequests extends JPanel {
     // Program/Section (row 1, column 1)
     gbcCol1.gridy = 1;
     JLabel programLabel = new JLabel(data.get(1));
-    programLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+    programLabel.setFont(new Font("Arial", Font.PLAIN, 11));
     programLabel.setForeground(new Color(100, 100, 100));
     requestPanel.add(programLabel, gbcCol1);
 
     // Subject (row 2, column 1)
     gbcCol1.gridy = 2;
     JLabel subjectLabel = new JLabel(data.get(2));
-    subjectLabel.setFont(new Font("Arial", Font.PLAIN, 13));
+    subjectLabel.setFont(new Font("Arial", Font.PLAIN, 11));
     subjectLabel.setForeground(new Color(100, 100, 100));
     requestPanel.add(subjectLabel, gbcCol1);
 
@@ -138,40 +131,47 @@ public class CheckRequests extends JPanel {
     gbcCol1.gridy = 3;
     gbcCol1.insets = new Insets(8, 10, 15, 10);
     JLabel requestedLabel = new JLabel("REQUESTED AT: " + data.get(3));
-    requestedLabel.setFont(new Font("Arial", Font.BOLD, 12));
+    requestedLabel.setFont(new Font("Arial", Font.BOLD, 11));
     requestedLabel.setForeground(new Color(120, 120, 120));
     requestPanel.add(requestedLabel, gbcCol1);
 
-    // ROOM CODE label (row 4, column 0)
-    gbcCol0.gridy = 4;
-    gbcCol0.insets = new Insets(15, 15, 2, 10);
-    JLabel roomTitleLabel = new JLabel("ROOM CODE");
-    roomTitleLabel.setFont(new Font("Arial", Font.BOLD, 11));
-    roomTitleLabel.setForeground(new Color(150, 150, 150));
-    requestPanel.add(roomTitleLabel, gbcCol0);
+   GridBagConstraints gbcRoomCode = new GridBagConstraints();
+		gbcRoomCode.gridx = 0;
+		gbcRoomCode.gridy = 4;
+		gbcRoomCode.anchor = GridBagConstraints.WEST;
+		gbcRoomCode.insets = new Insets(10, 10, 0, 5);
+		requestPanel.add(new JLabel("ROOM CODE") {
+			{
+				setFont(new Font("Arial", Font.BOLD, 11));
+                setForeground(new Color(150, 150, 150));
+			}
+		}, gbcRoomCode);
+
+		GridBagConstraints gbcRoomData = new GridBagConstraints();
+		gbcRoomData.gridx = 0;
+		gbcRoomData.gridy = 5;
+		gbcRoomData.anchor = GridBagConstraints.WEST;
+		gbcRoomData.insets = new Insets(8,10, 5, 5);
+		requestPanel.add(new JLabel(data.get(4)) {
+			{
+				setFont(new Font("Arial", Font.BOLD, 12));
+                setForeground(new Color(91, 112, 121));
+			}
+		}, gbcRoomData);
 
     // TIME label (row 4, column 1)
     gbcCol1.gridy = 4;
-    gbcCol1.insets = new Insets(15, 10, 2, 10);
+    gbcCol1.insets = new Insets(10, 10, 0, 10);
     JLabel timeTitleLabel = new JLabel("TIME");
     timeTitleLabel.setFont(new Font("Arial", Font.BOLD, 11));
     timeTitleLabel.setForeground(new Color(150, 150, 150));
     requestPanel.add(timeTitleLabel, gbcCol1);
 
-    // Room Code value (row 5, column 0) - allow natural width
-    gbcCol0.gridy = 5;
-    gbcCol0.insets = new Insets(2, 15, 5, 10);
-    JLabel roomValueLabel = new JLabel(data.get(4));
-    roomValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
-    roomValueLabel.setForeground(new Color(91, 112, 121));
-    // Remove fixed size - let it be natural but column won't expand
-    requestPanel.add(roomValueLabel, gbcCol0);
-
     // Time value (row 5, column 1)
     gbcCol1.gridy = 5;
-    gbcCol1.insets = new Insets(2, 10, 5, 10);
+    gbcCol1.insets = new Insets(8, 10, 5, 10);
     JLabel timeValueLabel = new JLabel(data.get(5));
-    timeValueLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    timeValueLabel.setFont(new Font("Arial", Font.BOLD, 12));
     timeValueLabel.setForeground(new Color(91, 112, 121));
     requestPanel.add(timeValueLabel, gbcCol1);
 
@@ -179,7 +179,7 @@ public class CheckRequests extends JPanel {
     mainPanel.setBackground(new Color(243, 244, 247));
 		mainPanel.setPreferredSize(new Dimension(400, 240));
 		mainPanel.setMaximumSize(new Dimension(400, 250));
-    mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
     mainPanel.add(requestPanel, BorderLayout.CENTER);
 
