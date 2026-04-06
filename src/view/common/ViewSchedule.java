@@ -457,7 +457,8 @@ spinnerPan.add(minsSpinner, gbc);
 gbc.gridx = 2;
 spinnerPan.add(mrdmCombo, gbc);
 
-// Row 2: JLabel spanning 3 columns
+//NOTE FOR OVERLAPPING SCHEDULES
+//BACKEND TO DO: Have checker for overlapping schedules, if the time in overlaps with an existing schedule, show this label  
 JLabel noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
 noteLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
 noteLabel.setForeground(new Color(227, 75, 75));
@@ -465,8 +466,9 @@ noteLabel.setHorizontalAlignment(JLabel.LEFT);
 
 gbc.gridy = 2;
 gbc.gridx = 0;
-gbc.gridwidth = 3;  // **SPANS 3 COLUMNS**
+gbc.gridwidth = 3;  
 spinnerPan.add(noteLabel, gbc);
+
     }
 
     // GETTERS FOR VALUES
@@ -720,7 +722,7 @@ spinnerPan.add(noteLabel, gbc);
 
 
     // UTILITY
-    public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
+    public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");
         System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
@@ -751,9 +753,18 @@ spinnerPan.add(noteLabel, gbc);
 
         JPanel schedPanel = new JPanel();
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
-        schedPanel.setBackground(schedType ? new Color(255, 169, 62) : new Color(255, 245, 157));
-        if (!schedType)
-            schedPanel.setForeground(Color.BLACK);
+        schedPanel.setForeground(Color.BLACK);
+        //for schedule type
+        //0 - master schedule - orange 255, 169, 62
+        //1 - request schedule - 255, 245, 157
+        //2 - pending request schedule - light gray
+        switch(schedType) {
+            case 0 -> schedPanel.setBackground(new Color(255, 169, 62));
+            case 1 -> schedPanel.setBackground(new Color(255, 245, 157));
+            case 2 -> schedPanel.setBackground(new Color(227, 227, 227));
+            default -> schedPanel.setBackground(new Color(227, 149, 100));
+        }
+
 
         schedPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
