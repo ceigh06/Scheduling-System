@@ -71,6 +71,7 @@ public class RequestsController {
 
                 page.setOnBackClicked(e -> {
                     MainFrame.showPanel("Landing", "RoomMate");
+                    MainFrame.restoreNavBarDefaultState();
                 });
             }
 
