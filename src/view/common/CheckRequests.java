@@ -2,6 +2,7 @@ package view.common;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -47,6 +48,8 @@ public class CheckRequests extends JPanel {
 
         mainScrollPane = new JScrollPane(requestsWrapper);
         mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         mainScrollPane.setBorder(null);
         add(mainScrollPane, BorderLayout.CENTER);
     }
@@ -65,70 +68,96 @@ public class CheckRequests extends JPanel {
         requestPanel.setBackground(new Color(221, 221, 219));
 
         GridBagConstraints gbcPfp = new GridBagConstraints();
-        gbcPfp.gridx = 0;
-        gbcPfp.gridy = 0;
-        gbcPfp.gridheight = 4;
-        gbcPfp.weightx = 0.1;
-        gbcPfp.anchor = GridBagConstraints.CENTER;
+		gbcPfp.gridx = 0;
+		gbcPfp.gridy = 0;
+		gbcPfp.gridheight = 4;   
+		gbcPfp.weightx = 0.1;
+		gbcPfp.weighty = 0;             
+		gbcPfp.insets = new Insets(5, 5, 0, 0);
+		gbcPfp.anchor = GridBagConstraints.NORTH;
 
-        ImageIcon rawIcon = new ImageIcon("pfp.png");
-        Image scaledImg = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
-        RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaledImg), 2, new Color(117, 144, 156), 100);
-        requestPanel.add(pfp, gbcPfp);
+        ImageIcon rawIcon = new ImageIcon(getClass().getResource("/resources/images/icons/Profile.png"));
+		Image scaled = rawIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+		RoundedLabel pfp = new RoundedLabel(new ImageIcon(scaled), 2, new Color(91, 112, 121), 80);
+		requestPanel.add(pfp, gbcPfp);
+		requestPanel.revalidate();	
+		requestPanel.repaint();
 
         for (int i = 0; i < 4; i++) {
             GridBagConstraints gbcInfo = new GridBagConstraints();
-            gbcInfo.gridx = 1;
-            gbcInfo.gridy = i;
-            gbcInfo.weightx = 0.9;
-            gbcInfo.anchor = GridBagConstraints.WEST;
-            gbcInfo.insets = new Insets(5, 5, 5, 5);
+			gbcInfo.gridx = 1;
+    		gbcInfo.gridy = i - 1;      
+    		gbcInfo.weightx = 0.9;
+    		gbcInfo.weighty = 0;         
+    		gbcInfo.anchor = GridBagConstraints.WEST;
+    		gbcInfo.insets = new Insets(i == 1 ? 4 : 2, 20, 2, 5);  
             if (i == 3) {
                 requestPanel.add(new JLabel("Requested at: " + data.get(3)) {
-                    { setFont(new Font("Courier New", Font.BOLD, 14)); }
-                }, gbcInfo);
+					{
+						setFont(new Font("Arial", Font.BOLD, 14));
+					}
+				}, gbcInfo);
             } else {
-                requestPanel.add(new JLabel(data.get(i)) {
-                    { setFont(new Font("Courier New", Font.BOLD, 14)); }
-                }, gbcInfo);
+                if (i == 1) {
+					requestPanel.add(new JLabel(data.get(i)) {
+						{
+							setFont(new Font("Arial", Font.BOLD, 20));
+						}
+					}, gbcInfo);
+				} else {
+					requestPanel.add(new JLabel(data.get(i)) {
+						{
+							setFont(new Font("Arial", Font.BOLD, 15));
+						}
+					}, gbcInfo);
+				}
             }
         }
 
-        GridBagConstraints gbcSchedLabel = new GridBagConstraints();
-        gbcSchedLabel.gridx = 0;
-        gbcSchedLabel.gridy = 4;
-        gbcSchedLabel.anchor = GridBagConstraints.WEST;
-        gbcSchedLabel.insets = new Insets(15, 5, 0, 5);
-        requestPanel.add(new JLabel("CLASSROOM SCHEDULE") {
-            { setFont(new Font("Courier New", Font.BOLD, 12)); }
-        }, gbcSchedLabel);
+        GridBagConstraints gbcRoomCode = new GridBagConstraints();
+		gbcRoomCode.gridx = 0;
+		gbcRoomCode.gridy = 5;
+		gbcRoomCode.anchor = GridBagConstraints.WEST;
+		gbcRoomCode.insets = new Insets(15, 15, 0, 5);
+		requestPanel.add(new JLabel("ROOM CODE") {
+			{
+				setFont(new Font("Arial", Font.BOLD, 12));
+			}
+		}, gbcRoomCode);
 
-        GridBagConstraints gbcSchedData = new GridBagConstraints();
-        gbcSchedData.gridx = 0;
-        gbcSchedData.gridy = 5;
-        gbcSchedData.anchor = GridBagConstraints.WEST;
-        gbcSchedData.insets = new Insets(5, 5, 15, 5);
-        requestPanel.add(new JLabel(data.get(4)) {
-            { setFont(new Font("Courier New", Font.BOLD, 12)); }
-        }, gbcSchedData);
+
+        GridBagConstraints gbcRoomData = new GridBagConstraints();
+		gbcRoomData.gridx = 0;
+		gbcRoomData.gridy = 6;
+		gbcRoomData.anchor = GridBagConstraints.WEST;
+		gbcRoomData.insets = new Insets(5,15, 15, 5);
+		requestPanel.add(new JLabel(data.get(4)) {
+			{
+				setFont(new Font("Arial", Font.BOLD, 12));
+			}
+		}, gbcRoomData);
 
         GridBagConstraints gbcTimeLabel = new GridBagConstraints();
-        gbcTimeLabel.gridx = 1;
-        gbcTimeLabel.gridy = 4;
-        gbcTimeLabel.anchor = GridBagConstraints.WEST;
-        gbcTimeLabel.insets = new Insets(15, 15, 0, 5);
-        requestPanel.add(new JLabel("TIME") {
-            { setFont(new Font("Courier New", Font.BOLD, 12)); }
-        }, gbcTimeLabel);
+		gbcTimeLabel.gridx = 1;
+		gbcTimeLabel.gridy = 5;
+		gbcTimeLabel.anchor = GridBagConstraints.WEST;
+		gbcTimeLabel.insets = new Insets(15, 20, 0, 5);
+		requestPanel.add(new JLabel("TIME") {
+			{
+				setFont(new Font("Arial", Font.BOLD, 12));
+			}
+		}, gbcTimeLabel);
 
         GridBagConstraints gbcTimeData = new GridBagConstraints();
-        gbcTimeData.gridx = 1;
-        gbcTimeData.gridy = 5;
-        gbcTimeData.anchor = GridBagConstraints.WEST;
-        gbcTimeData.insets = new Insets(5, 15, 15, 5);
-        requestPanel.add(new JLabel(data.get(5)) {
-            { setFont(new Font("Courier New", Font.BOLD, 12)); }
-        }, gbcTimeData);
+		gbcTimeData.gridx = 1;
+		gbcTimeData.gridy = 6;
+		gbcTimeData.anchor = GridBagConstraints.WEST;
+		gbcTimeData.insets = new Insets(5, 20, 15, 5);
+		requestPanel.add(new JLabel(data.get(5)) {
+			{
+				setFont(new Font("Arial", Font.BOLD, 12));
+			}
+		}, gbcTimeData);
 
         ConfirmPanel confirmBtns = new ConfirmPanel(
                 requestPanel,
@@ -148,10 +177,12 @@ public class CheckRequests extends JPanel {
                 onAccept.accept(requestKey);
         });
 
-        RoundedPanel mainPanel = new RoundedPanel(50, 10, new Color(117, 144, 156), new BorderLayout());
-        mainPanel.setOpaque(false);
-        mainPanel.setBackground(new Color(243, 244, 247));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        RoundedPanel mainPanel = new RoundedPanel(60, 3, new Color(91, 112, 121), new BorderLayout());
+		mainPanel.setOpaque(false);
+		mainPanel.setBackground(new Color(243, 244, 247));
+		mainPanel.setPreferredSize(new Dimension(400, 250));
+		mainPanel.setMaximumSize(new Dimension(400, 250));
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));
 
         requestPanel.setOpaque(false);
         confirmBtns.getConfirmPanel().setOpaque(false);
