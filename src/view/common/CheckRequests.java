@@ -166,6 +166,7 @@ public class CheckRequests extends JPanel {
                 new Color(77, 139, 78), 2);
         confirmBtns.setBtn1Color(new Color(255, 100, 100));
         confirmBtns.setBtn2Color(new Color(63, 193, 127));
+        confirmBtns.getConfirmPanel().setOpaque(false);
 
         confirmBtns.setBtn1Action(e -> {
             if (onDecline != null)
