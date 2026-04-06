@@ -11,6 +11,7 @@ import model.Room;
 import model.schedule.RequestSchedule;
 import model.schedule.Schedule;
 import model.user.User;
+import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RequestForm;
@@ -114,10 +115,11 @@ public class ViewScheduleController {
         }
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
-        data.add(String.valueOf(requestSchedule.getTimeIn()));
-        data.add(String.valueOf(requestSchedule.getTimeOut()));
+        data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeIn())));
+        data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeOut())));
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
         data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
+        System.out.println(data.get(6));
 
         String header = getHeader(requestSchedule.getDateRequested(),schedule.getTimeIn(), schedule.getTimeOut());
 
@@ -156,6 +158,14 @@ public class ViewScheduleController {
         RequestForm form = new RequestForm(data, header, "Cancel");
         MainFrame.addContentPanel(form, "Form");
         MainFrame.showPanel("Form");
+
+        form.setGoBackOnClick(e ->{
+
+        });
+
+        form.setSubmitOnClick(e->{
+            
+        });
 
     }
 

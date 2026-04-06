@@ -1,5 +1,6 @@
 package view.common;
 
+import dao.LookUpDAO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -158,6 +159,7 @@ public class RequestForm extends JPanel {
 
     public RequestForm(Schedule schedule, User user, Boolean viewArchives,
             String requestorID, String studentName, String fullSectionName) throws SQLException {
+        LookUpDAO lookUpDAO = new LookUpDAO();
         isRequest = false;
         studentNumber = null;
         if (user.getUserType().equals("Admin")) {
@@ -179,7 +181,7 @@ public class RequestForm extends JPanel {
                 this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
             }
             this.course = schedule.getCourseCode();
-            this.professor = schedule.getFacultyID();
+            this.professor = lookUpDAO.getFullFacultyName(schedule.getFacultyID());
 
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);
