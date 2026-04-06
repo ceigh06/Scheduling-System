@@ -83,6 +83,7 @@ public class AdminController {
            MainFrame.addContentPanel(report1, "Report1");
         }
         MainFrame.showPanel("Report1", "Admin Reports");
+        MainFrame.restoreNavBarDefaultState();
     }
 
     public void onMostReportClicked() {
@@ -94,6 +95,7 @@ public class AdminController {
             MainFrame.addContentPanel(report2, "Report2");
         }
         MainFrame.showPanel("Report2", "Admin Reports");
+        MainFrame.restoreNavBarDefaultState();
     }
 
     public void onPeakReportClicked() throws SQLException {
@@ -105,6 +107,7 @@ public class AdminController {
             MainFrame.addContentPanel(report3, "Report3");
         }
         MainFrame.showPanel("Report3", "Admin Reports");
+        MainFrame.restoreNavBarDefaultState();
     }
 
     public void onBrowseClicked() throws SQLException {

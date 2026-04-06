@@ -178,6 +178,7 @@ public class NotificationMessage extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
+            MainFrame.restoreNavBarDefaultState();
             if (user == null) {
                 MainFrame.showPanel("Landing", "RoomMate");
             } else {

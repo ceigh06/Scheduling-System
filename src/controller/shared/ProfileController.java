@@ -78,10 +78,13 @@ public class ProfileController {
     private void onBackClicked() throws SQLException {
         if (user.getUserType() == "Student") {
             MainFrame.showPanel("Landing", "RoomMate");
+            MainFrame.restoreNavBarDefaultState();
         } else if (user.getUserType() == "Faculty") {
             MainFrame.showPanel("Landing", "RoomMate");
+            MainFrame.restoreNavBarDefaultState();
         } else if (user.getUserType() == "Admin") {
             MainFrame.showPanel("AdminLanding", "RoomMate");
+            MainFrame.restoreNavBarDefaultState();
         }
     }
 
