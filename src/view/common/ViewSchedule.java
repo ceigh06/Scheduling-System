@@ -404,35 +404,69 @@ public class ViewSchedule extends JPanel {
         timeInPanel.setBackground(Color.WHITE);
         timeInPanel.add(timeinLbl);
 
-        // Spinner panel
-        spinnerPan = new JPanel(new GridLayout(2, 3, 20, 5));
-        spinnerPan.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        spinnerPan.setBackground(Color.WHITE);
-        spinnerPan.setMaximumSize(new Dimension(400, 80));
+        // Spinner panel with GridBagLayout
+spinnerPan = new JPanel(new GridBagLayout());
+spinnerPan.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+spinnerPan.setBackground(Color.WHITE);
+spinnerPan.setMaximumSize(new Dimension(400, 100));
 
-        // Labels
-        hLbl = new JLabel("Hour");
-        mLbl = new JLabel("Minute");
-        mrdmLbl = new JLabel("AM/PM");
+GridBagConstraints gbc = new GridBagConstraints();
+gbc.insets = new Insets(5, 10, 5, 10);  
+gbc.fill = GridBagConstraints.BOTH;     
+gbc.weightx = 1.0;                    
+gbc.weighty = 0;                       
 
-        // Spinners
-        SpinnerNumberModel hrsModel = new SpinnerNumberModel(7, 1, 12, 1);
-        hrsSpinner = new JSpinner(hrsModel);
+// Labels row
+hLbl = new JLabel("Hour");
+mLbl = new JLabel("Minute");
+mrdmLbl = new JLabel("AM/PM");
+hLbl.setHorizontalAlignment(JLabel.CENTER);
+mLbl.setHorizontalAlignment(JLabel.CENTER);
+mrdmLbl.setHorizontalAlignment(JLabel.CENTER);
 
-        SpinnerNumberModel minModel = new SpinnerNumberModel(0, 0, 59, 1);
-        minsSpinner = new JSpinner(minModel);
+// Spinners
+SpinnerNumberModel hrsModel = new SpinnerNumberModel(7, 1, 12, 1);
+hrsSpinner = new JSpinner(hrsModel);
 
-        // AM/PM combo
-        String[] meridiem = { "AM", "PM" };
-        mrdmCombo = new JComboBox<>(meridiem);
+SpinnerNumberModel minModel = new SpinnerNumberModel(0, 0, 59, 1);
+minsSpinner = new JSpinner(minModel);
 
-        // Add to panel
-        spinnerPan.add(hLbl);
-        spinnerPan.add(mLbl);
-        spinnerPan.add(mrdmLbl);
-        spinnerPan.add(hrsSpinner);
-        spinnerPan.add(minsSpinner);
-        spinnerPan.add(mrdmCombo);
+String[] meridiem = { "AM", "PM" };
+mrdmCombo = new JComboBox<>(meridiem);
+
+// Row 0: Labels
+gbc.gridy = 0;
+gbc.gridx = 0;
+gbc.gridwidth = 1;
+spinnerPan.add(hLbl, gbc);
+
+gbc.gridx = 1;
+spinnerPan.add(mLbl, gbc);
+
+gbc.gridx = 2;
+spinnerPan.add(mrdmLbl, gbc);
+
+// Row 1: Spinners
+gbc.gridy = 1;
+gbc.gridx = 0;
+spinnerPan.add(hrsSpinner, gbc);
+
+gbc.gridx = 1;
+spinnerPan.add(minsSpinner, gbc);
+
+gbc.gridx = 2;
+spinnerPan.add(mrdmCombo, gbc);
+
+// Row 2: JLabel spanning 3 columns
+JLabel noteLabel = new JLabel("! This time overlaps with an existing schedule.", SwingConstants.LEFT);
+noteLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+noteLabel.setForeground(new Color(227, 75, 75));
+noteLabel.setHorizontalAlignment(JLabel.LEFT);
+
+gbc.gridy = 2;
+gbc.gridx = 0;
+gbc.gridwidth = 3;  // **SPANS 3 COLUMNS**
+spinnerPan.add(noteLabel, gbc);
     }
 
     // GETTERS FOR VALUES
