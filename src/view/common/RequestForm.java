@@ -1,6 +1,5 @@
 package view.common;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -47,17 +48,9 @@ public class RequestForm extends JPanel {
             course,
             professor;
 
-    public RequestForm(RequestSchedule requestSchedule) {
+    public RequestForm(List<String> data) {
         studentNumber = null;
         isRequest = false;
-        this.roomCode = requestSchedule.getRoomCode();
-        this.requestorID = requestSchedule.getStudentRequested();
-        this.name = requestSchedule.getStudentRequested();
-        this.section = requestSchedule.getSectionKey();
-        this.timeIn = requestSchedule.getTimeIn();
-        this.timeOut = requestSchedule.getTimeOut();
-        this.course = requestSchedule.getCourseCode();
-        this.professor = requestSchedule.getFacultyID();
 
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -82,10 +75,10 @@ public class RequestForm extends JPanel {
         formsTop.setBackground(Color.WHITE);
         formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
 
-        formsTop.add(labeledField("Requestor", requestorID));
-        formsTop.add(labeledField("Name", name));
-        formsTop.add(labeledField("Section", section));
-        formsTop.add(labeledField("Room Code", this.roomCode));
+        formsTop.add(labeledField("Requestor", data.get(0)));
+        formsTop.add(labeledField("Name", data.get(1)));
+        formsTop.add(labeledField("Section", data.get(2)));
+        formsTop.add(labeledField("Room Code", data.get(3)));
         formsPanel.add(formsTop);
         formsPanel.add(Box.createVerticalStrut(20));
 
@@ -118,13 +111,13 @@ public class RequestForm extends JPanel {
         RoundedTextField timeInTxt = new RoundedTextField(10, 20, 1,
                 new Color(200, 200, 200),
                 null);
-        timeInTxt.setText(timeIn);
+        timeInTxt.setText(data.get(4));
         styleField(timeInTxt);
 
         RoundedTextField timeOutTxt = new RoundedTextField(10, 20, 1,
                 new Color(200, 200, 200),
                 null);
-        timeOutTxt.setText(timeOut);
+        timeOutTxt.setText(data.get(5));
         styleField(timeOutTxt);
 
         timeValues.add(timeInTxt);
@@ -142,8 +135,8 @@ public class RequestForm extends JPanel {
         formsBottom.setBackground(Color.WHITE);
         formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
 
-        formsBottom.add(labeledField("Course", course));
-        formsBottom.add(labeledField("Professor", professor));
+        formsBottom.add(labeledField("Course", data.get(6)));
+        formsBottom.add(labeledField("Professor", data.get(7)));
         formsPanel.add(formsBottom);
         formsPanel.add(Box.createVerticalStrut(30));
 
@@ -166,24 +159,24 @@ public class RequestForm extends JPanel {
     }
 
     public RequestForm(Schedule schedule, User user, Boolean viewArchives,
-                   String requestorID, String studentName, String fullSectionName) throws SQLException {
+            String requestorID, String studentName, String fullSectionName) throws SQLException {
         isRequest = false;
         studentNumber = null;
         if (user.getUserType().equals("Admin")) {
             isRequest = schedule.getStatus().equals("3");
 
-        if (isRequest) {
-            this.requestorID = requestorID;
-            studentNumber = this.requestorID;
-            this.name = studentName;
-        }
+            if (isRequest) {
+                this.requestorID = requestorID;
+                studentNumber = this.requestorID;
+                this.name = studentName;
+            }
 
-        this.section = fullSectionName; 
-        this.roomCode = schedule.getRoomCode();
-        this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
-        this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
-        this.course = schedule.getCourseCode();
-        this.professor = schedule.getFacultyID();
+            this.section = fullSectionName;
+            this.roomCode = schedule.getRoomCode();
+            this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
+            this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
+            this.course = schedule.getCourseCode();
+            this.professor = schedule.getFacultyID();
 
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);
@@ -325,8 +318,7 @@ public class RequestForm extends JPanel {
         field.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         field.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)
-        ));
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
         field.setForeground(Color.DARK_GRAY);
         field.setEditable(false);
         field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
@@ -335,5 +327,5 @@ public class RequestForm extends JPanel {
     public ConfirmPanel getReqConfirm() {
         return reqConfirm;
     }
-    
+
 }
