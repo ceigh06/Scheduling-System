@@ -2,8 +2,11 @@ package view.common;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +18,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import model.Room;
@@ -108,6 +112,7 @@ public class RoomBrowser extends JPanel{
 			new Color(77,139, 78),2);
 		confirmArea.setBtn1Color(new Color(255, 100, 100));
 		confirmArea.setBtn2Color(new Color(63, 193, 127));
+		confirmArea.getConfirmPanel().setOpaque(false);
         roomPanel.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
         wrapper.add(roomPanel);
         
@@ -184,18 +189,45 @@ public class RoomBrowser extends JPanel{
 	        RoundedPanel roomCard = new RoundedPanel(20,0);
 	        roomCard.setPreferredSize(new Dimension(400, 100));
 	        roomCard.setMaximumSize(new Dimension(400,100));
-	        
-	        RoundedPanel codePanel = new RoundedPanel(20,1, new Color(91,112,121));
+	        roomCard.setLayout(new BorderLayout(7, 0));
+
+	        RoundedPanel codePanel = new RoundedPanel(20,1, new Color(91,112,121), new GridBagLayout());
 	        codePanel.setBackground(new Color(91,112,121));
 	        codePanel.setPreferredSize(new Dimension(90, 60));
 	        codePanel.setMaximumSize(new Dimension(90,60));
-	        roomCard.setLayout(new BorderLayout(7, 0));
 
-	        JLabel codeLabel = new JLabel(room.getRoomCode(), SwingConstants.CENTER);
-	        codeLabel.setFont(new Font("Segoe UI", Font.BOLD, 17));
-	        codeLabel.setForeground(Color.WHITE);
-	        codeLabel.setAlignmentX(CENTER_ALIGNMENT);
-	        codePanel.add(codeLabel);
+			// **Insert line breaks every 5 characters**
+		String roomCode = room.getRoomCode();
+		String wrappedCode = roomCode.replaceAll("(.{6})", "$1\n").trim();	
+
+		JTextArea codeLabel = new JTextArea(wrappedCode);
+		codeLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+		codeLabel.setForeground(Color.WHITE);
+		codeLabel.setBackground(codePanel.getBackground()); 
+		codeLabel.setEditable(false);      
+		codeLabel.setFocusable(false);     
+		codeLabel.setBorder(null);         
+		codeLabel.setOpaque(true);           
+		codeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		codeLabel.setSize(80, Short.MAX_VALUE);
+		codeLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.weightx = 1.0;      
+		gbc.weighty = 1.0;        
+		gbc.anchor = GridBagConstraints.CENTER; 
+		gbc.fill = GridBagConstraints.NONE;    
+
+		int lineCount = wrappedCode.split("\n").length;
+		int lineHeight = codeLabel.getFontMetrics(codeLabel.getFont()).getHeight();
+		int preferredHeight = lineCount * lineHeight;
+
+		codeLabel.setMaximumSize(new Dimension(80, preferredHeight));
+		codeLabel.setPreferredSize(new Dimension(80, preferredHeight));
+			codePanel.add(codeLabel, gbc);
+
 
 	        RoundedPanel infoPanel = new RoundedPanel(20,0); //NOTE: border shouldn't be visible
 	        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
