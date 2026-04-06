@@ -821,7 +821,7 @@ public class ViewSchedule extends JPanel {
     }
 
     // UTILITY
-    public void addScheduleBlock(int column, String timeRange, boolean schedType, Schedule schedule) {
+    public void addScheduleBlock(int column, String timeRange, int schedType, Schedule schedule) {
         System.out.println("Adding block: " + timeRange);
         String[] times = timeRange.split(" - ");
         System.out.println("Start: '" + times[0] + "', End: '" + times[1] + "'");
@@ -852,9 +852,18 @@ public class ViewSchedule extends JPanel {
 
         JPanel schedPanel = new JPanel();
         schedPanel.setLayout(new BoxLayout(schedPanel, BoxLayout.Y_AXIS));
-        schedPanel.setBackground(schedType ? new Color(255, 169, 62) : new Color(255, 245, 157));
-        if (!schedType)
-            schedPanel.setForeground(Color.BLACK);
+        schedPanel.setForeground(Color.BLACK);
+        //for schedule type
+        //0 - master schedule - orange 255, 169, 62
+        //1 - request schedule - 255, 245, 157
+        //2 - pending request schedule - light gray
+        switch(schedType) {
+            case 0 -> schedPanel.setBackground(new Color(255, 169, 62));
+            case 1 -> schedPanel.setBackground(new Color(255, 245, 157));
+            case 2 -> schedPanel.setBackground(new Color(227, 227, 227));
+            default -> schedPanel.setBackground(new Color(227, 149, 100));
+        }
+
 
         schedPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.GRAY, 1),
