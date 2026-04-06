@@ -43,7 +43,7 @@ public class RoomsController {
         });
 
         MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
-        MainFrame.showPanel("BrowseBuilding");
+        MainFrame.showPanel("BrowseBuilding", "Browse Buildings");
     }
 
     void showBrowseBuilding(boolean viewArchives) throws SQLException {
@@ -63,7 +63,7 @@ public class RoomsController {
         });
 
         MainFrame.addContentPanel(browseBuilding, "BrowseBuilding");
-        MainFrame.showPanel("BrowseBuilding");
+        MainFrame.showPanel("BrowseBuilding", "Unarchive Rooms");
     }
 
     // 1.2
