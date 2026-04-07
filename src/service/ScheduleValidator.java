@@ -1,5 +1,7 @@
 package service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -7,7 +9,8 @@ import model.schedule.Schedule;
 
 public class ScheduleValidator {
 
-    private static final DateTimeFormatter FORMAT_12H = DateTimeFormatter.ofPattern("h:mm a");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("h:mm a");
 
     public static boolean isOverlapping(String timeIn, String timeOut, List<Schedule> schedules) {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("h:mm a");
@@ -30,26 +33,31 @@ public class ScheduleValidator {
         return false;
     }
 
-    public static boolean isIncoming(String timeIn) {
-        LocalTime start = LocalTime.parse(timeIn, FORMAT_12H);
-        return LocalTime.now().isBefore(start);
+    public static boolean isIncoming(String date, String timeIn) {
+        LocalDate scheduleDate = LocalDate.parse(date, DATE_FORMAT);
+        LocalTime startTime = LocalTime.parse(timeIn, TIME_FORMAT);
+        LocalDateTime scheduleStart = LocalDateTime.of(scheduleDate, startTime);
+
+        return LocalDateTime.now().isBefore(scheduleStart);
     }
 
-    /**
-     * Check if schedule is currently ongoing - uses current system time
-     */
-    public static boolean isOngoing(String timeIn, String timeOut) {
-        LocalTime now = LocalTime.now();
-        LocalTime start = LocalTime.parse(timeIn, FORMAT_12H);
-        LocalTime end = LocalTime.parse(timeOut, FORMAT_12H);
-        return !now.isBefore(start) && !now.isAfter(end);
+    public static boolean isOngoing(String date, String timeIn, String timeOut) {
+        LocalDate scheduleDate = LocalDate.parse(date, DATE_FORMAT);
+        LocalTime startTime = LocalTime.parse(timeIn, TIME_FORMAT);
+        LocalTime endTime = LocalTime.parse(timeOut, TIME_FORMAT);
+
+        LocalDateTime scheduleStart = LocalDateTime.of(scheduleDate, startTime);
+        LocalDateTime scheduleEnd = LocalDateTime.of(scheduleDate, endTime);
+        LocalDateTime now = LocalDateTime.now();
+
+        return !now.isBefore(scheduleStart) && !now.isAfter(scheduleEnd);
     }
 
-    /**
-     * Check if schedule has ended - uses current system time
-     */
-    public static boolean isPast(String timeOut) {
-        LocalTime end = LocalTime.parse(timeOut, FORMAT_12H);
-        return LocalTime.now().isAfter(end);
+    public static boolean isPast(String date, String timeOut) {
+        LocalDate scheduleDate = LocalDate.parse(date, DATE_FORMAT);
+        LocalTime endTime = LocalTime.parse(timeOut, TIME_FORMAT);
+        LocalDateTime scheduleEnd = LocalDateTime.of(scheduleDate, endTime);
+
+        return LocalDateTime.now().isAfter(scheduleEnd);
     }
 }

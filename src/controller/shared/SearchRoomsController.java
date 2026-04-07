@@ -31,8 +31,14 @@ public class SearchRoomsController {
     String timeIn;
     String timeOut;
     User user;
-    RequestSchedule requestSchedule; // since the request schedule is not yet created, we can just initialize it here
-                                     // and load the data later when the user confirms the search.
+    RequestSchedule requestSchedule;
+
+    // === SCHEDULE BOUNDS (in 24-hour integers) ===
+    private static final int MIN_TIME_IN  = 7;   // 7:00 AM
+    private static final int MAX_TIME_IN  = 19;  // 7:00 PM
+    private static final int MIN_DURATION = 1;   // hours
+    private static final int MAX_DURATION = 3;   // hours
+    private static final int MAX_TIME_OUT = 20;  // 8:00 PM hard cap
 
     public SearchRoomsController(User user) {
         this.user = user;
@@ -44,26 +50,24 @@ public class SearchRoomsController {
     }
 
     void showSearch() throws SQLException {
-        boolean isFaculty = false;
-        if (user.getUserType().equals("Faculty"))
-            isFaculty = true;
+        boolean isFaculty = user.getUserType().equals("Faculty");
 
         SearchRooms1 searchRooms = new SearchRooms1(user);
 
-        BuildingDAO buildingDAO = new BuildingDAO();// dao
-        List<Building> buildings = buildingDAO.getAllBuilding(); // model
+        BuildingDAO buildingDAO = new BuildingDAO();
+        List<Building> buildings = buildingDAO.getAllBuilding();
         searchRooms.loadBuilding(buildings);
 
-        List<Course> courses = new ArrayList<>();
+        List<Course> courses;
         CourseDAO courseDAO = new CourseDAO();
         if (isFaculty) {
-            courses = courseDAO.getFacultyCourses(user.getUserID()); // courses
+            courses = courseDAO.getFacultyCourses(user.getUserID());
         } else {
             courses = courseDAO.getStudentCourse(user.getUserID());
         }
 
         searchRooms.loadCourse(courses);
-        loadSection(searchRooms); //default values
+        loadSection(searchRooms);
 
         MainFrame.addContentPanel(searchRooms, "SearchRooms");
         MainFrame.showPanel("SearchRooms", "Search Rooms");
@@ -73,28 +77,18 @@ public class SearchRoomsController {
         searchRooms.setOnTimeInChanged(e -> handleTimeChange(searchRooms));
         searchRooms.setOnTimeOutChanged(e -> handleTimeChange(searchRooms));
 
-        
         if (isFaculty) {
-            searchRooms.setOnCourseChanged(e -> {
-                loadSection(searchRooms);
-            });
+            searchRooms.setOnCourseChanged(e -> loadSection(searchRooms));
         }
 
-        searchRooms.setOnClearButton(e -> {
-            searchRooms.clearAll();
-        });
-
-        searchRooms.setOnConfirmButton(e -> {
-            onConfirmClicked(searchRooms);
-        });
+        searchRooms.setOnClearButton(e -> searchRooms.clearAll());
+        searchRooms.setOnConfirmButton(e -> onConfirmClicked(searchRooms));
     }
 
     void handleTimeChangeSilent(SearchRooms1 searchRooms) {
-        // set spinners to 7:00 AM and 8:00 AM as defaults
         searchRooms.setTimeIn(7, 0, "AM");
         searchRooms.setTimeOut(8, 0, "AM");
-
-        timeIn = DateTimeBuilder.formatTo12Hour(7, 0);
+        timeIn  = DateTimeBuilder.formatTo12Hour(7, 0);
         timeOut = DateTimeBuilder.formatTo12Hour(8, 0);
     }
 
@@ -106,84 +100,125 @@ public class SearchRoomsController {
     }
 
     void handleTimeChange(SearchRooms1 searchRooms) {
-        String rawTimeIn = searchRooms.getTimeIn();
+        // --- Read raw values from the view ---
+        String rawTimeIn  = searchRooms.getTimeIn();
         String rawTimeOut = searchRooms.getTimeOut();
 
-        String[] inParts = rawTimeIn.split("[ :]");
+        String[] inParts  = rawTimeIn.split("[ :]");
         String[] outParts = rawTimeOut.split("[ :]");
 
-        int inHour = Integer.parseInt(inParts[0]);
+        int inHour   = Integer.parseInt(inParts[0]);
         int inMinute = Integer.parseInt(inParts[1]);
         String inMer = inParts[2];
 
-        int outHour = Integer.parseInt(outParts[0]);
+        int outHour   = Integer.parseInt(outParts[0]);
         int outMinute = Integer.parseInt(outParts[1]);
         String outMer = outParts[2];
 
-        // convert to 24hr
-        int inHour24 = inHour;
-        if (inMer.equals("PM") && inHour != 12)
-            inHour24 += 12;
-        if (inMer.equals("AM") && inHour == 12)
-            inHour24 = 0;
+        // --- Convert to 24-hour for arithmetic ---
+        int inHour24  = to24Hour(inHour, inMer);
+        int outHour24 = to24Hour(outHour, outMer);
 
-        int outHour24 = outHour;
-        if (outMer.equals("PM") && outHour != 12)
-            outHour24 += 12;
-        if (outMer.equals("AM") && outHour == 12)
-            outHour24 = 0;
+        // Convert minutes to total minutes from midnight for precise comparison
+        int inTotal  = inHour24  * 60 + inMinute;
+        int outTotal = outHour24 * 60 + outMinute;
 
         String notification = null;
 
-        // clamp time in: 7AM to 7PM
-        if (inHour24 < 7) {
-            inHour24 = 7;
+        // =========================================================
+        // STEP 1: Clamp Time In within allowed window [7AM .. 7PM]
+        // =========================================================
+        if (inHour24 < MIN_TIME_IN) {
+            inHour24  = MIN_TIME_IN;
+            inMinute  = 0;
+            inTotal   = inHour24 * 60;
             notification = "Time In cannot be earlier than 7:00 AM.";
-        } else if (inHour24 > 19) {
-            inHour24 = 19;
+        } else if (inHour24 > MAX_TIME_IN) {
+            inHour24  = MAX_TIME_IN;
+            inMinute  = 0;
+            inTotal   = inHour24 * 60;
             notification = "Time In cannot be later than 7:00 PM.";
         }
 
-        int in12 = inHour24 > 12 ? inHour24 - 12 : (inHour24 == 0 ? 12 : inHour24);
-        String inMerNew = inHour24 >= 12 ? "PM" : "AM";
-        searchRooms.setTimeIn(in12, inMinute, inMerNew);
+        // =========================================================
+        // STEP 2: Derive the valid Time Out window from clamped Time In
+        //   min out = Time In + 1 hour  (in total minutes)
+        //   max out = min(Time In + 3 hours, 8:00 PM)
+        // =========================================================
+        int minOutTotal = inTotal + MIN_DURATION * 60;       // e.g. 8:00 AM if in=7AM
+        int maxOutTotal = Math.min(
+            inTotal + MAX_DURATION * 60,                     // e.g. 10:00 AM if in=7AM
+            MAX_TIME_OUT * 60                                // hard cap: 8:00 PM = 1200 min
+        );
 
-        // clamp time out — order matters, hard cap first
-        if (outHour24 > 20) {
-            outHour24 = 20;
-            notification = "Time Out cannot exceed 8:00 PM.";
-        } else if (outHour24 > inHour24 + 3) {
-            outHour24 = inHour24 + 3;
-            notification = "Maximum duration is 3 hours.";
-        } else if (outHour24 < inHour24 + 1) {
-            outHour24 = inHour24 + 1;
+        // =========================================================
+        // STEP 3: Clamp Time Out within [minOut .. maxOut]
+        //   ORDER MATTERS: check hard cap first, then range constraints.
+        //   Old code checked > max hard cap only on outHour24 (ignoring minutes),
+        //   then fell through to the duration checks — allowing out-of-bounds
+        //   values to slip past when the hour happened to equal the cap.
+        // =========================================================
+        if (outTotal > maxOutTotal) {
+            // Out-of-range high: could be beyond 8PM *or* beyond +3h from Time In
+            outTotal = maxOutTotal;
+            if (outTotal == MAX_TIME_OUT * 60) {
+                notification = "Time Out cannot exceed 8:00 PM.";
+            } else {
+                notification = "Maximum duration is 3 hours.";
+            }
+        } else if (outTotal < minOutTotal) {
+            // Out-of-range low: earlier than Time In + 1 hour
+            outTotal = minOutTotal;
             notification = "Minimum duration is 1 hour.";
         }
 
-        int out12 = outHour24 > 12 ? outHour24 - 12 : (outHour24 == 0 ? 12 : outHour24);
+        // Unpack corrected outTotal back to hour/minute
+        outHour24  = outTotal / 60;
+        outMinute  = outTotal % 60;
+
+        // =========================================================
+        // STEP 4: Push corrected values back into the view
+        // =========================================================
+        int in12   = to12Hour(inHour24);
+        String inMerNew  = inHour24 >= 12 ? "PM" : "AM";
+        searchRooms.setTimeIn(in12, inMinute, inMerNew);
+
+        int out12  = to12Hour(outHour24);
         String outMerNew = outHour24 >= 12 ? "PM" : "AM";
         searchRooms.setTimeOut(out12, outMinute, outMerNew);
 
-        // store formatted
-        timeIn = DateTimeBuilder.formatTo12Hour(inHour24, inMinute);
+        // Store formatted strings for later use in the booking flow
+        timeIn  = DateTimeBuilder.formatTo12Hour(inHour24,  inMinute);
         timeOut = DateTimeBuilder.formatTo12Hour(outHour24, outMinute);
 
-        // show notification after spinners are set to avoid re-entry issues
+        // Show notification after spinners are updated to avoid re-entry issues
         if (notification != null) {
             JOptionPane.showMessageDialog(null, notification, "Invalid Time", JOptionPane.WARNING_MESSAGE);
         }
     }
 
+    // --- Helpers ---
+
+    /** Convert 12-hour (1–12) + meridiem to 24-hour (0–23). */
+    private int to24Hour(int hour12, String mer) {
+        int h = hour12;
+        if (mer.equals("PM") && hour12 != 12) h += 12;
+        if (mer.equals("AM") && hour12 == 12)  h  = 0;
+        return h;
+    }
+
+    /** Convert 24-hour (0–23) to 12-hour display (1–12). */
+    private int to12Hour(int hour24) {
+        int h = hour24 % 12;
+        return h == 0 ? 12 : h;
+    }
+
     void onConfirmClicked(SearchRooms1 searchRooms) {
         try {
             if (searchRooms.getChosenBuildings().isEmpty()) {
-
                 JOptionPane.showMessageDialog(null, "Please select a building");
                 return;
-
-            }
-
-            else if (searchRooms.getTimeIn() == null || searchRooms.getTimeOut() == null) {
+            } else if (searchRooms.getTimeIn() == null || searchRooms.getTimeOut() == null) {
                 JOptionPane.showMessageDialog(null, "Please put the necessary fields.");
                 return;
             } else if (searchRooms.getCourse() == null) {
@@ -194,21 +229,18 @@ public class SearchRoomsController {
                 JOptionPane.showMessageDialog(null, "Please select a course and section");
                 return;
             }
-        } catch (HeadlessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
+        } catch (HeadlessException | SQLException e) {
             e.printStackTrace();
         }
+
         try {
             RoomDAO roomDAO = new RoomDAO();
             List<Building> checkedBuildings = searchRooms.getChosenBuildings();
-            String timeIn = searchRooms.getTimeIn();
-            String timeOut = searchRooms.getTimeOut();
-            Course course = searchRooms.getCourse();
-            int capacity = searchRooms.getCapacity();
-            int floor = searchRooms.getFloorLevel();
+            String timeIn    = searchRooms.getTimeIn();
+            String timeOut   = searchRooms.getTimeOut();
+            Course course    = searchRooms.getCourse();
+            int capacity     = searchRooms.getCapacity();
+            int floor        = searchRooms.getFloorLevel();
 
             buildRequestSchedule(timeIn, timeOut, course, capacity, floor, searchRooms);
 
@@ -216,36 +248,28 @@ public class SearchRoomsController {
             for (Building building : checkedBuildings) {
                 List<Room> roomsToCheck = roomDAO.getAllRooms(building.getCode());
                 for (Room room : roomsToCheck) {
-                    room.loadSchedules(new ScheduleDAO().getRoom(room.getRoomCode())); // load the schedules for
-                                                                                       // each
-                                                                                       // room to check
+                    room.loadSchedules(new ScheduleDAO().getRoom(room.getRoomCode()));
                     List<Schedule> schedules = room.getSchedules();
                     if (schedules == null) {
                         schedules = new ArrayList<>();
-                        System.out.println("Schedules is null for room: " + room.getRoomCode());
-                        // catching incase the room has no schedule
                     }
-
                     boolean isValidCapacity = room.getCapacity() >= capacity;
-                    boolean isValidFloor = room.getFloor() == floor || floor == 0 ? true : false;
-                    boolean isOverlap = ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
+                    boolean isValidFloor    = floor == 0 || room.getFloor() == floor;
+                    boolean isOverlap       = ScheduleValidator.isOverlapping(timeIn, timeOut, schedules);
 
                     if (isValidCapacity && isValidFloor && !isOverlap) {
                         availableRooms.add(room);
                     }
                 }
             }
-
             showRoomBrowser(availableRooms, course);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     void buildRequestSchedule(String timeIn, String timeOut, Course course, int capacity, int floor,
-            SearchRooms1 searchRooms1) { // process the
-        // request here
+            SearchRooms1 searchRooms1) {
         requestSchedule = new RequestSchedule();
         Student student = new StudentDAO().get(user.getUserID());
         ScheduleDAO scheduleDAO = new ScheduleDAO();
@@ -254,16 +278,13 @@ public class SearchRoomsController {
             requestSchedule.load(-1, "", String.valueOf(searchRooms1.getSection().getSectionKey()), course.getCode(),
                     user.getUserID(),
                     timeIn, timeOut, DateTimeBuilder.getDayName(), "3", 0, DateTimeBuilder.getCurrentDate(),
-                    user.getUserID()); // load the request schedule with the data from the search form. The ID and
-                                       // RoomCode are set to default values since they are not yet created.
+                    user.getUserID());
         } else {
             requestSchedule.load(-1, "", String.valueOf(student.getSectionKey()), course.getCode(),
                     scheduleDAO.getFacultyIDByStudentCourse(student.getUserID(), course.getCode()),
                     timeIn, timeOut, DateTimeBuilder.getDayName(), "1", 0, DateTimeBuilder.getCurrentDate(),
-                    student.getUserID()); // load the request schedule with the data from the search form. The ID and
-                                          // RoomCode are set to default values since they are not yet created.
+                    student.getUserID());
         }
-
     }
 
     void showRoomBrowser(List<Room> availableRooms, Course course) throws SQLException {
@@ -271,10 +292,7 @@ public class SearchRoomsController {
         MainFrame.addContentPanel(roomBrowser, "RoomBrowser");
         MainFrame.showPanel("RoomBrowser", "Browse Room");
 
-        roomBrowser.setOnBackButton(e -> {
-            MainFrame.showPanel("SearchRooms", "Search Rooms");
-        });
-
+        roomBrowser.setOnBackButton(e -> MainFrame.showPanel("SearchRooms", "Search Rooms"));
         roomBrowser.setOnConfirmButton(e -> {
             Room selectedRoom = roomBrowser.getSelectedRoom();
             if (selectedRoom == null) {
