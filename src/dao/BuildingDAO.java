@@ -59,7 +59,7 @@ public class BuildingDAO {
                      "JOIN dbo.Building b ON r.BuildingCode = b.BuildingCode " +
                      "WHERE MONTH(s.DateRequested) = MONTH(GETDATE()) " +
                      "AND YEAR(s.DateRequested) = YEAR(GETDATE()) " +
-                     "AND s.Status = 3 " +
+                     "AND s.Status IN (0, 2, 3) " +
                      "AND s.IsArchived = 0 " +
                      "GROUP BY b.BuildingCode, b.BuildingName " +
                      "ORDER BY RequestCount DESC";
@@ -85,7 +85,7 @@ public class BuildingDAO {
                      "JOIN dbo.Room r ON s.RoomCode = r.RoomCode " +
                      "JOIN dbo.Building b ON r.BuildingCode = b.BuildingCode " +
                      "WHERE s.DateRequested >= DATEADD(DAY, -7, GETDATE()) " +
-                     "AND s.Status = 3 " +
+                     "AND s.Status IN (0, 2, 3) " +
                      "AND s.IsArchived = 0 " +
                      "GROUP BY b.BuildingCode, b.BuildingName " +
                      "ORDER BY RequestCount DESC";
@@ -171,7 +171,7 @@ public class BuildingDAO {
                      "WHERE r.BuildingCode = ? " +
                      "AND MONTH(s.DateRequested) = MONTH(GETDATE()) " +
                      "AND YEAR(s.DateRequested) = YEAR(GETDATE()) " +
-                     "AND s.Status = 3 " +
+                     "AND s.Status IN (0, 2, 3) " +
                      "AND s.IsArchived = 0 " +
                      "GROUP BY s.RoomCode " +
                      "ORDER BY RequestCount DESC";
@@ -197,7 +197,7 @@ public class BuildingDAO {
                      "JOIN dbo.Room r ON s.RoomCode = r.RoomCode " +
                      "WHERE r.BuildingCode = ? " +
                      "AND s.DateRequested >= DATEADD(DAY, -7, GETDATE()) " +
-                     "AND s.Status = 3 " +
+                     "AND s.Status IN (0, 2, 3) " +
                      "AND s.IsArchived = 0 " +
                      "GROUP BY s.RoomCode " +
                      "ORDER BY RequestCount DESC";

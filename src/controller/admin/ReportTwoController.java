@@ -58,9 +58,12 @@ public class ReportTwoController {
         buildingNames = new String[buildings.size()];
         buildingRequestCounts = new int[buildings.size()];
 
+        System.out.println("I AM TESTING: " + buildings.size());
+
         for (int i = 0; i < buildings.size(); i++) {
             BuildingDAO.BuildingRequestCount b = buildings.get(i);
             buildingNames[i] = b.buildingCode + " - " + b.buildingName;
+            System.out.println("THIS IS A TEST: " + b.requestCount);
             buildingRequestCounts[i] = b.requestCount;
         }
 
@@ -167,6 +170,7 @@ public class ReportTwoController {
 
                 // Load initial view (Request Frequency)
                 loadRoomFrequencyData(selectedBuildingCode);
+                totalRequests = approvedCount + declinedCount + voidCount;
                 view.setReportData(period, selectedBuildingName, totalRequests,
                         approvedCount, declinedCount, voidCount, roomData);
             } catch (SQLException e) {
