@@ -33,6 +33,9 @@ public class AdminLanding extends JPanel {
     // Store buttons to identify which report they belong to
     private RoundedButton totalBtn, mostBtn, peakBtn;
 
+    // Store card labels so refresh() can update them without rebuilding the whole panel
+    private javax.swing.JLabel totalCardLabel, mostCardLabel, peakCardLabel;
+
     // Setter methods for buttons - following AdminNavigationBar pattern
     public void setOnTotalBtn(ActionListener action) {
         totalBtn.addActionListener(action);
@@ -201,6 +204,11 @@ public class AdminLanding extends JPanel {
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         nameLabel.setForeground(new Color(91, 112, 121));
 
+        // Store reference by matching which button owns this card
+        if (viewBtn == totalBtn) totalCardLabel = nameLabel;
+        else if (viewBtn == mostBtn)  mostCardLabel  = nameLabel;
+        else if (viewBtn == peakBtn)  peakCardLabel  = nameLabel;
+
         viewBtn.setForeground(Color.WHITE);
         viewBtn.setBackground(new Color(91, 112, 121));
         viewBtn.setPreferredSize(new Dimension(120, 35));
@@ -208,6 +216,25 @@ public class AdminLanding extends JPanel {
         roomCard.add(nameLabel, BorderLayout.CENTER);
         roomCard.add(viewBtn, BorderLayout.SOUTH);
         return roomCard;
+    }
+
+    /**
+     * Re-queries all three summary values from the database and updates the
+     * landing page cards. Called by AdminController whenever the admin
+     * returns to the home panel.
+     */
+    public void refresh() {
+        try {
+            String newTotal = String.valueOf(new controller.admin.ReportOneController().getMonthlyTotal());
+            String newMost  = new controller.admin.ReportTwoController().getTopBuildingName();
+            String newPeak  = new view.admin.Report3().getPeakTimeSlotOfWeek();
+
+            if (totalCardLabel != null) totalCardLabel.setText(newTotal);
+            if (mostCardLabel  != null) mostCardLabel.setText(newMost);
+            if (peakCardLabel  != null) peakCardLabel.setText(newPeak);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Getter methods to access buttons directly if needed

@@ -19,7 +19,6 @@ public class ReportOneController {
     }
     
     private void loadData() {
-        // Use the efficient single-query method
         int[] monthly = requestDAO.getAllStatusCountsMonthly();
         this.monthlyApproved = monthly[0];   // Status 3
         this.monthlyDeclined = monthly[1];   // Status 2
@@ -56,7 +55,7 @@ public class ReportOneController {
             }
         });
         
-        // Filter callback - CORRECTED labels
+       
         view.setOnFilterChanged(filterType -> {
             switch(filterType) {
                 case "All":
@@ -90,5 +89,7 @@ public class ReportOneController {
         view.setMonthlyData(monthlyApproved, monthlyDeclined, monthlyVoid);
         view.setWeeklyData(weeklyApproved, weeklyDeclined, weeklyVoid);
         view.setWeeklyArrays(weeklyApprovedArr, weeklyDeclinedArr, weeklyVoidArr);
+        // Re-render so the displayed numbers update immediately
+        view.showMonthlyView();
     }
 }
