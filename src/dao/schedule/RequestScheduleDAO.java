@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import model.Room;
@@ -545,35 +548,52 @@ public class RequestScheduleDAO {
     }
 
     public double[][] getWeeklyTimeSlotData() throws SQLException {
-        double[][] data = new double[6][6]; // 6 days × 6 time slots
+    double[][] data = new double[6][6]; // 6 days × 6 time slots
 
-        String query = """
-                    SELECT
-                        ScheduledDay,
-                        CASE
-                            WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
-                            WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
-                            WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
-                            WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
-                            WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
-                            WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
-                        END AS TimeSlot,
-                        COUNT(*) AS Total
-                    FROM RequestSchedule
-                    WHERE IsArchived = 0
-                    GROUP BY ScheduledDay,
-                        CASE
-                            WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
-                            WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
-                            WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
-                            WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
-                            WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
-                            WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
-                        END
-                """;
+    LocalDate today = LocalDate.now();
+    LocalDate monday = today;
+    while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+        monday = monday.minusDays(1);
+    }
+    LocalDate saturday = monday.plusDays(5);
+    
+    
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String mondayStart = monday.atStartOfDay().format(formatter);
+    String saturdayEnd = saturday.atTime(23, 59, 59).format(formatter);
 
-        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+    String query = """
+                SELECT
+                    ScheduledDay,
+                    CASE
+                        WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                        WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                        WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                        WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                        WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                        WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                    END AS TimeSlot,
+                    COUNT(*) AS Total
+                FROM RequestSchedule
+                WHERE IsArchived = 0
+                    AND DateRequested >= ? 
+                    AND DateRequested <= ?
+                GROUP BY ScheduledDay,
+                    CASE
+                        WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
+                        WHEN TimeIn >= '09:00' AND TimeIn < '11:00' THEN 1
+                        WHEN TimeIn >= '11:00' AND TimeIn < '13:00' THEN 2
+                        WHEN TimeIn >= '13:00' AND TimeIn < '15:00' THEN 3
+                        WHEN TimeIn >= '15:00' AND TimeIn < '17:00' THEN 4
+                        WHEN TimeIn >= '17:00' AND TimeIn < '19:00' THEN 5
+                    END
+            """;
 
+    try (PreparedStatement ps = connection.prepareStatement(query)) {
+        ps.setString(1, mondayStart);
+        ps.setString(2, saturdayEnd);
+
+        try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String day = rs.getString("ScheduledDay");
                 int slot = rs.getInt("TimeSlot");
@@ -585,8 +605,9 @@ public class RequestScheduleDAO {
                 }
             }
         }
-        return data;
     }
+    return data;
+}
 
     private int mapDayToIndex(String day) {
         return switch (day.toLowerCase()) {
@@ -608,30 +629,49 @@ public class RequestScheduleDAO {
     }
 
     public double[] getTimeSlotDataForDay(String dayAbbrev) throws SQLException {
-        double[] counts = new double[6]; // 6 time slots
-        String day = convertDay(dayAbbrev); // Mon -> Monday
+    double[] counts = new double[6]; // 6 time slots
+    String day = convertDay(dayAbbrev); // Mon -> Monday
 
-        // Define time slot ranges as SQL TIME literals
-        String[] startTimes = { "07:00", "09:00", "11:00", "13:00", "15:00", "17:00" };
-        String[] endTimes = { "09:00", "11:00", "13:00", "15:00", "17:00", "19:00" };
+    // Calculate current week's Monday and Saturday dates
+    LocalDate today = LocalDate.now();
+    LocalDate monday = today;
+    while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+        monday = monday.minusDays(1);
+    }
+    LocalDate saturday = monday.plusDays(5);
 
-        String sql = "SELECT COUNT(*) AS cnt FROM RequestSchedule "
-                + "WHERE ScheduledDay = ? AND TimeIn >= ? AND TimeIn < ? AND IsArchived = 0";
+    // For DATETIME: Monday 00:00:00 to Saturday 23:59:59
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String mondayStart = monday.atStartOfDay().format(formatter);
+    String saturdayEnd = saturday.atTime(23, 59, 59).format(formatter);
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            for (int i = 0; i < 6; i++) {
-                ps.setString(1, day);
-                ps.setString(2, startTimes[i]); // TimeIn >= slot start
-                ps.setString(3, endTimes[i]); // TimeIn < slot end
-                ResultSet rs = ps.executeQuery();
+    // Define time slot ranges as SQL TIME literals
+    String[] startTimes = { "07:00", "09:00", "11:00", "13:00", "15:00", "17:00" };
+    String[] endTimes = { "09:00", "11:00", "13:00", "15:00", "17:00", "19:00" };
+
+    String sql = "SELECT COUNT(*) AS cnt FROM RequestSchedule "
+            + "WHERE ScheduledDay = ? "
+            + "AND TimeIn >= ? AND TimeIn < ? "
+            + "AND IsArchived = 0 "
+            + "AND DateRequested >= ? AND DateRequested <= ?";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        for (int i = 0; i < 6; i++) {
+            ps.setString(1, day);
+            ps.setString(2, startTimes[i]);
+            ps.setString(3, endTimes[i]);
+            ps.setString(4, mondayStart);
+            ps.setString(5, saturdayEnd);
+
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     counts[i] = rs.getDouble("cnt");
                 }
-                rs.close();
             }
         }
-        return counts;
     }
+    return counts;
+}
 
     private static String convertDay(String abbrev) {
         switch (abbrev) {

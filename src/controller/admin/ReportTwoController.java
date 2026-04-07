@@ -246,6 +246,6 @@ public class ReportTwoController {
 
     public String getTopBuildingName() {
         String top = getTopBuilding();
-        return (top != null) ? top.split(" - ")[1] : null;
+        return (top != null) ? top.split(" - ")[1] : "No Requests";
     }
 }
