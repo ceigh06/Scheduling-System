@@ -139,23 +139,17 @@ public class ViewProfile extends JPanel {
 		}
 	}
 
-	    public void loadUser(User user) {
-        
-        JLabel adminLabel = new JLabel("ADMIN", SwingConstants.CENTER);
-        adminLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        adminLabel.setForeground(new Color(91, 112, 121));
-        adminLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
- 
-        GridBagConstraints gbcName = new GridBagConstraints();
-        gbcName.gridx = 0;
-        gbcName.gridy = 1;
-        gbcName.anchor = GridBagConstraints.CENTER;
-        gbcName.insets = new Insets(0, 0, 10, 0);
-        picPanel.add(adminLabel, gbcName);
-        picPanel.revalidate();
-        picPanel.repaint();
- 
-    }
+	public void loadUser(User user) {
+		String[][] dataset = {
+			{ "Name", "ADMIN" },
+			{ "Office", "Information and Communication Technology Office" },
+			{ "Company", "Bulacan State University - Main Campus"}
+		};
+
+		for (int i = 0; i < dataset.length; i++) {
+			contentLbl(dataset[i][0], dataset[i][1]);
+		}
+	}
 
 	public void setOnBackClicked(ActionListener action) {
 		btns.setBtn1Action(action);
