@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import model.Room;
+import model.user.User;
 import view.components.RoundedButton;
 import view.components.RoundedPanel;
 import view.components.RoundedTextField;
@@ -34,6 +35,8 @@ public class Landing extends JPanel {
 
     private Consumer<Room> onRoomClicked;
 
+    User user;
+
     public void setOnRoomClicked(Consumer<Room> action) {
         this.onRoomClicked = action;
     }
@@ -46,7 +49,8 @@ public class Landing extends JPanel {
         searchBar.addMouseListener(action);
     }
 
-    public Landing() {
+    public Landing(User user) {
+        this.user = user;
         setLayout(new BorderLayout());
         setBackground(OFF_WHITE);
 
@@ -88,7 +92,7 @@ public class Landing extends JPanel {
 
         // if not possible: RESO ->
         // JLabel title = new JLabel("The best rooms are just a click away");
-        JLabel title = new JLabel("Welcome back, OOPsie");
+        JLabel title = new JLabel("Welcome back, " + user.getFirstName());
         title.setFont(new Font("Segoe UI", Font.BOLD, 23));
         title.setAlignmentX(LEFT_ALIGNMENT);
         wrapper.add(Box.createRigidArea(new Dimension(0, 2)));
