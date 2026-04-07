@@ -26,7 +26,7 @@ import view.components.ScrollBarHelper;
 public class RequestForm extends JPanel {
 
     public static boolean isRequest = false;
-    public static String studentNumber;
+    public static String RequestorID;
 
     ConfirmPanel reqConfirm;
 
@@ -48,7 +48,7 @@ public class RequestForm extends JPanel {
             professor;
 
     public RequestForm(List<String> data, String header, String buttonType) {
-        studentNumber = null;
+        requestorID = null;
         isRequest = false;
 
         setLayout(new BorderLayout());
@@ -161,13 +161,13 @@ public class RequestForm extends JPanel {
             String requestorID, String studentName, String fullSectionName) throws SQLException {
         LookUpDAO lookUpDAO = new LookUpDAO();
         isRequest = false;
-        studentNumber = null;
+        requestorID = null;
         if (user.getUserType().equals("Admin")) {
             isRequest = schedule.getStatus().equals("3");
 
             if (isRequest) {
                 this.requestorID = requestorID;
-                studentNumber = this.requestorID;
+                requestorID = this.requestorID;
                 this.name = studentName;
             }
 

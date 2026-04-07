@@ -27,12 +27,12 @@ public class RequestController {
         LookUpDAO lookUp = new LookUpDAO();
         List<String> data = new ArrayList<>();
 
-        data.add(requestSchedule.getStudentRequested());
+        data.add(requestSchedule.getRequestor());
         if(user.getUserType().equalsIgnoreCase("student")) {
-            data.add(lookUp.getFullStudentName(requestSchedule.getStudentRequested()));
+            data.add(lookUp.getFullStudentName(requestSchedule.getRequestor()));
         }
         else {
-            data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
+            data.add(lookUp.getFullFacultyName(requestSchedule.getRequestor()));
         }        
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));

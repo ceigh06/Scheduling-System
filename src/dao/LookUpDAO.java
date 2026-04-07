@@ -10,11 +10,7 @@ public class LookUpDAO {
     private static Connection connection;
 
     public LookUpDAO() {
-        try {
-            connection = DBConnection.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        connection = DBConnection.getConnection();
     }
 
     public String getFullSectionName(int sectionKey) {

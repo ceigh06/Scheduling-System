@@ -38,7 +38,7 @@ public class EditScheduleController {
             RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
             StudentDAO studentDAO = new StudentDAO();
             RequestSchedule requestSchedule = requestScheduleDAO.getBySchedule(schedule);
-            requestorID = requestSchedule.getStudentRequested();
+            requestorID = requestSchedule.getRequestor();
             studentName = lookUpDAO.getFullStudentName(requestorID);
         }
 
@@ -63,7 +63,7 @@ public class EditScheduleController {
                 if (RequestScheduleDAO.archiveStudentSchedule(
                         schedule.getRoomCode(),
                         schedule.getCourseCode(),
-                        requestForm.studentNumber,
+                        requestForm.RequestorID,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
                         DateTimeBuilder.formatTo12Hour(schedule.getTimeIn()),

@@ -15,11 +15,7 @@ public class ScheduleDAO {
     Connection connection;
 
     public ScheduleDAO() {
-        try {
-            this.connection = DBConnection.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.connection = DBConnection.getConnection();
     }
 
     public List<Schedule> getRoom(String roomCode) {
@@ -294,17 +290,17 @@ public class ScheduleDAO {
 
         // UNION of MasterSchedule and approved RequestSchedule for the faculty
         String sql = "SELECT ScheduleID AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
-        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
-        "FROM MasterSchedule " +
-        "WHERE FacultyID = ? AND ScheduledDay = ? AND IsArchived = 0 " +
-        "UNION ALL " +
-        "SELECT RequestKey AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
-        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
-        "FROM RequestSchedule " +
-        "WHERE FacultyID = ? AND ScheduledDay = ? AND Status = 3 AND IsArchived = 0 " +
-        "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
-        "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
-        "ORDER BY TimeIn";
+                "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+                "FROM MasterSchedule " +
+                "WHERE FacultyID = ? AND ScheduledDay = ? AND IsArchived = 0 " +
+                "UNION ALL " +
+                "SELECT RequestKey AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
+                "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+                "FROM RequestSchedule " +
+                "WHERE FacultyID = ? AND ScheduledDay = ? AND Status = 3 AND IsArchived = 0 " +
+                "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+                "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+                "ORDER BY TimeIn";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -364,17 +360,17 @@ public class ScheduleDAO {
 
         // UNION of MasterSchedule and approved RequestSchedule for the faculty
         String sql = "SELECT ScheduleID AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
-        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
-        "FROM MasterSchedule " +
-        "WHERE ScheduledDay = ? AND IsArchived = 1" +
-        "UNION ALL " +
-        "SELECT RequestKey AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
-        "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
-        "FROM RequestSchedule " +
-        "WHERE ScheduledDay = ? AND Status = 3 AND IsArchived = 1" +
-        "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
-        "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
-        "ORDER BY TimeIn";
+                "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+                "FROM MasterSchedule " +
+                "WHERE ScheduledDay = ? AND IsArchived = 1" +
+                "UNION ALL " +
+                "SELECT RequestKey AS ID, RoomCode, SectionKey, CourseCode, FacultyID, " +
+                "       TimeIn, TimeOut, ScheduledDay, Status, IsArchived " +
+                "FROM RequestSchedule " +
+                "WHERE ScheduledDay = ? AND Status = 3 AND IsArchived = 1" +
+                "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+                "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
+                "ORDER BY TimeIn";
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
