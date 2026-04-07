@@ -443,6 +443,10 @@ public class Report3 extends JPanel {
                 }
             }
 
+            if (peakCount <= 0) {
+                return "No Requests This Week";
+            }
+
             // convert day abbreviation to full name
             String fullDay = switch (dayAbbrevs[peakDayIndex]) {
                 case "Mon" ->
