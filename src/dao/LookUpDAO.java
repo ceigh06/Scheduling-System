@@ -12,7 +12,7 @@ public class LookUpDAO {
         connection = DBConnection.getConnection();
     }
 
-    public String getFullSectionName(int sectionKey) {
+    public static String getFullSectionName(int sectionKey) {
         String fullSectionName = "";
         try {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Section WHERE SectionKey = ?");
@@ -61,7 +61,7 @@ public class LookUpDAO {
         return fullCourseName;
     }
 
-    public String getFullFacultyName(String facultyId) {
+    public static String getFullFacultyName(String facultyId) {
         String fullFacultyName = "";
         try {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM Faculty WHERE EmployeeID = ?");
