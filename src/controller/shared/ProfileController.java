@@ -67,6 +67,8 @@ public class ProfileController {
 
     private void onLogoutClicked() {
         DBConnection.disconnect(); // logs out the current user connection to the db
+        DBConnection connect = new DBConnection("26.218.110.33:1433", "SchedulingSystem", "admin_user",
+                    "1234");
         MainFrame.restoreNavBarDefaultState();
         TitleHeader.removeIconFromHeader(user.getUserType());
         user = null;
