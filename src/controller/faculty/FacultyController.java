@@ -91,6 +91,7 @@ public class FacultyController {
         MainFrame.setOnViewSchedulePanel(user, new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                MainFrame.restoreNavBarDefaultState();
                 new ViewScheduleController(user);
             }
         });

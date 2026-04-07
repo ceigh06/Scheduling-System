@@ -26,4 +26,15 @@ public class ReportThreeController {
     }
 
     
+
+    public void refreshData() {
+        try {
+            // Report3 queries fresh data on construction, so rebuild the view in-place
+            Report3 newView = new Report3();
+            this.view = newView;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
