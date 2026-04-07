@@ -13,7 +13,7 @@ import utilities.DBConnection;
 public class CourseDAO {
     private static Connection connection;
 
-    public CourseDAO()  {
+    public CourseDAO() {
         try {
             this.connection = DBConnection.getConnection(); // shared connection
         } catch (Exception e) {
@@ -21,21 +21,22 @@ public class CourseDAO {
         }
     }
 
-    public List<Course> getStudentCourse(String studentNumber){
+    public List<Course> getStudentCourse(String studentNumber) {
         List<Course> courses = new ArrayList<>();
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT c.CourseCode, c.ProgramCode, c.CourseDescription, c.Units,c.IsMajor,IsArchived, ec.SectionKey FROM Course c "
-            + "JOIN EnrolledCourses ec ON c.CourseCode = ec.CourseCode  WHERE ec.StudentNumber = ?");
+            PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT c.CourseCode, c.ProgramCode, c.CourseDescription, c.Units,c.IsMajor,IsArchived, ec.SectionKey FROM Course c "
+                            + "JOIN EnrolledCourses ec ON c.CourseCode = ec.CourseCode  WHERE ec.StudentNumber = ? AND ec.Enrollment_Type = 1");
             stmt.setString(1, studentNumber);
             ResultSet set = stmt.executeQuery();
-            while (set.next()){
+            while (set.next()) {
                 Course course = new Course();
                 course.setCode(set.getString("CourseCode"));
                 course.setProgramCode(set.getString("ProgramCode"));
                 course.setDescription(set.getString("CourseDescription"));
                 course.setUnits(set.getInt("Units"));
                 course.setMajor((set.getString("IsMajor").equals("1") ? true : false));
-                course.setIsArchived((set.getString("IsArchived").equals("1") ? true : false ));
+                course.setIsArchived((set.getString("IsArchived").equals("1") ? true : false));
                 course.setSection(set.getInt("SectionKey"));
                 courses.add(course);
             }
@@ -45,7 +46,6 @@ public class CourseDAO {
         }
         return courses;
     }
-
 
     public List<Course> getFacultyCourses(String facultyID) {
         List<Course> courses = new ArrayList<>();
@@ -61,7 +61,7 @@ public class CourseDAO {
                 course.setDescription(set.getString("CourseDescription"));
                 course.setUnits(set.getInt("Units"));
                 course.setMajor((set.getString("IsMajor").equals("1") ? true : false));
-                course.setIsArchived((set.getString("IsArchived").equals("1") ? true : false ));
+                course.setIsArchived((set.getString("IsArchived").equals("1") ? true : false));
                 courses.add(course);
             }
 
@@ -71,6 +71,4 @@ public class CourseDAO {
         return courses;
     }
 
-
-    
 }
