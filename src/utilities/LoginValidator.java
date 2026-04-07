@@ -13,9 +13,6 @@ public class LoginValidator {
     private static User authenticatedUser;
     private static String errorMessage;
 
-    private static FacultyDAO facultyDAO = new FacultyDAO();
-    private static StudentDAO studentDAO = new StudentDAO();
-
     public static boolean validate(String username, String password) {
 
         if ((username == null || username.trim().isEmpty()) && (password == null || password.trim().isEmpty())) {
@@ -50,7 +47,8 @@ public class LoginValidator {
     }
 
     private static boolean isExisting(String username) {
-
+        FacultyDAO facultyDAO = new FacultyDAO();
+        StudentDAO studentDAO = new StudentDAO();
         User user = studentDAO.get(username);
         if (user != null) {
             user.setUserType("Student");
