@@ -11,12 +11,8 @@ import utilities.DBConnection;
 public class StudentDAO {
     private static Connection connection;
 
-     public StudentDAO() {
-        try {
-            connection = DBConnection.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public StudentDAO() {
+        connection = DBConnection.getConnection();
     }
 
     public Student get(String studentID) {
@@ -27,13 +23,13 @@ public class StudentDAO {
 
             ResultSet set = stmt.executeQuery();
             set.next();
- 
+
             String firstName = set.getString("FirstName");
             String middleName = set.getString("MiddleName");
             String lastName = set.getString("LastName");
             int section = Integer.parseInt(set.getString("SectionKey"));
             String password = set.getString("Password");
-            
+
             student.load(studentID, firstName, middleName, lastName, section, password);
             return student;
         } catch (Exception e) {
