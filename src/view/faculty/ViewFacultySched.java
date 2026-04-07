@@ -1,5 +1,6 @@
 package view.faculty;
 
+import dao.LookUpDAO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -7,15 +8,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import model.schedule.Schedule;
 import view.common.RequestForm;
 import view.components.RoundedButton;
@@ -64,7 +62,7 @@ public class ViewFacultySched extends JPanel {
                 null);
         RequestForm.styleField(field);
 		
-        formsTop.add(RequestForm.labeledField("Section", schedule.getSectionKey()));
+        formsTop.add(RequestForm.labeledField("Section", LookUpDAO.getFullSectionName(Integer.parseInt((schedule.getSectionKey())))));
         formsTop.add(RequestForm.labeledField("Room", schedule.getRoomCode()));
         formsPanel.add(formsTop);
         formsPanel.add(Box.createVerticalStrut(10));
@@ -120,7 +118,7 @@ public class ViewFacultySched extends JPanel {
         formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
         
         formsBottom.add(RequestForm.labeledField("Course", schedule.getCourseCode())); 
-        formsBottom.add(RequestForm.labeledField("Professor", schedule.getFacultyID()));
+        formsBottom.add(RequestForm.labeledField("Professor", LookUpDAO.getFullFacultyName(schedule.getFacultyID())));
         formsPanel.add(formsBottom);
 //        formsPanel.setBackground(Color.RED);
         formsPanel.add(Box.createVerticalStrut(30));
