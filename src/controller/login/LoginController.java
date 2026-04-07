@@ -62,7 +62,7 @@ public class LoginController {
     void createUserDashBoard() throws SQLException {
         if (authenticatedUser.getUserType().equals("Student")) {
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
-                MainFrame.setNotification("Room scheduling is not available this time.");
+                MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
             }
             System.out.println("Student");
@@ -74,7 +74,7 @@ public class LoginController {
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
-                MainFrame.setNotification("Room scheduling is not available this time.");
+                MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
             }
             System.out.println("Faculty");
