@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import utilities.DateTimeBuilder;
 import view.components.RoundedPanel;
 import view.components.RoundedProgressBar;
 import view.components.RoundedToggleSwitch;
@@ -77,7 +78,7 @@ public class Report2 extends JPanel {
         header = new JLabel("MOST REQUESTED BUILDINGS");
         header.setFont(new Font("Arial", Font.PLAIN, 15));
 
-        selected = new JLabel("This Month");
+        selected = new JLabel(DateTimeBuilder.getCurrentMonth());
         selected.setFont(new Font("Arial", Font.BOLD, 15));
 
         // Store reference
@@ -85,9 +86,9 @@ public class Report2 extends JPanel {
 
         toggle.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                selected.setText("This Week");
+                selected.setText(DateTimeBuilder.getCurrentWeek());
             } else {
-                selected.setText("This Month");
+                selected.setText(DateTimeBuilder.getCurrentMonth());
             }
             if (onToggleChanged != null) {
                 onToggleChanged.accept(e.getStateChange() == ItemEvent.SELECTED);
@@ -416,7 +417,7 @@ public class Report2 extends JPanel {
         repHeader.setFont(new Font("Arial", Font.BOLD, 20));
         repHeader.setForeground(new Color(91, 112, 121));
 
-        repSelected = new JLabel("This Month");
+        repSelected = new JLabel(DateTimeBuilder.getCurrentMonth());
         repSelected.setFont(new Font("Arial", Font.BOLD, 18));
         this.repSelected = repSelected;
 

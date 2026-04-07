@@ -3,6 +3,7 @@ package controller.admin;
 import dao.BuildingDAO;
 import java.sql.SQLException;
 import java.util.List;
+import utilities.DateTimeBuilder;
 import view.admin.Report2;
 
 public class ReportTwoController {
@@ -140,7 +141,7 @@ public class ReportTwoController {
             view.setBuildingData(buildingNames, buildingRequestCounts);
         }
 
-        String periodText = isWeeklyView ? "This Week" : "This Month";
+        String periodText = isWeeklyView ? DateTimeBuilder.getCurrentWeek() : DateTimeBuilder.getCurrentMonth();
         view.setSelectedPeriod(periodText);
 
         // Toggle callback for Monthly/Weekly switch (top toggle)
@@ -149,7 +150,7 @@ public class ReportTwoController {
             try {
                 loadBuildingListData();
                 view.setBuildingData(buildingNames, buildingRequestCounts);
-                view.setSelectedPeriod(isWeekly ? "This Week" : "This Month");
+                view.setSelectedPeriod(isWeekly ? DateTimeBuilder.getCurrentWeek() : DateTimeBuilder.getCurrentMonth());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
