@@ -281,7 +281,7 @@ public class Report2 extends JPanel {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
 
-        JLabel numberLabel = new JLabel(String.valueOf(total));
+        JLabel numberLabel = new JLabel(String.valueOf(approved + declined + voided));
         numberLabel.setFont(new Font("Arial", Font.BOLD, 48));
         numberLabel.setForeground(new Color(91, 112, 121));
         numberLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -510,7 +510,7 @@ public class Report2 extends JPanel {
         headerPanel.setMaximumSize(new Dimension(360, 25));
         headerPanel.setPreferredSize(new Dimension(360, 25));
 
-        JLabel buildingHeader = new JLabel("BUILDING", SwingConstants.CENTER);
+        JLabel buildingHeader = new JLabel("ROOM", SwingConstants.CENTER);
         buildingHeader.setFont(new Font("Arial", Font.BOLD, 13));
         buildingHeader.setForeground(new Color(91, 112, 121));
 
