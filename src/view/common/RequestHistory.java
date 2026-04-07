@@ -73,7 +73,8 @@ public class RequestHistory extends JPanel {
 		mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		ScrollBarHelper.applySlimScrollBar(mainScrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
 		mainScrollPane.setBorder(null);
-
+		mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // lab rat 
+		mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // lab rat
 		add(mainScrollPane, BorderLayout.CENTER);
 
 	}
@@ -194,8 +195,8 @@ public class RequestHistory extends JPanel {
 		RoundedPanel mainPanel = new RoundedPanel(60, 2, new Color(91, 112, 121), new BorderLayout());
 		mainPanel.setOpaque(false);
 		mainPanel.setBackground(new Color(243, 244, 247));
-		mainPanel.setPreferredSize(new Dimension(400, 250));
-		mainPanel.setMaximumSize(new Dimension(400, 250));
+		mainPanel.setPreferredSize(new Dimension(380, 250));
+		mainPanel.setMaximumSize(new Dimension(380, 250));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));
 
 		requestPanel.setOpaque(false);
