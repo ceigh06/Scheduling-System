@@ -7,8 +7,6 @@ import dao.StudentDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
@@ -45,6 +43,7 @@ public class ProfileController {
                 viewProfile.loadUser(faculty, dataFaculty);
                 break;
             case "Admin":
+                viewProfile.loadUser(user);
                 break;
         }
 
