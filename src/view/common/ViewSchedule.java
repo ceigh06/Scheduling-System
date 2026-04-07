@@ -230,7 +230,7 @@ public class ViewSchedule extends JPanel {
         ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPanel.setBorder(null);
+        scrollPanel.setBackground(Color.WHITE); // lab rat
 
         add(scrollPanel, BorderLayout.CENTER);
     }
@@ -264,7 +264,7 @@ public class ViewSchedule extends JPanel {
         ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // test line
         scrollPanel.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPanel.setBorder(null);
+        scrollPanel.setBorder(BorderFactory.createEmptyBorder(10,5,5,0)); //lab rat
 
         // false: view only
         // true: view and click
@@ -609,7 +609,7 @@ public class ViewSchedule extends JPanel {
         JPanel calendarPanel = new JPanel(new GridLayout(1, day.size(), 10, 0));
         calendarPanel.setBackground(Color.WHITE);
         calendarPanel.setPreferredSize(new Dimension(0, 90));
-        calendarPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 83));
+        calendarPanel.setMaximumSize(new Dimension(400, 83)); // lab rat
         calendarPanel.setMinimumSize(new Dimension(0, 83));
         calendarPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
@@ -730,7 +730,8 @@ public class ViewSchedule extends JPanel {
         timeSched = new JPanel(new GridBagLayout());
         timeSched.setBackground(Color.WHITE);
         timeSched.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        timeSched.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+        timeSched.setMaximumSize(new Dimension(380, Integer.MAX_VALUE));
+        timeSched.setBorder(BorderFactory.createEmptyBorder(10,5,10,5)); // lab rat
         timeSched.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         gbc = new GridBagConstraints();
