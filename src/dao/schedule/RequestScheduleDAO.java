@@ -1,5 +1,6 @@
 package dao.schedule;
 
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,16 @@ public class RequestScheduleDAO {
 
     public RequestScheduleDAO() {
         this.connection = DBConnection.getConnection();
+    }
+
+    public static void voidOverdueRequest(){
+        String query = "UPDATE RequestSchedule SET Status = 0  WHERE Status = 1 AND DateRequested < DATEADD(MINUTE, -30, GETDATE());";
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(query);
+        } catch (SQLException e) {
+            System.out.println("No pending requests voided");
+        }
     }
 
     // Status constants
