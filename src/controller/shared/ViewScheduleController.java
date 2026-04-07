@@ -109,7 +109,7 @@ public class ViewScheduleController {
         List<String> data = new ArrayList<>(); // for printing only
         System.out.println(requestSchedule.getTimeIn());
         data.add(requestSchedule.getRequestor());
-        if (user.getUserType().equalsIgnoreCase("student")) {
+        if (requestSchedule.getRequestor().length()>4) {
             data.add(lookUp.getFullStudentName(requestSchedule.getRequestor()));
         } else {
             data.add(lookUp.getFullFacultyName(requestSchedule.getRequestor()));
