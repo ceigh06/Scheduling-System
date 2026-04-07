@@ -60,6 +60,7 @@ public class SearchRooms1 extends JPanel {
 
 	JComboBox<Section> sectionCombo;
 	JComboBox<Course> courseCombo;
+	
 
 	private ConfirmPanel confirmArea;
 	JComboBox<String> input;
@@ -194,7 +195,7 @@ public class SearchRooms1 extends JPanel {
 		floorLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		floorLbl.setAlignmentX(LEFT_ALIGNMENT);
 
-		JComboBox<String> input = new JComboBox<>();
+		input = new JComboBox<>();
 		input.addItem("1st Floor");
 		input.addItem("2nd Floor");
 		input.addItem("3rd Floor");
