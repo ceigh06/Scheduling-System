@@ -91,7 +91,7 @@ public class RequestScheduleDAO {
         try {
             PreparedStatement stmt = connection
                     .prepareStatement(
-                            "SELECT * FROM RequestSchedule WHERE StudentNumber = ? AND (Status = 2 OR Status = 3) AND IsArchived = 0");
+                            "SELECT * FROM RequestSchedule WHERE RequestorID = ? AND (Status = 2 OR Status = 3) AND IsArchived = 0");
             stmt.setString(1, studentNumber);
             ResultSet set = stmt.executeQuery();
 
