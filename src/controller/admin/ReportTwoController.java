@@ -167,7 +167,7 @@ public class ReportTwoController {
             // Then load real data asynchronously
             try {
                 loadBuildingDetails(selectedBuildingCode);
-                String period = isWeeklyView ? "March 8 - March 14" : "FEBRUARY";
+                String period = isWeeklyView ? DateTimeBuilder.getCurrentWeek() : DateTimeBuilder.getCurrentMonth();
 
                 // Load initial view (Request Frequency)
                 loadRoomFrequencyData(selectedBuildingCode);
