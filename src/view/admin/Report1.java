@@ -31,6 +31,7 @@ import utilities.DateTimeBuilder;
 
 import view.components.RoundedPanel;
 import view.components.RoundedToggleSwitch;
+import view.components.ScrollBarHelper;
 
 public class Report1 extends JPanel {
 
@@ -212,6 +213,7 @@ public class Report1 extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(null);
+        ScrollBarHelper.applySlimScrollBar(scrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -267,6 +269,7 @@ public class Report1 extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(null);
+        ScrollBarHelper.applySlimScrollBar(scrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -304,6 +307,7 @@ public class Report1 extends JPanel {
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(null);
+        ScrollBarHelper.applySlimScrollBar(scrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -338,7 +342,7 @@ public class Report1 extends JPanel {
             if (labels[i].equals(activeFilter)) {
                 buttons[i].setSelected(true);
                 buttons[i].setBackground(new Color(139, 0, 0));
-                buttons[i].setForeground(Color.WHITE);
+                buttons[i].setForeground(Color.BLACK); 
             }
         }
 
