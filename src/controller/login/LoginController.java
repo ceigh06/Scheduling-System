@@ -44,6 +44,7 @@ public class LoginController {
 
     void attachLoginListener(Login view) {
         view.setOnLoginButton(e -> {
+            
             if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
                 authenticatedUser = LoginValidator.getAuthenticatedUser();
                 view.clearFields();
@@ -64,7 +65,7 @@ public class LoginController {
 
         if (authenticatedUser.getUserType().equals("Student")) {
             new DBConnection("26.218.110.33:1433", "SchedulingSystem", "student_user",
-                                "1234");
+                    "1234");
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
                 MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
@@ -79,7 +80,7 @@ public class LoginController {
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
             new DBConnection("26.218.110.33:1433", "SchedulingSystem", "faculty_user",
-                                "1234");
+                    "1234");
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
                 MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
