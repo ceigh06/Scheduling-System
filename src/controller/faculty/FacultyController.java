@@ -17,6 +17,7 @@ import model.Room;
 import model.user.Faculty;
 import model.user.User;
 import view.common.MainFrame;
+import view.common.RoomBrowser;
 import view.common.TitleHeader;
 import view.landing.Landing;
 
@@ -28,7 +29,7 @@ public class FacultyController {
         
         this.user = user;
         MainFrame.setCurrentUser(user, true);
-        Landing landing = new Landing();
+        Landing landing = new Landing(user);
         List<Room> mostRequestedRooms = new RequestScheduleDAO().getMostRequestedRoomsThisWeek(5);
         List<Room> mostAvailableRooms = new RequestScheduleDAO().getMostAvailableRooms(5);
         landing.loadLandingContent();

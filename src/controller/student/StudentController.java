@@ -25,7 +25,7 @@ public class StudentController {
     public StudentController(User user) throws SQLException {
         this.user = user;
 
-        Landing landing = new Landing();
+        Landing landing = new Landing(user);
         List<Room> mostRequestedRooms = new RequestScheduleDAO().getMostRequestedRoomsThisWeek(5);
         List<Room> mostAvailableRooms = new RequestScheduleDAO().getMostAvailableRooms(5);
         landing.loadLandingContent();
