@@ -412,7 +412,7 @@ public class RequestScheduleDAO {
                 + "SET IsArchived = 1 "
                 + "WHERE RoomCode = ? "
                 + "AND CourseCode = ? "
-                + "AND StudentNumber = ? "
+                + "AND RequestorID = ? "
                 + "AND SectionKey = ? "
                 + "AND FacultyID = ? "
                 + "AND TimeIn = ? "
@@ -715,7 +715,7 @@ public class RequestScheduleDAO {
                         rs.getString("Status"),
                         rs.getInt("IsArchived"),
                         rs.getString("DateRequested"),
-                        rs.getString("StudentNumber"));
+                        rs.getString("RequestorID"));
                 schedules.add(sched);
             }
         }
@@ -770,5 +770,167 @@ public class RequestScheduleDAO {
         }
         return mostAvailableRooms;
     }
+
+    public RequestSchedule getByScheduleWithRequestorType(Schedule sched) {
+    try {
+        // First try to find by schedule details
+        PreparedStatement stmt = connection.prepareStatement(
+            "SELECT * FROM RequestSchedule WHERE " +
+            "RoomCode = ? AND TimeIn = ? AND TimeOut = ? AND ScheduledDay = ? AND IsArchived = 0"
+        );
+        stmt.setString(1, sched.getRoomCode());
+        stmt.setString(2, sched.getTimeIn());
+        stmt.setString(3, sched.getTimeOut());
+        stmt.setString(4, sched.getScheduledDay());
+        
+        ResultSet set = stmt.executeQuery();
+        if (set.next()) {
+            RequestSchedule request = new RequestSchedule();
+            request.load(
+                set.getInt("RequestKey"),
+                set.getString("RoomCode"),
+                set.getString("SectionKey"),
+                set.getString("CourseCode"),
+                set.getString("FacultyID"),
+                set.getString("TimeIn"),
+                set.getString("TimeOut"),
+                set.getString("ScheduledDay"),
+                String.valueOf(set.getInt("Status")),
+                set.getInt("IsArchived"),
+                set.getString("DateRequested"),
+                set.getString("RequestorID")
+            );
+            return request;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+public boolean isStudentRequestor(String requestorID) {
+    if (requestorID == null || requestorID.isEmpty()) {
+        return false;
+    }
+    // Student numbers typically start with "20" (e.g., 2023100505, 2024100789)
+    // Faculty IDs are typically 4 digits starting with 1-9 (e.g., 1001, 2002, 6006)
+    return requestorID.matches("^20\\d{8}$");
+}
+
+    public String getRequestorName(String requestorID) throws SQLException {
+    if (isStudentRequestor(requestorID)) {
+        // Get student name
+        String sql = "SELECT FirstName, MiddleName, LastName FROM Student WHERE StudentNumber = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, requestorID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String first = rs.getString("FirstName");
+                String middle = rs.getString("MiddleName");
+                String last = rs.getString("LastName");
+                return first + (middle != null && !middle.isEmpty() ? " " + middle : "") + " " + last;
+            }
+        }
+    } else {
+        // Get faculty name
+        String sql = "SELECT FirstName, MiddleName, LastName FROM Faculty WHERE EmployeeID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, requestorID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String first = rs.getString("FirstName");
+                String middle = rs.getString("MiddleName");
+                String last = rs.getString("LastName");
+                return first + (middle != null && !middle.isEmpty() ? " " + middle : "") + " " + last;
+            }
+        }
+    }
+    return "Unknown";
+}
+
+public static boolean archiveRequestSchedule(
+        String roomCode,
+        String courseCode,
+        String requestorID,
+        String sectionKey,
+        String facultyID,
+        String timeIn,
+        String timeOut,
+        String scheduledDay,
+        boolean isStudentRequestor) {
+    
+    String sql = "UPDATE RequestSchedule "
+            + "SET IsArchived = 1 "
+            + "WHERE RoomCode = ? "
+            + "AND CourseCode = ? "
+            + "AND RequestorID = ? "
+            + "AND SectionKey = ? "
+            + "AND FacultyID = ? "
+            + "AND TimeIn = ? "
+            + "AND TimeOut = ? "
+            + "AND ScheduledDay = ? "
+            + "AND IsArchived = 0";
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, roomCode);
+        stmt.setString(2, courseCode);
+        stmt.setString(3, requestorID);
+        stmt.setString(4, sectionKey);
+        stmt.setString(5, facultyID);
+        stmt.setString(6, timeIn);
+        stmt.setString(7, timeOut);
+        stmt.setString(8, scheduledDay);
+
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        System.out.println("Error archiving request: " + e);
+        e.printStackTrace();
+    }
+    return false;
+}
+
+public static boolean unarchiveRequestSchedule(
+        String roomCode,
+        String courseCode,
+        String requestorID,
+        String sectionKey,
+        String facultyID,
+        String timeIn,
+        String timeOut,
+        String scheduledDay) {
+    
+    String sql = "UPDATE RequestSchedule "
+            + "SET IsArchived = 0 "
+            + "WHERE RoomCode = ? "
+            + "AND CourseCode = ? "
+            + "AND RequestorID = ? "
+            + "AND SectionKey = ? "
+            + "AND FacultyID = ? "
+            + "AND TimeIn = ? "
+            + "AND TimeOut = ? "
+            + "AND ScheduledDay = ?";
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, roomCode);
+        stmt.setString(2, courseCode);
+        stmt.setString(3, requestorID);
+        stmt.setString(4, sectionKey);
+        stmt.setString(5, facultyID);
+        stmt.setString(6, timeIn);
+        stmt.setString(7, timeOut);
+        stmt.setString(8, scheduledDay);
+
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        System.out.println("Error unarchiving request: " + e);
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
 }

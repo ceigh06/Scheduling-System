@@ -27,6 +27,7 @@ public class RequestForm extends JPanel {
 
     public static boolean isRequest = false;
     public static String RequestorID;
+    private boolean isStudentRequestor;
 
     ConfirmPanel reqConfirm;
 
@@ -158,142 +159,170 @@ public class RequestForm extends JPanel {
     }
 
     public RequestForm(Schedule schedule, User user, Boolean viewArchives,
-            String requestorID, String studentName, String fullSectionName) throws SQLException {
-        LookUpDAO lookUpDAO = new LookUpDAO();
-        isRequest = false;
-        requestorID = null;
-        if (user.getUserType().equals("Admin")) {
-            isRequest = schedule.getStatus().equals("3");
-
-            if (isRequest) {
-                this.requestorID = requestorID;
-                requestorID = this.requestorID;
-                this.name = studentName;
-            }
-
-            this.section = fullSectionName;
-            this.roomCode = schedule.getRoomCode();
-            if(viewArchives) {
-                this.timeIn = schedule.getTimeIn();
-                this.timeOut = schedule.getTimeOut();
-            } else {
-                this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
-                this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
-            }
-            this.course = schedule.getCourseCode();
-            this.professor = lookUpDAO.getFullFacultyName(schedule.getFacultyID());
-
-            setLayout(new BorderLayout());
-            setBackground(Color.WHITE);
-
-            JPanel contentPanel = new JPanel(new BorderLayout());
-            contentPanel.setBackground(Color.WHITE);
-
-            JPanel formsPanel = new JPanel();
-            formsPanel.setLayout(new BoxLayout(formsPanel, BoxLayout.Y_AXIS));
-            formsPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
-            formsPanel.setBackground(Color.WHITE);
-
-            JLabel sectionHeader = new JLabel("Schedule Details", JLabel.CENTER);
-            sectionHeader.setForeground(Color.DARK_GRAY);
-            sectionHeader.setFont(new Font("Segoe UI", Font.BOLD, 24));
-            sectionHeader.setAlignmentX(CENTER_ALIGNMENT);
-            formsPanel.add(sectionHeader);
-            formsPanel.add(Box.createVerticalStrut(25));
-
-            // Top section - Student info (4 rows, tighter spacing)
-            int rowCount = isRequest ? 4 : 2;
-            JPanel formsTop = new JPanel(new GridLayout(rowCount, 1, 0, 12));
-            formsTop.setBackground(Color.WHITE);
-            formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
-
-            if (isRequest) {
-                formsTop.add(labeledField("Requestor", requestorID));
-                formsTop.add(labeledField("Name", name));
-            }
-            formsTop.add(labeledField("Section", section));
-            formsTop.add(labeledField("Room Code", this.roomCode));
-            formsPanel.add(formsTop);
-            formsPanel.add(Box.createVerticalStrut(20));
-
-            // Middle section - Time In/Time Out (labels row, values row)
-            JPanel timeSection = new JPanel();
-            timeSection.setLayout(new BoxLayout(timeSection, BoxLayout.Y_AXIS));
-            timeSection.setBackground(Color.WHITE);
-            timeSection.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
-
-            // Labels row
-            JPanel timeLabels = new JPanel(new GridLayout(1, 2, 20, 0));
-
-            timeLabels.setBackground(Color.WHITE);
-
-            JLabel timeInLbl = new JLabel("Time In");
-            timeInLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            timeInLbl.setForeground(Color.DARK_GRAY);
-
-            JLabel timeOutLbl = new JLabel("Time Out");
-            timeOutLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            timeOutLbl.setForeground(Color.DARK_GRAY);
-
-            timeLabels.add(timeInLbl);
-            timeLabels.add(timeOutLbl);
-
-            // Values row
-            JPanel timeValues = new JPanel(new GridLayout(1, 2, 20, 0));
-            timeValues.setBackground(Color.WHITE);
-
-            RoundedTextField timeInTxt = new RoundedTextField(10, 20, 1,
-                    new Color(200, 200, 200),
-                    null);
-            timeInTxt.setText(timeIn);
-            styleField(timeInTxt);
-
-            RoundedTextField timeOutTxt = new RoundedTextField(10, 20, 1,
-                    new Color(200, 200, 200),
-                    null);
-            timeOutTxt.setText(timeOut);
-            styleField(timeOutTxt);
-
-            timeValues.add(timeInTxt);
-            timeValues.add(timeOutTxt);
-
-            timeSection.add(timeLabels);
-            timeSection.add(Box.createVerticalStrut(6));
-            timeSection.add(timeValues);
-
-            formsPanel.add(timeSection);
-            formsPanel.add(Box.createVerticalStrut(20));
-
-            // Bottom section - Course and Professor
-            JPanel formsBottom = new JPanel(new GridLayout(2, 1, 0, 12));
-            formsBottom.setBackground(Color.WHITE);
-            formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
-
-            formsBottom.add(labeledField("Course", course));
-            formsBottom.add(labeledField("Professor", professor));
-            formsPanel.add(formsBottom);
-            formsPanel.add(Box.createVerticalStrut(30));
-
-            String btn2Text = viewArchives ? "UNARCHIVE" : "ARCHIVE";
-
-            // Confirm buttons
-            reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
-                    "GO BACK", btn2Text,
-                    new Color(91, 112, 121), 2,
-                    new Color(91, 112, 121), 2);
-
-            formsPanel.add(reqConfirm.getConfirmPanel());
-            contentPanel.add(formsPanel, BorderLayout.CENTER);
-
-            JScrollPane scrollPanel = new JScrollPane(contentPanel);
-            scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
-            scrollPanel.setBorder(null);
-            scrollPanel.getViewport().setBackground(Color.WHITE);
-
-            add(scrollPanel, BorderLayout.CENTER);
+        String requestorID, String requestorName, String fullSectionName, 
+        boolean isStudentRequestor) throws SQLException {
+    
+    LookUpDAO lookUpDAO = new LookUpDAO();
+    isRequest = false;
+    this.requestorID = null;
+    
+    // Auto-detect if not explicitly provided (for backward compatibility)
+    if (requestorID != null && !requestorID.isEmpty()) {
+        // If isStudentRequestor wasn't determined by caller, detect from ID pattern
+        // Student IDs start with "20" (e.g., 2023100505, 2024100789)
+        // Faculty IDs are 4 digits starting with 1-9 (e.g., 1001, 2002, 6006)
+        boolean detectedStudent = requestorID.matches("^20\\d{8}$");
+        
+        // Use caller's determination if they passed it, otherwise use detection
+        // This is just validation - caller should pass correct value
+        isStudentRequestor = isStudentRequestor || detectedStudent;
+    }
+    
+    // Fetch name if not provided
+    String displayName = requestorName;
+    if ((displayName == null || displayName.isEmpty() || displayName.equals("null")) 
+            && requestorID != null && !requestorID.isEmpty()) {
+        if (isStudentRequestor) {
+            displayName = lookUpDAO.getFullStudentName(requestorID);
+        } else {
+            displayName = lookUpDAO.getFullFacultyName(requestorID);
         }
     }
+    
+    if (user.getUserType().equals("Admin")) {
+        isRequest = schedule.getStatus().equals("3");
+
+        if (isRequest) {
+            this.requestorID = requestorID;
+            RequestorID = this.requestorID;  // Set static field for controller access
+            this.name = displayName;
+        }
+
+        this.section = fullSectionName;
+        this.roomCode = schedule.getRoomCode();
+        if(viewArchives) {
+            this.timeIn = schedule.getTimeIn();
+            this.timeOut = schedule.getTimeOut();
+        } else {
+            this.timeIn = DateTimeBuilder.formatTo12Hour(schedule.getTimeIn());
+            this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
+        }
+        this.course = schedule.getCourseCode();
+        this.professor = lookUpDAO.getFullFacultyName(schedule.getFacultyID());
+
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(Color.WHITE);
+
+        JPanel formsPanel = new JPanel();
+        formsPanel.setLayout(new BoxLayout(formsPanel, BoxLayout.Y_AXIS));
+        formsPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        formsPanel.setBackground(Color.WHITE);
+
+        JLabel sectionHeader = new JLabel("Schedule Details", JLabel.CENTER);
+        sectionHeader.setForeground(Color.DARK_GRAY);
+        sectionHeader.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        sectionHeader.setAlignmentX(CENTER_ALIGNMENT);
+        formsPanel.add(sectionHeader);
+        formsPanel.add(Box.createVerticalStrut(25));
+
+        // Top section - Requestor info (4 rows if request, 2 if not)
+        int rowCount = isRequest ? 4 : 2;
+        JPanel formsTop = new JPanel(new GridLayout(rowCount, 1, 0, 12));
+        formsTop.setBackground(Color.WHITE);
+        formsTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+
+        if (isRequest) {
+            // Show "Student ID" or "Faculty ID" based on requestor type
+            String idLabel = isStudentRequestor ? "Student ID" : "Faculty ID";
+            formsTop.add(labeledField(idLabel, this.requestorID));
+            formsTop.add(labeledField("Name", this.name));
+        }
+        formsTop.add(labeledField("Section", section));
+        formsTop.add(labeledField("Room Code", this.roomCode));
+        formsPanel.add(formsTop);
+        formsPanel.add(Box.createVerticalStrut(20));
+
+        // Middle section - Time In/Time Out (labels row, values row)
+        JPanel timeSection = new JPanel();
+        timeSection.setLayout(new BoxLayout(timeSection, BoxLayout.Y_AXIS));
+        timeSection.setBackground(Color.WHITE);
+        timeSection.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+
+        // Labels row
+        JPanel timeLabels = new JPanel(new GridLayout(1, 2, 20, 0));
+
+        timeLabels.setBackground(Color.WHITE);
+
+        JLabel timeInLbl = new JLabel("Time In");
+        timeInLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        timeInLbl.setForeground(Color.DARK_GRAY);
+
+        JLabel timeOutLbl = new JLabel("Time Out");
+        timeOutLbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        timeOutLbl.setForeground(Color.DARK_GRAY);
+
+        timeLabels.add(timeInLbl);
+        timeLabels.add(timeOutLbl);
+
+        // Values row
+        JPanel timeValues = new JPanel(new GridLayout(1, 2, 20, 0));
+        timeValues.setBackground(Color.WHITE);
+
+        RoundedTextField timeInTxt = new RoundedTextField(10, 20, 1,
+                new Color(200, 200, 200),
+                null);
+        timeInTxt.setText(timeIn);
+        styleField(timeInTxt);
+
+        RoundedTextField timeOutTxt = new RoundedTextField(10, 20, 1,
+                new Color(200, 200, 200),
+                null);
+        timeOutTxt.setText(timeOut);
+        styleField(timeOutTxt);
+
+        timeValues.add(timeInTxt);
+        timeValues.add(timeOutTxt);
+
+        timeSection.add(timeLabels);
+        timeSection.add(Box.createVerticalStrut(6));
+        timeSection.add(timeValues);
+
+        formsPanel.add(timeSection);
+        formsPanel.add(Box.createVerticalStrut(20));
+
+        // Bottom section - Course and Professor
+        JPanel formsBottom = new JPanel(new GridLayout(2, 1, 0, 12));
+        formsBottom.setBackground(Color.WHITE);
+        formsBottom.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
+
+        formsBottom.add(labeledField("Course", course));
+        formsBottom.add(labeledField("Professor", professor));
+        formsPanel.add(formsBottom);
+        formsPanel.add(Box.createVerticalStrut(30));
+
+        String btn2Text = viewArchives ? "UNARCHIVE" : "ARCHIVE";
+
+        // Confirm buttons
+        reqConfirm = new ConfirmPanel(MainFrame.getFrame(),
+                "GO BACK", btn2Text,
+                new Color(91, 112, 121), 2,
+                new Color(91, 112, 121), 2);
+
+        formsPanel.add(reqConfirm.getConfirmPanel());
+        contentPanel.add(formsPanel, BorderLayout.CENTER);
+
+        JScrollPane scrollPanel = new JScrollPane(contentPanel);
+        scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        ScrollBarHelper.applySlimScrollBar(scrollPanel, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
+        scrollPanel.setBorder(null);
+        scrollPanel.getViewport().setBackground(Color.WHITE);
+
+        add(scrollPanel, BorderLayout.CENTER);
+    }
+}
 
     public static JPanel labeledField(String labelText, String value) {
         JPanel panel = new JPanel();
