@@ -76,7 +76,7 @@ public class RequestsController {
 
             for (RequestSchedule rs : pendingRequests) {
                 List<String> data = new ArrayList<>();
-                data.add(lookUp.getFullStudentName(rs.getStudentRequested()));
+                data.add(lookUp.getFullStudentName(rs.getRequestor()));
                 data.add(lookUp.getFullSectionName(Integer.parseInt(rs.getSectionKey())));
                 data.add(lookUp.getFullCourseName(rs.getCourseCode()));
                 data.add(DateTimeBuilder.formatTo12Hour(

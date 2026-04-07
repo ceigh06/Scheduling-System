@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import model.Room;
@@ -16,11 +19,7 @@ public class RequestScheduleDAO {
     static Connection connection;
 
     public RequestScheduleDAO() {
-        try {
-            this.connection = DBConnection.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.connection = DBConnection.getConnection();
     }
 
     // Status constants
@@ -44,7 +43,7 @@ public class RequestScheduleDAO {
                         set.getInt("RequestKey"),
                         set.getString("RoomCode"),
                         set.getString("CourseCode"),
-                        set.getString("StudentNumber"),
+                        set.getString("RequestorID"),
                         set.getString("SectionKey"),
                         set.getString("FacultyID"),
                         set.getString("TimeIn"),
@@ -78,7 +77,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 facultyPendingRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -103,7 +102,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 sectionRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -129,7 +128,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 roomPendingRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -153,7 +152,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 sectionRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -184,7 +183,7 @@ public class RequestScheduleDAO {
                         set.getString("Status"),
                         set.getInt("IsArchived"),
                         set.getDate("DateRequested").toString(),
-                        set.getString("StudentNumber"));
+                        set.getString("RequestorID"));
                 return request;
             }
         } catch (SQLException e) {
@@ -207,7 +206,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -434,7 +433,7 @@ public class RequestScheduleDAO {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            System.out.println("Error: "+e);
+            System.out.println("Error: " + e);
             e.printStackTrace();
         }
 
@@ -444,7 +443,7 @@ public class RequestScheduleDAO {
     public static boolean unarchiveStudentSchedule(
             String roomCode,
             String courseCode,
-            String studentNumber,
+            String RequestorID ,
             String sectionKey,
             String facultyID,
             String timeIn,
@@ -455,7 +454,7 @@ public class RequestScheduleDAO {
                 + "SET IsArchived = 0 "
                 + "WHERE RoomCode = ? "
                 + "AND CourseCode = ? "
-                + "AND StudentNumber = ? "
+                + "AND RequestorID  = ? "
                 + "AND SectionKey = ? "
                 + "AND FacultyID = ? "
                 + "AND TimeIn = ? "
@@ -465,7 +464,7 @@ public class RequestScheduleDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, roomCode);
             stmt.setString(2, courseCode);
-            stmt.setString(3, studentNumber);
+            stmt.setString(3, RequestorID );
             stmt.setString(4, sectionKey);
             stmt.setString(5, facultyID);
             stmt.setString(6, timeIn);
@@ -510,7 +509,7 @@ public class RequestScheduleDAO {
                         String.valueOf(set.getInt("Status")),
                         set.getInt("IsArchived"),
                         set.getString("DateRequested"),
-                        set.getString("StudentNumber"));
+                        set.getString("RequestorID"));
 
                 return request;
             }
@@ -523,13 +522,13 @@ public class RequestScheduleDAO {
     }
 
     public void addRequest(RequestSchedule requestSchedule) {
-        String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, StudentNumber, SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
+        String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, RequestorID , SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, requestSchedule.getRoomCode());
             stmt.setString(2, requestSchedule.getCourseCode());
-            stmt.setString(3, requestSchedule.getStudentRequested());
+            stmt.setString(3, requestSchedule.getRequestor());
             stmt.setString(4, requestSchedule.getSectionKey());
             stmt.setString(5, requestSchedule.getFacultyID());
             stmt.setString(6, requestSchedule.getTimeIn());
@@ -547,6 +546,17 @@ public class RequestScheduleDAO {
     public double[][] getWeeklyTimeSlotData() throws SQLException {
         double[][] data = new double[6][6]; // 6 days × 6 time slots
 
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today;
+        while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+            monday = monday.minusDays(1);
+        }
+        LocalDate saturday = monday.plusDays(5);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String mondayStart = monday.atStartOfDay().format(formatter);
+        String saturdayEnd = saturday.atTime(23, 59, 59).format(formatter);
+
         String query = """
                     SELECT
                         ScheduledDay,
@@ -561,6 +571,8 @@ public class RequestScheduleDAO {
                         COUNT(*) AS Total
                     FROM RequestSchedule
                     WHERE IsArchived = 0
+                        AND DateRequested >= ?
+                        AND DateRequested <= ?
                     GROUP BY ScheduledDay,
                         CASE
                             WHEN TimeIn >= '07:00' AND TimeIn < '09:00' THEN 0
@@ -572,16 +584,20 @@ public class RequestScheduleDAO {
                         END
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, mondayStart);
+            ps.setString(2, saturdayEnd);
 
-            while (rs.next()) {
-                String day = rs.getString("ScheduledDay");
-                int slot = rs.getInt("TimeSlot");
-                double count = rs.getDouble("Total");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String day = rs.getString("ScheduledDay");
+                    int slot = rs.getInt("TimeSlot");
+                    double count = rs.getDouble("Total");
 
-                int dayIndex = mapDayToIndex(day);
-                if (dayIndex != -1 && slot >= 0 && slot < 6) {
-                    data[dayIndex][slot] = count;
+                    int dayIndex = mapDayToIndex(day);
+                    if (dayIndex != -1 && slot >= 0 && slot < 6) {
+                        data[dayIndex][slot] = count;
+                    }
                 }
             }
         }
@@ -611,23 +627,42 @@ public class RequestScheduleDAO {
         double[] counts = new double[6]; // 6 time slots
         String day = convertDay(dayAbbrev); // Mon -> Monday
 
+        // Calculate current week's Monday and Saturday dates
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today;
+        while (monday.getDayOfWeek() != DayOfWeek.MONDAY) {
+            monday = monday.minusDays(1);
+        }
+        LocalDate saturday = monday.plusDays(5);
+
+        // For DATETIME: Monday 00:00:00 to Saturday 23:59:59
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String mondayStart = monday.atStartOfDay().format(formatter);
+        String saturdayEnd = saturday.atTime(23, 59, 59).format(formatter);
+
         // Define time slot ranges as SQL TIME literals
         String[] startTimes = { "07:00", "09:00", "11:00", "13:00", "15:00", "17:00" };
         String[] endTimes = { "09:00", "11:00", "13:00", "15:00", "17:00", "19:00" };
 
         String sql = "SELECT COUNT(*) AS cnt FROM RequestSchedule "
-                + "WHERE ScheduledDay = ? AND TimeIn >= ? AND TimeIn < ? AND IsArchived = 0";
+                + "WHERE ScheduledDay = ? "
+                + "AND TimeIn >= ? AND TimeIn < ? "
+                + "AND IsArchived = 0 "
+                + "AND DateRequested >= ? AND DateRequested <= ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int i = 0; i < 6; i++) {
                 ps.setString(1, day);
-                ps.setString(2, startTimes[i]); // TimeIn >= slot start
-                ps.setString(3, endTimes[i]); // TimeIn < slot end
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    counts[i] = rs.getDouble("cnt");
+                ps.setString(2, startTimes[i]);
+                ps.setString(3, endTimes[i]);
+                ps.setString(4, mondayStart);
+                ps.setString(5, saturdayEnd);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        counts[i] = rs.getDouble("cnt");
+                    }
                 }
-                rs.close();
             }
         }
         return counts;

@@ -15,12 +15,7 @@ public class FacultyDAO {
     static Connection connection;
 
     public FacultyDAO() {
-        try {
             connection = DBConnection.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public Faculty get(String facultyID) {

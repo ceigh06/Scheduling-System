@@ -43,7 +43,7 @@ public class ArchiveController {
         if (schedule.getStatus().equals("3")) {
             RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
             RequestSchedule requestSchedule = requestScheduleDAO.getBySchedule(schedule);
-            requestorID = requestSchedule.getStudentRequested();
+            requestorID = requestSchedule.getRequestor();
             studentName = lookUpDAO.getFullStudentName(requestorID);
         }
 
@@ -68,7 +68,7 @@ public class ArchiveController {
                 if (RequestScheduleDAO.unarchiveStudentSchedule(
                         schedule.getRoomCode(),
                         schedule.getCourseCode(),
-                        requestForm.studentNumber,
+                        requestForm.RequestorID,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
                         schedule.getTimeIn(),

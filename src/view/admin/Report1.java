@@ -27,6 +27,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import utilities.DateTimeBuilder;
 
 import view.components.RoundedPanel;
 import view.components.RoundedToggleSwitch;
@@ -41,10 +42,10 @@ public class Report1 extends JPanel {
     private JToggleButton approvedBtn;
     private JToggleButton declinedBtn;
     private JToggleButton voidedBtn;
-    
+
     private Consumer<Boolean> onToggleChanged;
     private Consumer<String> onFilterChanged;
-    
+
     private int monthlyApproved;
     private int monthlyDeclined;
     private int monthlyVoid;
@@ -139,14 +140,14 @@ public class Report1 extends JPanel {
     public Report1() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
-        
+
         buildHeader();
-        
+
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
         add(contentPanel, BorderLayout.CENTER);
     }
-    
+
     public void renderInitialView() {
         showMonthlyView();
     }
@@ -158,7 +159,7 @@ public class Report1 extends JPanel {
 
         toggleBtn = new RoundedToggleSwitch(40, 2);
         toggleBtn.setPreferredSize(new Dimension(220, 40));
-        
+
         toggleBtn.addItemListener(e -> {
             boolean isWeekly = (e.getStateChange() == java.awt.event.ItemEvent.SELECTED);
             if (onToggleChanged != null) {
@@ -184,11 +185,38 @@ public class Report1 extends JPanel {
     }
 
     private JPanel createMonthlyPanel() {
+        JPanel contentWrapper = new JPanel();
+        contentWrapper.setLayout(new BoxLayout(contentWrapper, BoxLayout.Y_AXIS));
+        contentWrapper.setBackground(Color.WHITE);
+
+        // Month span label (like "Current Week")
+        JLabel monthSpan = new JLabel(DateTimeBuilder.getCurrentMonth());
+        monthSpan.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        monthSpan.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(monthSpan);
+        contentWrapper.add(Box.createVerticalStrut(3));
+
+        // Stats card
+        JPanel statsCard = createStatsCard("Monthly Room Schedule Requests", monthlyApproved, monthlyDeclined, monthlyVoid);
+        statsCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(statsCard);
+        contentWrapper.add(Box.createVerticalStrut(15));
+
+        // Pie chart (monthly equivalent of column chart)
+        JPanel pieChartCard = createPieChart(monthlyApproved, monthlyDeclined, monthlyVoid);
+        pieChartCard.setAlignmentX(Component.CENTER_ALIGNMENT);
+        contentWrapper.add(pieChartCard);
+
+        JScrollPane scrollPane = new JScrollPane(contentWrapper,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(null);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
-
-        panel.add(createStatsCard("Monthly Room Schedule Requests", monthlyApproved, monthlyDeclined, monthlyVoid), BorderLayout.NORTH);
-        panel.add(createPieChart(monthlyApproved, monthlyDeclined, monthlyVoid), BorderLayout.SOUTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
     }
@@ -202,15 +230,21 @@ public class Report1 extends JPanel {
         int declined = weeklyDeclined;
         int voided = weeklyVoid;
 
-        if (approvedArr == null) approvedArr = new int[6];
-        if (declinedArr == null) declinedArr = new int[6];
-        if (voidedArr == null) voidedArr = new int[6];
+        if (approvedArr == null) {
+            approvedArr = new int[6];
+        }
+        if (declinedArr == null) {
+            declinedArr = new int[6];
+        }
+        if (voidedArr == null) {
+            voidedArr = new int[6];
+        }
 
         JPanel contentWrapper = new JPanel();
         contentWrapper.setLayout(new BoxLayout(contentWrapper, BoxLayout.Y_AXIS));
         contentWrapper.setBackground(Color.WHITE);
 
-        JLabel weekSpan = new JLabel("Current Week");
+        JLabel weekSpan = new JLabel(DateTimeBuilder.getCurrentWeek());
         weekSpan.setFont(new Font("Segoe UI", Font.BOLD, 14));
         weekSpan.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentWrapper.add(weekSpan);
@@ -283,13 +317,13 @@ public class Report1 extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         buttonPanel.setBackground(Color.WHITE);
 
-        allBtn      = new JToggleButton("All");
+        allBtn = new JToggleButton("All");
         approvedBtn = new JToggleButton("Approved");
         declinedBtn = new JToggleButton("Declined");
-        voidedBtn   = new JToggleButton("Voided");
+        voidedBtn = new JToggleButton("Voided");
 
         JToggleButton[] buttons = {allBtn, approvedBtn, declinedBtn, voidedBtn};
-        String[]        labels  = {"All", "Approved", "Declined", "Voided"};
+        String[] labels = {"All", "Approved", "Declined", "Voided"};
 
         // setOpaque(true) forces Swing to honour setBackground regardless of the OS look-and-feel
         for (JToggleButton btn : buttons) {
@@ -310,8 +344,8 @@ public class Report1 extends JPanel {
 
         ButtonGroup group = new ButtonGroup();
         for (int i = 0; i < buttons.length; i++) {
-            final JToggleButton btn   = buttons[i];
-            final String        label = labels[i];
+            final JToggleButton btn = buttons[i];
+            final String label = labels[i];
             group.add(btn);
             buttonPanel.add(btn);
 

@@ -5,10 +5,11 @@ import view.common.MainFrame;
 
 public class Launcher {
         public static void main(String[] args) throws SQLException {
-        DBConnection connection = new DBConnection("JessieHP\\SQLEXPRESS",
-                "latestRoomSchedulingSystemDB", "sa", "jessie");
-        MainFrame.init();
-        new LoginController();
+                DBConnection connection = new DBConnection("26.218.110.33:1433", "SchedulingSystem", "admin_user",
+                                "1234");
+
+                MainFrame.init();
+                new LoginController();
 
         }
 }

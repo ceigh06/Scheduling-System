@@ -50,9 +50,9 @@ public class RequestsController {
 
         if ((status.equalsIgnoreCase("declined") || status.equalsIgnoreCase("pending")
                 || status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("void"))
-                && (user.getUserID().equalsIgnoreCase(rs.getStudentRequested()))) {
+                && (user.getUserID().equalsIgnoreCase(rs.getRequestor()))) {
             ControlNotifs page = new ControlNotifs();
-            student = new StudentDAO().get(rs.getStudentRequested());
+            student = new StudentDAO().get(rs.getRequestor());
             String section = lookUp.getFullSectionName(student.getSectionKey());
             String room = lookUp.getFullRoomName(rs.getRoomCode());
             String timeIn = handleTimeChange(rs.getTimeIn());

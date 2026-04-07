@@ -27,7 +27,7 @@ public class BrowseBuilding extends JPanel {
     private JPanel bldgContent;
 
     private List<RoundedButton> buildingButtons = new ArrayList<>();
-        
+
     Consumer<Building> onBuildingClicked;
 
     public void setOnBuildingClicked(Consumer<Building> action) {
@@ -39,7 +39,8 @@ public class BrowseBuilding extends JPanel {
         bldgContent.setBackground(Color.WHITE);
 
         for (Building building : buildings) {
-            RoundedButton btn = createBldgBtn(building.getName(), "/resources/images/building/" + building.getName() + ".png"); //registering the button to the model
+            RoundedButton btn = createBldgBtn(building.getName(),
+                    "/resources/images/building/" + building.getName() + ".png"); // registering the button to the model
             btn.addActionListener(e -> {
                 onBuildingClicked.accept(building);
             });
@@ -95,7 +96,7 @@ public class BrowseBuilding extends JPanel {
 
         scrollPanel.setMaximumSize(new Dimension(410, 400));
         scrollPanel.setMinimumSize(new Dimension(410, 400));
-        
+
         scrollPanel.getViewport().setPreferredSize(new Dimension(410, 400));
         scrollPanel.getViewport().setMaximumSize(new Dimension(410, 400));
 
@@ -109,7 +110,7 @@ public class BrowseBuilding extends JPanel {
         if (viewArchives) {
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);
-            
+
             wrapper = new JPanel();
             wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
             wrapper.setBackground(Color.WHITE);
@@ -144,7 +145,9 @@ public class BrowseBuilding extends JPanel {
     }
 
     private RoundedButton createBldgBtn(String bldgName, String imgPath) {
-        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(91,112,121), 3);
+        System.out.println(imgPath);
+        System.out.println(bldgName);
+        RoundedButton btn = new RoundedButton(bldgName, 25, new Color(91, 112, 121), 3);
         btn.setForeground(Color.WHITE);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 20));
         btn.setPreferredSize(new Dimension(120, 120));

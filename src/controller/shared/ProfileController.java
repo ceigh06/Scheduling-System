@@ -10,6 +10,7 @@ import java.util.List;
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
+import utilities.DBConnection;
 import utilities.LoginValidator;
 import view.common.MainFrame;
 import view.common.TitleHeader;
@@ -65,6 +66,7 @@ public class ProfileController {
     }
 
     private void onLogoutClicked() {
+        DBConnection.disconnect(); // logs out the current user connection to the db
         MainFrame.restoreNavBarDefaultState();
         TitleHeader.removeIconFromHeader(user.getUserType());
         user = null;

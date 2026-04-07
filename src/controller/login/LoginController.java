@@ -10,6 +10,7 @@ import org.jfree.chart.title.Title;
 import model.user.Faculty;
 import model.user.Student;
 import model.user.User;
+import utilities.DBConnection;
 import utilities.DateTimeBuilder;
 import utilities.LoginValidator;
 import view.common.MainFrame;
@@ -45,7 +46,6 @@ public class LoginController {
         view.setOnLoginButton(e -> {
             if (LoginValidator.validate(view.getUsername(), view.getPassword())) {
                 authenticatedUser = LoginValidator.getAuthenticatedUser();
-
                 view.clearFields();
                 try {
                     createUserDashBoard();
@@ -60,19 +60,26 @@ public class LoginController {
     }
 
     void createUserDashBoard() throws SQLException {
+        DBConnection.disconnect(); // logs out the db connection with the user login.
+
         if (authenticatedUser.getUserType().equals("Student")) {
+            new DBConnection("26.218.110.33:1433", "SchedulingSystem", "student_user",
+                                "1234");
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
                 MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
             }
             System.out.println("Student");
             try {
+
                 new StudentController(authenticatedUser);
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {
+            new DBConnection("26.218.110.33:1433", "SchedulingSystem", "faculty_user",
+                                "1234");
             if (DateTimeBuilder.getDayName().equals("Sunday")) {
                 MainFrame.setNotification("Room scheduling is not available every Sunday.");
                 return;
@@ -80,6 +87,8 @@ public class LoginController {
             System.out.println("Faculty");
             new FacultyController(authenticatedUser);
         } else if (authenticatedUser.getUserType().equals("Admin")) { // admin
+            new DBConnection("26.218.110.33:1433", "SchedulingSystem", "admin_user",
+                    "1234");
             System.out.println("Admin");
             new AdminController(authenticatedUser);
         }
