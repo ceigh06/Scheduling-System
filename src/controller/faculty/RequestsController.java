@@ -1,16 +1,20 @@
 package controller.faculty;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
+import dao.schedule.ScheduleDAO;
 import model.schedule.RequestSchedule;
+import model.schedule.Schedule;
 import model.user.User;
 import utilities.DateTimeBuilder;
 import view.common.CheckRequests;
@@ -35,7 +39,8 @@ public class RequestsController {
         JPanel page;
 
         if (pendingRequests.isEmpty()) {
-            page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png", "No student pending requests.");
+            page = new NotificationMessage("/resources/images/icons/allCaughtUpIcon.png",
+                    "No student pending requests.");
         } else {
             checkRequests.loadRequestCount(pendingRequests.size());
 
@@ -49,8 +54,20 @@ public class RequestsController {
                         .filter(rs -> String.valueOf(rs.getID()).equals(requestKey))
                         .findFirst()
                         .orElse(null);
+                boolean isOverlapping = false;
+                try {
+                    ScheduleDAO schedDAO = new ScheduleDAO();
+                    List<Schedule> facultySchedule = schedDAO.getFacultySchedulesByDay(user,
+                            DateTimeBuilder.getDayName());
+                    if (isOverlappingWithFacultySchedule(facultySchedule, approvedRequest)) {
+                        isOverlapping = true;
+                        MainFrame.setNotification("This schedule is overlapping with your current schedule.");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
-                if (approvedRequest != null) {
+                if (approvedRequest != null && !isOverlapping) {
                     rsDAO.updateStatus(Integer.parseInt(requestKey), 3);
                     handleScheduleOverlapCheck(approvedRequest);
                     showConfirmationMessage("Request Accepted! Added to your schedule.");
@@ -99,7 +116,12 @@ public class RequestsController {
             if (rs.getID() == approvedRequest.getID())
                 continue;
 
-            boolean isOverlapping = isOverlappingWithRequest(rs, approvedRequest);
+            String firstTimeIn = rs.getTimeIn().split("\\.")[0];
+            String firstTimeOut = rs.getTimeOut().split("\\.")[0];
+            String secondTimeIn = approvedRequest.getTimeIn().split("\\.")[0];
+            String secondTimeOut = approvedRequest.getTimeOut().split("\\.")[0];
+
+            boolean isOverlapping = isOverlappingWithRequest(firstTimeIn, firstTimeOut, secondTimeIn, secondTimeOut);
 
             System.out.println("Checking RS ID: " + rs.getID()
                     + " overlap result: " + isOverlapping);
@@ -110,12 +132,20 @@ public class RequestsController {
         }
     }
 
-    private boolean isOverlappingWithRequest(RequestSchedule firstRS, RequestSchedule secondRS) {
-        String firstTimeIn = firstRS.getTimeIn().split("\\.")[0];
-        String firstTimeOut = firstRS.getTimeOut().split("\\.")[0];
-        String secondTimeIn = secondRS.getTimeIn().split("\\.")[0];
-        String secondTimeOut = secondRS.getTimeOut().split("\\.")[0];
+    private boolean isOverlappingWithFacultySchedule(List<Schedule> facultySchedule, RequestSchedule approvedRequest) {
+        for (Schedule schedule : facultySchedule) {
+            String firstTimeIn = schedule.getTimeIn().split("\\.")[0];
+            String firstTimeOut = schedule.getTimeOut().split("\\.")[0];
+            String secondTimeIn = approvedRequest.getTimeIn().split("\\.")[0];
+            String secondTimeOut = approvedRequest.getTimeOut().split("\\.")[0];
+            if (isOverlappingWithRequest(firstTimeIn, firstTimeOut, secondTimeIn, secondTimeOut)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private boolean isOverlappingWithRequest(String firstTimeIn, String firstTimeOut, String secondTimeIn, String secondTimeOut) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         LocalTime firstFormattedTimeIn = LocalTime.parse(firstTimeIn, formatter);
         LocalTime firstFormattedTimeOut = LocalTime.parse(firstTimeOut, formatter);
