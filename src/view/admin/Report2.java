@@ -170,9 +170,14 @@ public class Report2 extends JPanel {
     public void setBuildingData(String[] buildingNames, int[] requestCounts) {
         content.removeAll();
 
+        int totalRequests = 0;
+        for(int i = 0; i < requestCounts.length; i++) {
+            totalRequests += requestCounts[i];
+        }
+
         if (buildingNames != null && requestCounts != null) {
             for (int i = 0; i < buildingNames.length; i++) {
-                content.add(createBuildingCard(buildingNames[i], requestCounts[i]));
+                content.add(createBuildingCard(buildingNames[i], requestCounts[i], totalRequests));
                 content.add(Box.createVerticalStrut(10));
             }
             content.setPreferredSize(new Dimension(400, buildingNames.length * 90));
@@ -330,7 +335,7 @@ public class Report2 extends JPanel {
         return (int) Math.round((value * 100.0) / total);
     }
 
-    private RoundedPanel createBuildingCard(String name, int requests) {
+    private RoundedPanel createBuildingCard(String name, int requests, int totalAmountRequests) {
         RoundedPanel card = new RoundedPanel(50, 3, new Color(117, 144, 156));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setPreferredSize(new Dimension(400, 70));
@@ -361,8 +366,13 @@ public class Report2 extends JPanel {
         progressRow.setLayout(new FlowLayout());
         progressRow.setOpaque(false);
 
-        RoundedProgressBar progress = new RoundedProgressBar(0, 200);
-        progress.setValue(requests);
+        System.out.println("Requests: " + requests);
+        System.out.println("TotalAmountRequests: " + totalAmountRequests);
+        double percentage = (double)requests/totalAmountRequests * 100;
+        int percent = (int) percentage;
+
+        RoundedProgressBar progress = new RoundedProgressBar(0, 100);
+        progress.setValue(percent);
         progress.setPreferredSize(new Dimension(240, 20));
         progress.setMaximumSize(new Dimension(240, 20));
 
