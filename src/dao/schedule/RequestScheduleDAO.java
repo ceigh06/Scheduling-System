@@ -43,7 +43,7 @@ public class RequestScheduleDAO {
                         set.getInt("RequestKey"),
                         set.getString("RoomCode"),
                         set.getString("CourseCode"),
-                        set.getString("StudentNumber"),
+                        set.getString("RequestorID"),
                         set.getString("SectionKey"),
                         set.getString("FacultyID"),
                         set.getString("TimeIn"),
@@ -77,7 +77,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 facultyPendingRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 sectionRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -128,7 +128,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 roomPendingRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -152,7 +152,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
                 sectionRequests.add(requestSchedule);
             }
         } catch (SQLException e) {
@@ -183,7 +183,7 @@ public class RequestScheduleDAO {
                         set.getString("Status"),
                         set.getInt("IsArchived"),
                         set.getDate("DateRequested").toString(),
-                        set.getString("StudentNumber"));
+                        set.getString("RequestorID"));
                 return request;
             }
         } catch (SQLException e) {
@@ -206,7 +206,7 @@ public class RequestScheduleDAO {
                         set.getString("TimeIn"),
                         set.getString("TimeOut"), set.getString("ScheduledDay"), set.getString("Status"),
                         set.getInt("isArchived"),
-                        set.getString("DateRequested"), set.getString("StudentNumber"));
+                        set.getString("DateRequested"), set.getString("RequestorID"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -443,7 +443,7 @@ public class RequestScheduleDAO {
     public static boolean unarchiveStudentSchedule(
             String roomCode,
             String courseCode,
-            String studentNumber,
+            String RequestorID ,
             String sectionKey,
             String facultyID,
             String timeIn,
@@ -454,7 +454,7 @@ public class RequestScheduleDAO {
                 + "SET IsArchived = 0 "
                 + "WHERE RoomCode = ? "
                 + "AND CourseCode = ? "
-                + "AND StudentNumber = ? "
+                + "AND RequestorID  = ? "
                 + "AND SectionKey = ? "
                 + "AND FacultyID = ? "
                 + "AND TimeIn = ? "
@@ -464,7 +464,7 @@ public class RequestScheduleDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, roomCode);
             stmt.setString(2, courseCode);
-            stmt.setString(3, studentNumber);
+            stmt.setString(3, RequestorID );
             stmt.setString(4, sectionKey);
             stmt.setString(5, facultyID);
             stmt.setString(6, timeIn);
@@ -509,7 +509,7 @@ public class RequestScheduleDAO {
                         String.valueOf(set.getInt("Status")),
                         set.getInt("IsArchived"),
                         set.getString("DateRequested"),
-                        set.getString("StudentNumber"));
+                        set.getString("RequestorID"));
 
                 return request;
             }
@@ -522,13 +522,13 @@ public class RequestScheduleDAO {
     }
 
     public void addRequest(RequestSchedule requestSchedule) {
-        String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, StudentNumber, SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
+        String sql = "INSERT INTO RequestSchedule (RoomCode, CourseCode, RequestorID , SectionKey, FacultyID, TimeIn, TimeOut, ScheduledDay, Status, DateRequested, IsArchived) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, requestSchedule.getRoomCode());
             stmt.setString(2, requestSchedule.getCourseCode());
-            stmt.setString(3, requestSchedule.getStudentRequested());
+            stmt.setString(3, requestSchedule.getRequestor());
             stmt.setString(4, requestSchedule.getSectionKey());
             stmt.setString(5, requestSchedule.getFacultyID());
             stmt.setString(6, requestSchedule.getTimeIn());

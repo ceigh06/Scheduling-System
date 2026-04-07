@@ -108,11 +108,11 @@ public class ViewScheduleController {
         LookUpDAO lookUp = new LookUpDAO();
         List<String> data = new ArrayList<>(); // for printing only
         System.out.println(requestSchedule.getTimeIn());
-        data.add(requestSchedule.getStudentRequested());
+        data.add(requestSchedule.getRequestor());
         if (user.getUserType().equalsIgnoreCase("student")) {
-            data.add(lookUp.getFullStudentName(requestSchedule.getStudentRequested()));
+            data.add(lookUp.getFullStudentName(requestSchedule.getRequestor()));
         } else {
-            data.add(lookUp.getFullFacultyName(requestSchedule.getStudentRequested()));
+            data.add(lookUp.getFullFacultyName(requestSchedule.getRequestor()));
         }
         data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));

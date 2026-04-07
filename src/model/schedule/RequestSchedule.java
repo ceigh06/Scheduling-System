@@ -2,14 +2,14 @@ package model.schedule;
 
 public class RequestSchedule extends Schedule {
     private String dateRequested;
-    private String studentNumber;
+    private String requestorID;
 
     public void load(int ID, String roomCode, String sectionKey, String courseCode, String facultyID, String timeIn,
-            String timeOut, String scheduledDay, String status, int isArchived, String dateRequested, String studentNumber) {
+            String timeOut, String scheduledDay, String status, int isArchived, String dateRequested, String requestorID) {
         // TODO Auto-generated method stub
         super.load(ID, roomCode, sectionKey, courseCode, facultyID, timeIn, timeOut, scheduledDay, status, isArchived);
         this.dateRequested = dateRequested;
-        this.studentNumber = studentNumber;
+        this.requestorID = requestorID;
     }
 
     public void setRoomCode(String roomCode) {
@@ -21,8 +21,8 @@ public class RequestSchedule extends Schedule {
         return dateRequested;
     }
 
-    public String getStudentRequested(){
-        return studentNumber;
+    public String getRequestor(){
+        return requestorID;
     }
 
     public void setTimeIn(String timeIn){
