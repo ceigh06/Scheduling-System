@@ -1,5 +1,6 @@
 package utilities;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,35 @@ public class DateTimeBuilder {
 
     public static String getDayName() {
         return dateTime.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    }
+
+    public static String getCurrentMonth() {
+        return dateTime.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+    }
+
+    public static String getCurrentWeek() {
+        LocalDate today = LocalDate.now();
+        
+        // Find Monday (start of week)
+        LocalDate monday = today;
+        while (monday.getDayOfWeek() != java.time.DayOfWeek.MONDAY) {
+            monday = monday.minusDays(1);
+        }
+        
+        // Saturday is 5 days after Monday (excluding Sunday)
+        LocalDate saturday = monday.plusDays(5);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d");
+        
+        String mondayStr = monday.format(formatter);
+        String saturdayStr = saturday.format(formatter);
+        
+      
+        if (monday.getYear() != saturday.getYear()) {
+            mondayStr += ", " + monday.getYear();
+        }
+        
+        return mondayStr + " - " + saturdayStr;
     }
 
     public static String formatTo12Hour(int hour24, int minute) {
