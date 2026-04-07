@@ -17,6 +17,10 @@ public class ArchiveController {
 
     private Schedule schedule;
     User user;
+    static String requestorID = null;
+    static String requestorName = null;
+    static boolean isRequestSchedule = false;
+      static  boolean isStudentRequestor = false;
 
     public ArchiveController(User user) throws SQLException {
         new RoomsController(user, true);
@@ -37,18 +41,35 @@ public class ArchiveController {
         LookUpDAO lookUpDAO = new LookUpDAO();
         String fullSectionName = lookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
 
+        // Determine if this is a request schedule
+        requestorID = null;
+        requestorName = null;
+        isRequestSchedule = false;
+        isStudentRequestor = false;
         
-        String requestorID = null;
-        String studentName = null;
+        // Check if status indicates approved request (3 = approved)
         if (schedule.getStatus().equals("3")) {
             RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
             RequestSchedule requestSchedule = requestScheduleDAO.getBySchedule(schedule);
-            requestorID = requestSchedule.getRequestor();
-            studentName = lookUpDAO.getFullStudentName(requestorID);
+            
+            if (requestSchedule != null) {
+                isRequestSchedule = true;
+                requestorID = requestSchedule.getRequestor();
+                
+                // Determine if student or faculty requestor
+                isStudentRequestor = requestScheduleDAO.isStudentRequestor(requestorID);
+                
+                // Get appropriate name
+                if (isStudentRequestor) {
+                    requestorName = lookUpDAO.getFullStudentName(requestorID);
+                } else {
+                    requestorName = lookUpDAO.getFullFacultyName(requestorID);
+                }
+            }
         }
 
         RequestForm requestForm = new RequestForm(schedule, user, viewArchives,
-                requestorID, studentName, fullSectionName);
+                requestorID, requestorName, fullSectionName, isStudentRequestor);
 
         // Add to MainFrame
         MainFrame.addContentPanel(requestForm, "UnarchiveForm");
@@ -62,24 +83,24 @@ public class ArchiveController {
 
         confirmPanel.setBtn2Action(e -> {
 
-            if (requestForm.isRequest) {
-                RequestScheduleDAO requestScheduleDAO = new RequestScheduleDAO();
-
-                if (RequestScheduleDAO.unarchiveStudentSchedule(
+            if (isRequestSchedule) {
+                if (RequestScheduleDAO.unarchiveRequestSchedule(
                         schedule.getRoomCode(),
                         schedule.getCourseCode(),
-                        requestForm.RequestorID,
+                        requestorID,
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
-                        schedule.getTimeIn(),
+                        schedule.getTimeIn(),  // Keep original format for unarchive
                         schedule.getTimeOut(),
                         schedule.getScheduledDay()
                 )) {
-                    NotificationMessage notif = new NotificationMessage(null, "Request Schedule unarchived successfully.", user);
+                    NotificationMessage notif = new NotificationMessage(null, 
+                        "Request Schedule unarchived successfully.", user);
                     MainFrame.addContentPanel(notif, "Notif");
                     MainFrame.showPanel("Notif", "Notification");
                 } else {
-                    NotificationMessage notif = new NotificationMessage(null, "Failed to unarchive Request Schedule.", user);
+                    NotificationMessage notif = new NotificationMessage(null, 
+                        "Failed to unarchive Request Schedule.", user);
                     MainFrame.addContentPanel(notif, "Notif");
                     MainFrame.showPanel("Notif", "Notification");
                 }
@@ -92,14 +113,16 @@ public class ArchiveController {
                         schedule.getSectionKey(),
                         schedule.getFacultyID(),
                         schedule.getTimeIn(),
-                       schedule.getTimeOut(),
+                        schedule.getTimeOut(),
                         schedule.getScheduledDay()
                 )) {
-                    NotificationMessage notif = new NotificationMessage("", "Schedule unarchived successfully.", user);
+                    NotificationMessage notif = new NotificationMessage("", 
+                        "Schedule unarchived successfully.", user);
                     MainFrame.addContentPanel(notif, "Notif");
                     MainFrame.showPanel("Notif");
                 } else {
-                    NotificationMessage notif = new NotificationMessage(null, "Failed to unarchive Schedule.", user);
+                    NotificationMessage notif = new NotificationMessage(null, 
+                        "Failed to unarchive Schedule.", user);
                     MainFrame.addContentPanel(notif, "Notif");
                     MainFrame.showPanel("Notif", "Notification");
                 }

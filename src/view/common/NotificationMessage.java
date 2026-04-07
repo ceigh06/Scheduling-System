@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import model.user.User;
-import view.landing.Landing;
+import view.landing.AdminLanding;
 
 public class NotificationMessage extends JPanel {
 
@@ -182,6 +182,7 @@ public class NotificationMessage extends JPanel {
             if (user == null) {
                 MainFrame.showPanel("Landing", "RoomMate");
             } else {
+                AdminLanding.refresh();
                 MainFrame.showPanel("AdminLanding", "RoomMate");
             }
         }

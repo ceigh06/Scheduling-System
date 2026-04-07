@@ -34,7 +34,7 @@ public class AdminLanding extends JPanel {
     private RoundedButton totalBtn, mostBtn, peakBtn;
 
     // Store card labels so refresh() can update them without rebuilding the whole panel
-    private javax.swing.JLabel totalCardLabel, mostCardLabel, peakCardLabel;
+    private static javax.swing.JLabel totalCardLabel, mostCardLabel, peakCardLabel;
 
     // Setter methods for buttons - following AdminNavigationBar pattern
     public void setOnTotalBtn(ActionListener action) {
@@ -223,7 +223,7 @@ public class AdminLanding extends JPanel {
      * landing page cards. Called by AdminController whenever the admin
      * returns to the home panel.
      */
-    public void refresh() {
+    public static void refresh() {
         try {
             String newTotal = String.valueOf(new controller.admin.ReportOneController().getMonthlyTotal());
             String newMost  = new controller.admin.ReportTwoController().getTopBuildingName();
