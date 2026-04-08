@@ -6,9 +6,12 @@ import java.util.List;
 
 import dao.LookUpDAO;
 import dao.schedule.RequestScheduleDAO;
+import dao.schedule.ScheduleDAO;
 import model.schedule.RequestSchedule;
+import model.schedule.Schedule;
 import model.user.User;
 import service.RequestValidatorService;
+import service.ScheduleValidator;
 import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.NotificationMessage;
@@ -58,6 +61,20 @@ public class RequestController {
     }
 
     void onSubmit(RequestSchedule requestSchedule) {
+
+        if (user.getUserType().equals("Faculty")){//guard clause
+            ScheduleDAO dao = new ScheduleDAO();
+            List<Schedule> schedules;
+            schedules = dao.getFacultySchedulesByDay(user, DateTimeBuilder.getDayName().substring(0, 3));
+            System.out.println(DateTimeBuilder.getDayName().substring(0, 2));
+            for (Schedule schedule : schedules){
+                System.out.println(schedule.getTimeIn());
+            }
+            if (ScheduleValidator.isOverlapping(requestSchedule.getTimeIn(), requestSchedule.getTimeOut(), schedules)){
+                MainFrame.setNotification("This Schedule overlaps with your current schedule!");
+                return;
+            }
+        }
 
         requestSchedule.setTimeIn(DateTimeBuilder.convertTo24Hour(requestSchedule.getTimeIn()));
         requestSchedule.setTimeOut(DateTimeBuilder.convertTo24Hour(requestSchedule.getTimeOut()));

@@ -261,7 +261,7 @@ public class ScheduleDAO {
         return schedules;
     }
 
-    public List<Schedule> getFacultySchedulesByDay(User user, String day) throws SQLException {
+    public List<Schedule> getFacultySchedulesByDay(User user, String day) {
         List<Schedule> schedules = new ArrayList<>();
 
         String fullDay;
@@ -301,31 +301,34 @@ public class ScheduleDAO {
                 "AND DateRequested >= DATEADD(day, 1-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
                 "AND DateRequested <  DATEADD(day, 8-DATEPART(WEEKDAY, GETDATE()), CAST(GETDATE() AS DATE)) " +
                 "ORDER BY TimeIn";
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
-        PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, user.getUserID());
+            stmt.setString(2, fullDay);
+            stmt.setString(3, user.getUserID());
+            stmt.setString(4, fullDay);
 
-        stmt.setString(1, user.getUserID());
-        stmt.setString(2, fullDay);
-        stmt.setString(3, user.getUserID());
-        stmt.setString(4, fullDay);
+            ResultSet rs = stmt.executeQuery();
 
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            Schedule sched = new Schedule();
-            System.out.println(rs.getInt("ID"));
-            sched.load(
-                    rs.getInt("ID"),
-                    rs.getString("RoomCode"),
-                    rs.getString("SectionKey"),
-                    rs.getString("CourseCode"),
-                    rs.getString("FacultyID"),
-                    rs.getString("TimeIn"),
-                    rs.getString("TimeOut"),
-                    fullDay,
-                    rs.getString("Status"),
-                    rs.getInt("IsArchived"));
-            schedules.add(sched);
+            while (rs.next()) {
+                Schedule sched = new Schedule();
+                System.out.println(rs.getInt("ID"));
+                sched.load(
+                        rs.getInt("ID"),
+                        rs.getString("RoomCode"),
+                        rs.getString("SectionKey"),
+                        rs.getString("CourseCode"),
+                        rs.getString("FacultyID"),
+                        rs.getString("TimeIn"),
+                        rs.getString("TimeOut"),
+                        fullDay,
+                        rs.getString("Status"),
+                        rs.getInt("IsArchived"));
+                schedules.add(sched);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return schedules;

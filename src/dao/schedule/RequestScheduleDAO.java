@@ -23,15 +23,15 @@ public class RequestScheduleDAO {
         this.connection = DBConnection.getConnection();
     }
 
-    public static void voidOverdueRequest(){
-        String query = "UPDATE RequestSchedule SET Status = 0  WHERE Status = 1 AND DateRequested < DATEADD(MINUTE, -30, GETDATE());";
-        try {
-            Statement stmt = connection.createStatement();
-            stmt.execute(query);
-        } catch (SQLException e) {
-            System.out.println("No pending requests voided");
-        }
+    public static void voidOverdueRequest() {
+    String query = "UPDATE RequestSchedule SET Status = 0 WHERE Status = 1 AND DateRequested < DATEADD(MINUTE, -30, GETDATE());";
+    try (Connection conn = DBConnection.getConnection();
+         Statement stmt = conn.createStatement()) {
+        stmt.execute(query);
+    } catch (SQLException e) {
+        System.out.println("No pending requests voided");
     }
+}
 
     // Status constants
     public static final int STATUS_VOID = 0;
