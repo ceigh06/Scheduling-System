@@ -6,6 +6,7 @@ import dao.CourseDAO;
 import dao.StudentDAO;
 import dao.schedule.ScheduleDAO;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.List;
 import model.Course;
 import model.Room;
@@ -189,7 +190,7 @@ public class BookingController {
 
         List<Schedule> inactiveSchedules = scheduleDAO
                 .filterInactiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
-        
+
         selectedRoom.loadSchedules(inactiveSchedules); // schedules for room
         new ViewScheduleController(user, selectedRoom);
 
@@ -199,40 +200,43 @@ public class BookingController {
         // viewSchedule.loadClassSchedule(selectedRoom, viewArchives);
 
         // if (user.getUserType().equals("Admin")) {
-        //     viewSchedule.setOnScheduleClicked(schedule -> {
-        //         try {
-        //             onScheduleClicked(schedule, selectedRoom, viewArchives);
-        //         } catch (SQLException e) {
-        //             e.printStackTrace();
-        //         }
-        //     });
+        // viewSchedule.setOnScheduleClicked(schedule -> {
+        // try {
+        // onScheduleClicked(schedule, selectedRoom, viewArchives);
+        // } catch (SQLException e) {
+        // e.printStackTrace();
+        // }
+        // });
 
-        //     viewSchedule.setOnBackClicked(e -> {
-        //         MainFrame.showPanel("RoomBrowser", "Browse Room");
-        //     });
+        // viewSchedule.setOnBackClicked(e -> {
+        // MainFrame.showPanel("RoomBrowser", "Browse Room");
+        // });
 
-        //     MainFrame.addContentPanel(viewSchedule, "Schedule");
-        //     MainFrame.showPanel("Schedule", "View Schedule");
-        //     return;
+        // MainFrame.addContentPanel(viewSchedule, "Schedule");
+        // MainFrame.showPanel("Schedule", "View Schedule");
+        // return;
         // }
 
         // viewSchedule.loadFormPanel(user.getUserType().equals("Faculty"));
-        // attachShowRoomScheduleListeners(viewSchedule, selectedRoom, user.getUserType().equals("Faculty"));
+        // attachShowRoomScheduleListeners(viewSchedule, selectedRoom,
+        // user.getUserType().equals("Faculty"));
         // // attaches form listeners
 
         // if (user.getUserType().equals("Faculty")) {
-        //     List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID()); // courses
-        //     viewSchedule.loadCourse(facultyCourses);
-        //     viewSchedule.loadConfirmationPanel();
+        // List<Course> facultyCourses = courseDAO.getFacultyCourses(user.getUserID());
+        // // courses
+        // viewSchedule.loadCourse(facultyCourses);
+        // viewSchedule.loadConfirmationPanel();
 
-        //     viewSchedule.setOnCourseChanged(e -> {
-        //         loadSection(viewSchedule);
-        //     });
+        // viewSchedule.setOnCourseChanged(e -> {
+        // loadSection(viewSchedule);
+        // });
 
         // } else if (user.getUserType().equals("Student")) {
-        //     List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID()); // courses
-        //     viewSchedule.loadCourse(studentCourses);
-        //     viewSchedule.loadConfirmationPanel();
+        // List<Course> studentCourses = courseDAO.getStudentCourse(user.getUserID());
+        // // courses
+        // viewSchedule.loadCourse(studentCourses);
+        // viewSchedule.loadConfirmationPanel();
 
         // }
 
@@ -244,8 +248,9 @@ public class BookingController {
     void loadSection(ViewSchedule viewSchedule) {
         // will be loaded ones the courses are picked
         Course selectedCourse = viewSchedule.getCourse();
-        
-        if (selectedCourse == null) return; // guard clause
+
+        if (selectedCourse == null)
+            return; // guard clause
 
         ScheduleDAO scheduleDAO = new ScheduleDAO();
         List<Section> sections = scheduleDAO.getSectionByFacultyCourse(selectedCourse.getCode(), user.getUserID());
@@ -257,29 +262,61 @@ public class BookingController {
         int minute = viewSchedule.getMinute();
         String meridiem = viewSchedule.getMeridiem();
 
+        // Convert to 24-hour for calculation
         int hour24 = hour;
-        if (meridiem.equals("PM")) {
+        if (meridiem.equals("PM") && hour != 12) {
             hour24 += 12;
+        } else if (meridiem.equals("AM") && hour == 12) {
+            hour24 = 0; // midnight
         }
 
         int duration = viewSchedule.getIsLec() ? 2 : 3;
+        int nowHour = LocalTime.now().getHour();
+        int minHour = Math.max(7, nowHour);
+        int maxStartHour = 20 - duration;
 
-        // Clamp to school hours: 7 AM (7) to 8 PM (20)
-        if (hour24 < 7) {
-            hour24 = 7;
-            viewSchedule.setTimeIn(hour24, minute, meridiem);
+        boolean wasClamped = false;
+        String newMeridiem = meridiem;
+        int displayHour = hour;
+
+        // Clamp minimum (can't start before 7am or now)
+        if (hour24 < minHour) {
+            hour24 = minHour;
+            wasClamped = true;
         }
-        if (hour24 > 20 - duration) {
-            hour24 = 20 - duration; // clamp first
-            viewSchedule.setTimeIn(hour24 - 12, minute, meridiem);
+
+        // Clamp maximum (must end by 8pm)
+        if (hour24 > maxStartHour) {
+            hour24 = maxStartHour;
+            wasClamped = true;
         }
+
+        // Convert back to 12-hour format
+        if (hour24 == 0) {
+            displayHour = 12;
+            newMeridiem = "AM";
+        } else if (hour24 < 12) {
+            displayHour = hour24;
+            newMeridiem = "AM";
+        } else if (hour24 == 12) {
+            displayHour = 12;
+            newMeridiem = "PM";
+        } else {
+            displayHour = hour24 - 12;
+            newMeridiem = "PM";
+        }
+
+        // ALWAYS update the spinner to match calculated value
+        // This prevents the "visual vs actual" mismatch
+        viewSchedule.setTimeIn(displayHour, minute, newMeridiem);
+
+        // Calculate timeout
         int timeOutHour24 = hour24 + duration;
-        System.out.println(hour24 + " " + timeOutHour24);
-
         timeIn = DateTimeBuilder.formatTo12Hour(hour24, minute);
         timeOut = DateTimeBuilder.formatTo12Hour(timeOutHour24, minute);
-
         viewSchedule.setTimeOut(timeOut);
+
+        System.out.println("Set spinner to: " + displayHour + " " + newMeridiem + " (24h: " + hour24 + ")");
     }
 
     void attachShowRoomScheduleListeners(ViewSchedule viewSchedule, Room selectedRoom, boolean isFaculty) {
