@@ -230,10 +230,6 @@ public class SearchRoomsController {
         timeIn = DateTimeBuilder.formatTo12Hour(inHour24, inMinute);
         timeOut = DateTimeBuilder.formatTo12Hour(outHour24, outMinute);
 
-        // Show notification after spinners are updated to avoid re-entry issues
-        if (notification != null) {
-            JOptionPane.showMessageDialog(null, notification, "Invalid Time", JOptionPane.WARNING_MESSAGE);
-        }
     }
 
     // --- Helpers ---

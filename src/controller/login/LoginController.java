@@ -64,7 +64,7 @@ public class LoginController {
     }
 
     void createUserDashBoard() throws SQLException {
-        // RequestScheduleDAO.voidOverdueRequest(); // removes the overdue requests schedules
+        RequestScheduleDAO.voidOverdueRequest(); // removes the overdue requests schedules
         DBConnection.disconnect(); // logs out the db connection with the user login.
 
         if (authenticatedUser.getUserType().equals("Student")) {
