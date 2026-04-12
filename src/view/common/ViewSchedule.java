@@ -183,7 +183,8 @@ public class ViewSchedule extends JPanel {
         }
         sectionCombo.setBackground(Color.WHITE);
         sectionCombo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        sectionCombo.setMaximumSize(new Dimension(400, 50));
+        sectionCombo.setPreferredSize(new Dimension(372, 25));
+		sectionCombo.setMaximumSize(new Dimension(372, 25));
 
     }
 
@@ -316,7 +317,7 @@ public class ViewSchedule extends JPanel {
 
     public void loadConfirmationPanel() {
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.setPreferredSize(new Dimension(100, 50));
+        southPanel.setPreferredSize(new Dimension(400, 50));
         southPanel.setBorder(BorderFactory.createEmptyBorder(5, 40, 0, 40));
         southPanel.setBackground(Color.WHITE);
         confirmArea.setBtn1Color(new Color(255, 100, 100));
@@ -399,8 +400,12 @@ public class ViewSchedule extends JPanel {
 
         // Add all to form
         courseCombo = new JComboBox<>();
+        courseCombo.setPreferredSize(new Dimension(330, 25));
+		courseCombo.setMaximumSize(new Dimension(330, 25));
         // SECTION COMBO BOX
         sectionCombo = new JComboBox<>();
+        sectionCombo.setPreferredSize(new Dimension(330, 25));
+		sectionCombo.setMaximumSize(new Dimension(330, 25));
         sectionCombo.setVisible(isFaculty);
 
         form.add(selectCoursePanel);
@@ -425,6 +430,8 @@ public class ViewSchedule extends JPanel {
         JPanel selectSectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         selectSectionPanel.setBackground(Color.WHITE);
         selectSectionPanel.add(selectSectionLbl);
+        sectionCombo.setPreferredSize(new Dimension(330, 25));
+		sectionCombo.setMaximumSize(new Dimension(330, 25));
         if (userIsFaculty) {
             form.add(selectSectionPanel);
             form.add(sectionCombo);

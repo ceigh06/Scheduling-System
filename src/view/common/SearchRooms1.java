@@ -151,6 +151,7 @@ public class SearchRooms1 extends JPanel {
 		courseCombo = new JComboBox<>();
 		courseCombo.setBorder(BorderFactory.createEmptyBorder(0, 22, 0, 20));
 		courseCombo.setPreferredSize(new Dimension(372, 25));
+		courseCombo.setMaximumSize(new Dimension(372, 25));
 		form.add(Box.createVerticalStrut(5));
 		comboPanel.add(courseCombo);
 
@@ -175,7 +176,7 @@ public class SearchRooms1 extends JPanel {
 		// more filters panel wiwth buttons
 		moreFilter = new JPanel(new BorderLayout());
 		moreFilter.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-		moreFilter.setPreferredSize(new Dimension(450, 130));
+		moreFilter.setPreferredSize(new Dimension(450, 150));
 
 		// container for the components
 		clicked = new JPanel();
@@ -184,7 +185,7 @@ public class SearchRooms1 extends JPanel {
 		clicked.setAlignmentX(LEFT_ALIGNMENT);
 		clicked.setVisible(false);
 
-		JPanel filterWrapper = new JPanel(new GridLayout(2, 2, 40, 5));
+		JPanel filterWrapper = new JPanel(new GridLayout(2, 2, 50, 5));
 		filterWrapper.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
 		// MODIFIED --START
@@ -198,8 +199,8 @@ public class SearchRooms1 extends JPanel {
 		input.addItem("2nd Floor");
 		input.addItem("3rd Floor");
 		input.addItem("4th Floor");
-		input.setMaximumSize(new Dimension(200, 20));
-		input.setPreferredSize(new Dimension(200, 20));
+		input.setMaximumSize(new Dimension(200, 25));
+		input.setPreferredSize(new Dimension(200, 25));
 		input.setAlignmentX(LEFT_ALIGNMENT);
 
 		// CAPACITY
@@ -207,7 +208,7 @@ public class SearchRooms1 extends JPanel {
 		capLbl.setFont(new Font("Arial", Font.BOLD, 16));
 		capLbl.setAlignmentX(LEFT_ALIGNMENT);
 		cap = new JSpinner(new SpinnerNumberModel(60, 1, 200, 1));
-		cap.setMaximumSize(new Dimension(100, 20));
+		cap.setMaximumSize(new Dimension(100, 25));
 		cap.setAlignmentX(LEFT_ALIGNMENT);
 
 		filterWrapper.add(floorLbl);
@@ -219,14 +220,12 @@ public class SearchRooms1 extends JPanel {
 		// MODIFIED
 
 		// buttons below
-		btnPanel = new JPanel();
 		confirmArea = new ConfirmPanel(MainFrame.getFrame(), "Clear All", "Search",
 				new Color(91, 112, 121), 2,
 				new Color(91, 112, 121), 2);
 		confirmArea.setBackground(null);
-		btnPanel.add(confirmArea.getConfirmPanel(), BorderLayout.CENTER);
 
-		moreFilter.add(btnPanel, BorderLayout.SOUTH);
+		moreFilter.add(confirmArea.getConfirmPanel(), BorderLayout.SOUTH);
 		// when "more filters"is clicked
 		clickFilter.addMouseListener(new MouseAdapter() {
 			@Override
