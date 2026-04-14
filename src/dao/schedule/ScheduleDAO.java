@@ -35,7 +35,6 @@ public class ScheduleDAO {
             }
 
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return schedules;
@@ -56,7 +55,6 @@ public class ScheduleDAO {
                 System.out.println();
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return schedules;

@@ -18,7 +18,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.Border;
 
 import view.components.RoundedLabel;
 import view.components.RoundedPanel;

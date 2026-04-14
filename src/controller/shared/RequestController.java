@@ -1,6 +1,5 @@
 package controller.shared;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +34,14 @@ public class RequestController {
             data.add(lookUp.getFullStudentName(requestSchedule.getRequestor()));
         }
         else {
-            data.add(lookUp.getFullFacultyName(requestSchedule.getRequestor()));
+            data.add(LookUpDAO.getFullFacultyName(requestSchedule.getRequestor()));
         }        
-        data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
+        data.add(LookUpDAO.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
         data.add(requestSchedule.getTimeIn());
         data.add(requestSchedule.getTimeOut());
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
-        data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
+        data.add(LookUpDAO.getFullFacultyName(requestSchedule.getFacultyID()));
 
         RequestForm requestForm = new RequestForm(data, "Request Schedule", "Submit");
         MainFrame.addContentPanel(requestForm, "Form");

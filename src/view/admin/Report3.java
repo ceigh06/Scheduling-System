@@ -40,7 +40,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.w3c.dom.events.MouseEvent;
 
 import dao.schedule.RequestScheduleDAO;
 import view.common.RequestHistory;
@@ -54,7 +53,6 @@ public class Report3 extends JPanel {
     private JPanel lineGraphContainer;
     private List<String> dates, trimmedDates, day;
     private static int dateTodayIdx = -1;
-    private static String dateSelected;
     private JLabel selectedDayLabel = null;
     private RoundedPanel selectedDatePanel = null;
     private static String weekRange;
@@ -269,7 +267,6 @@ public class Report3 extends JPanel {
         calendarPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         for (int i = 0; i < trimmedDates.size(); i++) {
-            String dateString = dates.get(i);
 
             RoundedPanel clickableDate = new RoundedPanel(55, 2, new Color(91, 112, 121));
             clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
@@ -316,7 +313,6 @@ public class Report3 extends JPanel {
 
             final RoundedPanel thisDatePanel = clickableDate;
             final JLabel thisDayLabel = dayLabel;
-            final String thisSelectedDateString = dateString;
             final String dayOfWeek = day.get(i);
 
             clickableDate.addMouseListener(new MouseAdapter() {
@@ -330,7 +326,6 @@ public class Report3 extends JPanel {
                     thisDayLabel.setForeground(Color.BLACK);
                     selectedDatePanel = thisDatePanel;
                     selectedDayLabel = thisDayLabel;
-                    dateSelected = thisSelectedDateString;
 
                     // Load line graph for selected day
                     try {

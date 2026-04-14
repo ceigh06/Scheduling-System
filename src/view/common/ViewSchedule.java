@@ -1,8 +1,7 @@
 package view.common;
 
 import dao.LookUpDAO;
-import dao.schedule.RequestScheduleDAO;
-import dao.schedule.ScheduleDAO;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,7 +64,6 @@ public class ViewSchedule extends JPanel {
     RoundedButton labBtn;
     boolean isLec = true;
 
-    private boolean onTimeChangedCallBack = false;
     private Consumer<String> onDayClicked;
 
     private ConfirmPanel confirmArea;
@@ -75,7 +73,6 @@ public class ViewSchedule extends JPanel {
     private GridBagConstraints gbc;
     private JPanel container;
 
-    private String selectedSection = "";
 
     private boolean[][] occupied = new boolean[28][2];
     // BACKEND TO DO: checker if the time has overlapping schedule 'markOccupied()'
@@ -90,7 +87,6 @@ public class ViewSchedule extends JPanel {
     private static int dateTodayIdx = -1;
     private JLabel selectedDayLabel = null;
     private RoundedPanel selectedDatePanel = null;
-    private static String dateSelected;
 
     public void setOnDayClicked(Consumer<String> action) {
         this.onDayClicked = action;
@@ -621,7 +617,6 @@ public class ViewSchedule extends JPanel {
         calendarPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         for (int i = 0; i < trimmedDates.size(); i++) {
-            String dateString = dates.get(i);
 
             RoundedPanel clickableDate = new RoundedPanel(55, 2, new Color(91, 112, 121));
             clickableDate.setLayout(new BoxLayout(clickableDate, BoxLayout.Y_AXIS));
@@ -658,7 +653,6 @@ public class ViewSchedule extends JPanel {
 
             final RoundedPanel thisDatePanel = clickableDate;
             final JLabel thisDayLabel = dayLabel;
-            final String thisSelectedDateString = dateString;
             final String dayOfWeek = day.get(i);
 
             clickableDate.addMouseListener(new MouseAdapter() {
@@ -671,7 +665,6 @@ public class ViewSchedule extends JPanel {
                     thisDayLabel.setForeground(Color.BLACK);
                     selectedDatePanel = thisDatePanel;
                     selectedDayLabel = thisDayLabel;
-                    dateSelected = thisSelectedDateString;
 
                     // fire callback — no DB call here
                     if (onDayClicked != null) {
@@ -890,7 +883,7 @@ public class ViewSchedule extends JPanel {
                 BorderFactory.createLineBorder(Color.GRAY, 1),
                 BorderFactory.createEmptyBorder(20, 20, 5, 5)));
 
-        schedPanel.add(new JLabel(lookUp.getFullSectionName(Integer.parseInt(schedule.getSectionKey()))) {
+        schedPanel.add(new JLabel(LookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()))) {
             {
                 setFont(new Font("Arial", Font.BOLD, 20));
             }
@@ -900,7 +893,7 @@ public class ViewSchedule extends JPanel {
                 setFont(new Font("Arial", Font.BOLD, 16));
             }
         });
-        schedPanel.add(new JLabel(lookUp.getFullFacultyName(schedule.getFacultyID())) {
+        schedPanel.add(new JLabel(LookUpDAO.getFullFacultyName(schedule.getFacultyID())) {
             {
                 setFont(new Font("Arial", Font.BOLD, 16));
             }

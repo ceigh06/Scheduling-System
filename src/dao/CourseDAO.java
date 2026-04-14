@@ -15,7 +15,7 @@ public class CourseDAO {
 
     public CourseDAO() {
         try {
-            this.connection = DBConnection.getConnection(); // shared connection
+            connection = DBConnection.getConnection(); // shared connection
         } catch (Exception e) {
             System.err.println(e.getStackTrace());
         }

@@ -30,7 +30,6 @@ public class Landing extends JPanel {
     private final Color OFF_WHITE = new Color(250, 249, 246);
     private RoundedTextField searchBar;
     private ActionListener onSearchAction;
-    private ActionListener onRoomViewAction;
     private JPanel contentPanel;
 
     private Consumer<Room> onRoomClicked;
@@ -42,7 +41,6 @@ public class Landing extends JPanel {
     }
 
     public void setOnRoomViewAction(ActionListener action) {
-        this.onRoomViewAction = action;
     }
 
     public void setOnSearchAction(MouseAdapter action) {

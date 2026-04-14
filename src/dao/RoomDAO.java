@@ -1,6 +1,5 @@
 package dao;
 
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -8,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import model.Building;
 import model.Room;
 import utilities.DBConnection;
 
@@ -16,7 +14,7 @@ public class RoomDAO {
     private static Connection connection;
 
     public RoomDAO() throws SQLException  {
-        this.connection = DBConnection.getConnection(); // shared connection
+        connection = DBConnection.getConnection(); // shared connection
     }
     Room get(String roomCode) throws SQLException{
 

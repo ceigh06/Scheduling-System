@@ -5,7 +5,6 @@ import controller.shared.ProfileController;
 import controller.shared.RoomsController;
 import controller.shared.SearchRoomsController;
 import controller.shared.ViewScheduleController;
-import controller.student.RequestHistoryController;
 import dao.schedule.RequestScheduleDAO;
 
 import java.awt.event.MouseAdapter;
@@ -17,7 +16,6 @@ import model.Room;
 import model.user.Faculty;
 import model.user.User;
 import view.common.MainFrame;
-import view.common.RoomBrowser;
 import view.common.TitleHeader;
 import view.landing.Landing;
 

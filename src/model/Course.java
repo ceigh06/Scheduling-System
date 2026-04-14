@@ -6,11 +6,9 @@ public class Course {
     private String description;
     private int units;
     private boolean isMajor;
-    private boolean isArchived;
     private int section;
 
     public void setIsArchived(Boolean isArchived){
-        this.isArchived = isArchived;
     }
 
     public void setCode(String code) {

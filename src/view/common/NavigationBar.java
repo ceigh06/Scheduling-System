@@ -21,7 +21,6 @@ public class NavigationBar {
 
     private JPanel navPanel;
     private RoundedPanel selectedPanel, browsePanel, homePanel, reqPanel, archPanel, pfPanel;
-    private User currentUser;
 
     public RoundedPanel getSelectedPanel() { // still not sure what is the purpose of this
         return selectedPanel;
@@ -67,7 +66,6 @@ public class NavigationBar {
 
     // for admin
     public NavigationBar(JFrame frame, User user) {
-        this.currentUser = user;
         navPanel = new JPanel(new GridBagLayout());
         navPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
         navPanel.setBorder(BorderFactory.createEmptyBorder(5, 1, 5, 1));
@@ -147,7 +145,6 @@ public class NavigationBar {
         panel.setPreferredSize(new Dimension(80, 25));
         panel.setMaximumSize(new Dimension(80, 25));
 
-        ImageIcon icon = new ImageIcon(getClass().getResource(imgPath));
         Image imgIcon = new ImageIcon(getClass().getResource(imgPath)).getImage().getScaledInstance(20, 20,
                 Image.SCALE_SMOOTH);
         Image scaledImg = imgIcon.getScaledInstance(20, 20, Image.SCALE_SMOOTH);

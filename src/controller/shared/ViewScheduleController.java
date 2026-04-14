@@ -112,14 +112,14 @@ public class ViewScheduleController {
         if (requestSchedule.getRequestor().length()>4) {
             data.add(lookUp.getFullStudentName(requestSchedule.getRequestor()));
         } else {
-            data.add(lookUp.getFullFacultyName(requestSchedule.getRequestor()));
+            data.add(LookUpDAO.getFullFacultyName(requestSchedule.getRequestor()));
         }
-        data.add(lookUp.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
+        data.add(LookUpDAO.getFullSectionName(Integer.parseInt(requestSchedule.getSectionKey())));
         data.add(lookUp.getFullRoomName(requestSchedule.getRoomCode()));
         data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeIn())));
         data.add(DateTimeBuilder.formatTo12Hour(String.valueOf(requestSchedule.getTimeOut())));
         data.add(lookUp.getFullCourseName(requestSchedule.getCourseCode()));
-        data.add(lookUp.getFullFacultyName(requestSchedule.getFacultyID()));
+        data.add(LookUpDAO.getFullFacultyName(requestSchedule.getFacultyID()));
 
         data.add(String.valueOf(requestSchedule.getID())); //request primary key
 
