@@ -53,12 +53,12 @@ public class RequestsController {
                 && (user.getUserID().equalsIgnoreCase(rs.getRequestor()))) {
             ControlNotifs page = new ControlNotifs();
             student = new StudentDAO().get(rs.getRequestor());
-            String section = lookUp.getFullSectionName(student.getSectionKey());
+            String section = LookUpDAO.getFullSectionName(student.getSectionKey());
             String room = lookUp.getFullRoomName(rs.getRoomCode());
             String timeIn = handleTimeChange(rs.getTimeIn());
             String timeOut = handleTimeChange(rs.getTimeOut());
             String course = lookUp.getFullCourseName(rs.getCourseCode());
-            String faculty = lookUp.getFullFacultyName(rs.getFacultyID());
+            String faculty = LookUpDAO.getFullFacultyName(rs.getFacultyID());
             page.loadRequestForm(student, section, room, timeIn, timeOut, course, faculty, status);
             page.loadRequestStatusHeader(status);
             if (status.equalsIgnoreCase("pending")) {

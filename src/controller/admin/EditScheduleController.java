@@ -15,7 +15,6 @@ import view.common.RequestForm;
 
 public class EditScheduleController {
 
-    private Schedule schedule;
     User user;
     static boolean isRequestSchedule;
     static boolean isStudentRequestor;
@@ -23,7 +22,6 @@ public class EditScheduleController {
     static String requestorName;
 
     public EditScheduleController(Schedule schedule, User user) throws SQLException {
-        this.schedule = schedule;
         this.user = user;
         showArchiveForm(schedule, user);
     }
@@ -31,7 +29,7 @@ public class EditScheduleController {
     public void showArchiveForm(Schedule schedule, User user) throws SQLException {
        
         LookUpDAO lookUpDAO = new LookUpDAO();
-        String fullSectionName = lookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
+        String fullSectionName = LookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
 
         // Determine if this is a request schedule
         
@@ -58,7 +56,7 @@ public class EditScheduleController {
                 if (isStudentRequestor) {
                     requestorName = lookUpDAO.getFullStudentName(requestorID);
                 } else {
-                    requestorName = lookUpDAO.getFullFacultyName(requestorID); // Add this method to LookUpDAO
+                    requestorName = LookUpDAO.getFullFacultyName(requestorID); // Add this method to LookUpDAO
                 }
             }
         }

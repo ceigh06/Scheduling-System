@@ -39,7 +39,6 @@ public class BookingController {
     void showRoomSchedule(User user, Room selectedRoom, RequestSchedule requestSchedule) {
 
         ScheduleDAO scheduleDAO = new ScheduleDAO();
-        CourseDAO courseDAO = new CourseDAO();
 
         List<Schedule> activeSchedules = scheduleDAO
                 .filterActiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
@@ -186,7 +185,6 @@ public class BookingController {
             return;
         }
         ScheduleDAO scheduleDAO = new ScheduleDAO();
-        CourseDAO courseDAO = new CourseDAO();
 
         List<Schedule> inactiveSchedules = scheduleDAO
                 .filterInactiveSchedules(scheduleDAO.getRoom(selectedRoom.getRoomCode()));
@@ -226,20 +224,17 @@ public class BookingController {
         int minHour = Math.max(7, nowHour);
         int maxStartHour = 20 - duration;
 
-        boolean wasClamped = false;
         String newMeridiem = meridiem;
         int displayHour = hour;
 
         // Clamp minimum (can't start before 7am or now)
         if (hour24 < minHour) {
             hour24 = minHour;
-            wasClamped = true;
         }
 
         // Clamp maximum (must end by 8pm)
         if (hour24 > maxStartHour) {
             hour24 = maxStartHour;
-            wasClamped = true;
         }
 
         // Convert back to 12-hour format

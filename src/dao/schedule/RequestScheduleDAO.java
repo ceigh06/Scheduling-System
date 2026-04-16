@@ -20,7 +20,7 @@ public class RequestScheduleDAO {
     static Connection connection;
 
     public RequestScheduleDAO() {
-        this.connection = DBConnection.getConnection();
+        connection = DBConnection.getConnection();
     }
 
     public static void voidOverdueRequest() {

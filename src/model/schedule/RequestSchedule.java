@@ -6,7 +6,6 @@ public class RequestSchedule extends Schedule {
 
     public void load(int ID, String roomCode, String sectionKey, String courseCode, String facultyID, String timeIn,
             String timeOut, String scheduledDay, String status, int isArchived, String dateRequested, String requestorID) {
-        // TODO Auto-generated method stub
         super.load(ID, roomCode, sectionKey, courseCode, facultyID, timeIn, timeOut, scheduledDay, status, isArchived);
         this.dateRequested = dateRequested;
         this.requestorID = requestorID;

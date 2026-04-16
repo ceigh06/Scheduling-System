@@ -26,7 +26,6 @@ import utilities.DateTimeBuilder;
 import view.common.MainFrame;
 import view.common.RoomBrowser;
 import view.common.SearchRooms1;
-import view.common.ViewSchedule;
 
 public class SearchRoomsController {
     String timeIn;
@@ -35,7 +34,6 @@ public class SearchRoomsController {
     RequestSchedule requestSchedule;
 
     // === SCHEDULE BOUNDS (in 24-hour integers) ===
-    private static final int MIN_TIME_IN = 7; // 7:00 AM
     private static final int MAX_TIME_IN = 19; // 7:00 PM
     private static final int MIN_DURATION = 1; // hours
     private static final int MAX_DURATION = 3; // hours
@@ -156,7 +154,6 @@ public class SearchRoomsController {
         int inTotal = inHour24 * 60 + inMinute;
         int outTotal = outHour24 * 60 + outMinute;
 
-        String notification = null;
 
         // =========================================================
         // STEP 1: Clamp Time In within allowed window [7AM .. 7PM]
@@ -168,15 +165,11 @@ public class SearchRoomsController {
             inHour24 = effectiveMin;
             inMinute = 0;
             inTotal = inHour24 * 60;
-            notification = nowHour > 7
-                    ? "Time In cannot be earlier than the current time (" + DateTimeBuilder.formatTo12Hour(nowHour, 0)
-                            + ")."
-                    : "Time In cannot be earlier than 7:00 AM.";
+
         } else if (inHour24 > MAX_TIME_IN) {
             inHour24 = MAX_TIME_IN;
             inMinute = 0;
             inTotal = inHour24 * 60;
-            notification = "Time In cannot be later than 7:00 PM.";
         }
 
         // =========================================================
@@ -201,14 +194,11 @@ public class SearchRoomsController {
             // Out-of-range high: could be beyond 8PM *or* beyond +3h from Time In
             outTotal = maxOutTotal;
             if (outTotal == MAX_TIME_OUT * 60) {
-                notification = "Time Out cannot exceed 8:00 PM.";
             } else {
-                notification = "Maximum duration is 3 hours.";
             }
         } else if (outTotal < minOutTotal) {
             // Out-of-range low: earlier than Time In + 1 hour
             outTotal = minOutTotal;
-            notification = "Minimum duration is 1 hour.";
         }
 
         // Unpack corrected outTotal back to hour/minute

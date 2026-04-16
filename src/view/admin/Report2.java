@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import utilities.DateTimeBuilder;
 import view.components.RoundedPanel;
@@ -73,8 +74,6 @@ public class Report2 extends JPanel {
         toggle.setMaximumSize(new Dimension(200, 30));
 
         // Store reference for later
-        this.toggle = toggle;
-
         header = new JLabel("MOST REQUESTED BUILDINGS");
         header.setFont(new Font("Arial", Font.PLAIN, 15));
 
@@ -82,7 +81,6 @@ public class Report2 extends JPanel {
         selected.setFont(new Font("Arial", Font.BOLD, 15));
 
         // Store reference
-        this.selected = selected;
 
         toggle.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -119,13 +117,12 @@ public class Report2 extends JPanel {
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Store reference
-        this.content = content;
 
         showBuildings.add(content, BorderLayout.CENTER);
 
         mainScrollPane = new JScrollPane(showBuildings);
-        mainScrollPane.setHorizontalScrollBarPolicy(mainScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        mainScrollPane.setVerticalScrollBarPolicy(mainScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        mainScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        mainScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         ScrollBarHelper.applySlimScrollBar(mainScrollPane, 10, 30, Color.GRAY, Color.LIGHT_GRAY);
         mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -419,7 +416,6 @@ public class Report2 extends JPanel {
 
         repSelected = new JLabel(DateTimeBuilder.getCurrentMonth());
         repSelected.setFont(new Font("Arial", Font.BOLD, 18));
-        this.repSelected = repSelected;
 
         JLabel reqOverview = new JLabel("Room Request Distribution");
         reqOverview.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -475,7 +471,6 @@ public class Report2 extends JPanel {
         reportToggle.setMaximumSize(new Dimension(350, 30));
         reportToggle.setToggleTexts("REQUESTED", "UTILIZATION");
         reportToggle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.reportToggle = reportToggle;
 
         reportToggle.addItemListener(e -> {
             if (onReportToggleChanged != null) {
@@ -497,7 +492,6 @@ public class Report2 extends JPanel {
 
         tableTitle = new JLabel("Room Request Distribution");
         tableTitle.setFont(new Font("Arial", Font.PLAIN, 15));
-        this.tableTitle = tableTitle;
 
         JPanel tableTitlewrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
         tableTitlewrapper.setPreferredSize(new Dimension(400, 25));
@@ -519,7 +513,6 @@ public class Report2 extends JPanel {
         countHeader.setFont(new Font("Arial", Font.BOLD, 13));
         countHeader.setForeground(new Color(91, 112, 121));
         countHeader.setHorizontalAlignment(SwingConstants.CENTER);
-        this.countHeader = countHeader;
 
         headerPanel.add(buildingHeader);
         headerPanel.add(countHeader);
@@ -536,7 +529,6 @@ public class Report2 extends JPanel {
         dataPanel.setOpaque(false);
         dataPanel.setMaximumSize(new Dimension(360, rows * 28));
         dataPanel.setPreferredSize(new Dimension(360, rows * 28));
-        this.dataPanel = dataPanel;
 
         // Add hardcoded data initially
         for (String[] row : defaultDataset) {

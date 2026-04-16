@@ -13,7 +13,7 @@ import utilities.DBConnection;
 public class BuildingDAO {
     private static Connection connection;
     public BuildingDAO() throws SQLException {
-        this.connection = DBConnection.getConnection(); // shared connection
+        connection = DBConnection.getConnection(); // shared connection
     }
     public Building get(String buildingCode) throws SQLException{
         

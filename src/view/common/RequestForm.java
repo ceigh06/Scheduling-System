@@ -27,7 +27,6 @@ public class RequestForm extends JPanel {
 
     public static boolean isRequest = false;
     public static String RequestorID;
-    private boolean isStudentRequestor;
 
     ConfirmPanel reqConfirm;
 
@@ -185,7 +184,7 @@ public class RequestForm extends JPanel {
         if (isStudentRequestor) {
             displayName = lookUpDAO.getFullStudentName(requestorID);
         } else {
-            displayName = lookUpDAO.getFullFacultyName(requestorID);
+            displayName = LookUpDAO.getFullFacultyName(requestorID);
         }
     }
     
@@ -208,7 +207,7 @@ public class RequestForm extends JPanel {
             this.timeOut = DateTimeBuilder.formatTo12Hour(schedule.getTimeOut());
         }
         this.course = schedule.getCourseCode();
-        this.professor = lookUpDAO.getFullFacultyName(schedule.getFacultyID());
+        this.professor = LookUpDAO.getFullFacultyName(schedule.getFacultyID());
 
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);

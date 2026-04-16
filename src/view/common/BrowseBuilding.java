@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.BoxLayout;
@@ -26,7 +25,6 @@ public class BrowseBuilding extends JPanel {
     private JPanel wrapper;
     private JPanel bldgContent;
 
-    private List<RoundedButton> buildingButtons = new ArrayList<>();
 
     Consumer<Building> onBuildingClicked;
 

@@ -12,19 +12,16 @@ import java.awt.geom.Ellipse2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+
 
 public class RoundedLabel extends JLabel {
     private Image image;
     private int borderThickness = 0;
-    private int dimension = 0;
     private Color borderColor;
     private String text;
     private JLabel innerLabel;
-    private Color bgColor = new Color(255, 255, 255, 0); // Transparent background
 
     public RoundedLabel(ImageIcon icon, int borderThickness, Color borderColor, int dimension) {
-        this.dimension = dimension;
         this.image = icon.getImage();
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
@@ -33,8 +30,6 @@ public class RoundedLabel extends JLabel {
     }
 
     public RoundedLabel(JLabel label, int borderThickness, Color borderColor, int dimension) {
-    	this.dimension = dimension;
-        this.innerLabel = innerLabel;
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
         setPreferredSize(new Dimension(dimension, dimension));
@@ -51,7 +46,6 @@ public class RoundedLabel extends JLabel {
         // this.setBackground(bgColor);
         this.borderThickness = borderThickness;
         this.borderColor = borderColor;
-        this.dimension = dimension;
         setPreferredSize(new Dimension(dimension, dimension));
         setOpaque(false);
     }

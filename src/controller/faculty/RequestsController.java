@@ -1,13 +1,11 @@
 package controller.faculty;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import dao.LookUpDAO;
@@ -74,7 +72,7 @@ public class RequestsController {
             for (RequestSchedule rs : pendingRequests) {
                 List<String> data = new ArrayList<>();
                 data.add(lookUp.getFullStudentName(rs.getRequestor()));
-                data.add(lookUp.getFullSectionName(Integer.parseInt(rs.getSectionKey())));
+                data.add(LookUpDAO.getFullSectionName(Integer.parseInt(rs.getSectionKey())));
                 data.add(lookUp.getFullCourseName(rs.getCourseCode()));
                 data.add(DateTimeBuilder.formatTo12Hour(
                         Integer.parseInt(rs.getDateRequested().split(" ")[1].split(":")[0]),

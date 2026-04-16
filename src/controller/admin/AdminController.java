@@ -124,7 +124,7 @@ public class AdminController {
         if (reportOneController   != null) reportOneController.refreshData();
         if (reportTwoController   != null) reportTwoController.refreshData();
         if (reportThreeController != null) reportThreeController.refreshData();
-        adminLanding.refresh();
+        AdminLanding.refresh();
         MainFrame.showPanel("AdminLanding", "Home");
         MainFrame.restoreNavBarDefaultState();
     }

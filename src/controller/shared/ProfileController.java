@@ -33,13 +33,13 @@ public class ProfileController {
                 dataStudent.add(lookUp.getFullStudentName(student.getStudentID()));
                 dataStudent.add(lookUp.getFullCollege(student.getStudentID()));
                 dataStudent.add(lookUp.getFullProgramName(student.getStudentID()));
-                dataStudent.add(lookUp.getFullSectionName(student.getSectionKey()));
+                dataStudent.add(LookUpDAO.getFullSectionName(student.getSectionKey()));
                 viewProfile.loadUser(student, dataStudent);
                 break;
             case "Faculty":
                 List<String> dataFaculty = new ArrayList<>();
                 Faculty faculty = new FacultyDAO().get(user.getUserID());
-                dataFaculty.add(lookUp.getFullFacultyName(faculty.getFacultyID()));
+                dataFaculty.add(LookUpDAO.getFullFacultyName(faculty.getFacultyID()));
                 dataFaculty.add(lookUp.getFullCollegeFaculty(faculty.getCollegeCode()));
                 viewProfile.loadUser(faculty, dataFaculty);
                 break;
@@ -67,7 +67,7 @@ public class ProfileController {
 
     private void onLogoutClicked() {
         DBConnection.disconnect(); // logs out the current user connection to the db
-        DBConnection connect = new DBConnection("26.218.110.33:1433", "SchedulingSystem", "admin_user",
+         new DBConnection("26.218.110.33:1433", "SchedulingSystem", "admin_user",
                     "1234");
         MainFrame.restoreNavBarDefaultState();
         TitleHeader.removeIconFromHeader(user.getUserType());

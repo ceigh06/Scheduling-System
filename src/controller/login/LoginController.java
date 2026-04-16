@@ -7,16 +7,12 @@ import dao.schedule.RequestScheduleDAO;
 
 import java.sql.SQLException;
 
-import org.jfree.chart.title.Title;
 
-import model.user.Faculty;
-import model.user.Student;
 import model.user.User;
 import utilities.DBConnection;
 import utilities.DateTimeBuilder;
 import utilities.LoginValidator;
 import view.common.MainFrame;
-import view.common.TitleHeader;
 import view.landing.Login;
 
 public class LoginController {
@@ -79,7 +75,6 @@ public class LoginController {
 
                 new StudentController(authenticatedUser);
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else if (authenticatedUser.getUserType().equals("Faculty")) {

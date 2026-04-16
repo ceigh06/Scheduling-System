@@ -35,7 +35,7 @@ public class RequestHistoryController {
             List<String> cardData = new ArrayList<>();
             cardData.add(rs.getStatus());
             cardData.add(lookUp.getFullStudentName(rs.getRequestor()));
-            cardData.add(lookUp.getFullSectionName(Integer.parseInt(rs.getSectionKey())));
+            cardData.add(LookUpDAO.getFullSectionName(Integer.parseInt(rs.getSectionKey())));
             cardData.add(rs.getCourseCode());
             cardData.add(handleTimeFormatting(rs.getDateRequested().split(" ")[1]));
             cardData.add(lookUp.getFullRoomName(rs.getRoomCode()));

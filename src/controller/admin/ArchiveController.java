@@ -15,7 +15,6 @@ import view.common.RequestForm;
 
 public class ArchiveController {
 
-    private Schedule schedule;
     User user;
     static String requestorID = null;
     static String requestorName = null;
@@ -27,7 +26,6 @@ public class ArchiveController {
     }
 
     public ArchiveController(User user, Schedule schedule, Boolean viewArchives) throws SQLException {
-        this.schedule = schedule;
         this.user = user;
         if (viewArchives) {
             showArchiveForm(schedule, user, viewArchives);
@@ -39,7 +37,7 @@ public class ArchiveController {
     public void showArchiveForm(Schedule schedule, User user, Boolean viewArchives) throws SQLException {
         
         LookUpDAO lookUpDAO = new LookUpDAO();
-        String fullSectionName = lookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
+        String fullSectionName = LookUpDAO.getFullSectionName(Integer.parseInt(schedule.getSectionKey()));
 
         // Determine if this is a request schedule
         requestorID = null;
@@ -63,7 +61,7 @@ public class ArchiveController {
                 if (isStudentRequestor) {
                     requestorName = lookUpDAO.getFullStudentName(requestorID);
                 } else {
-                    requestorName = lookUpDAO.getFullFacultyName(requestorID);
+                    requestorName = LookUpDAO.getFullFacultyName(requestorID);
                 }
             }
         }

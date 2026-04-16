@@ -15,7 +15,6 @@ public class DBConnection {
 		try {
 			connection = DriverManager.getConnection(url, user, pass);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // connection is established here, if it fails, an exception is thrown and the
 			// program will crash. this is intentional because the program cannot run
