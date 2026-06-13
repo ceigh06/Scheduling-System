@@ -82,21 +82,8 @@ public class RequestHistory extends JPanel {
 		JLabel noReqLabel = new JLabel("No Request Schedule for this day!", SwingConstants.CENTER);
 		noReqLabel.setFont(new Font("Arial", Font.BOLD, 16));
 		noReqLabel.setForeground(new Color(117, 144, 156));
-		noRequests.add(noReqLabel, BorderLayout.CENTER);
-		
-		
-		int requestsCount = 0; // example count, replace with actual logic to check requests for the selected date
-		if(requestsCount > 0){ // if there are requests, load them if none, show no requests panel
-			newRequest(true);
-			newRequest(false);
-			newRequest(true);
-		}else {
-			mainWrapper.add(noRequests);
-		}
-				
-		
-	    
-	    
+		noRequests.add(noReqLabel, BorderLayout.CENTER);		  
+		mainWrapper.add(noRequests);
 	}
 
 	public void newRequest(List<String> requestData) {
@@ -318,9 +305,11 @@ public class RequestHistory extends JPanel {
 
 		if (filteredCardData.isEmpty()) {
 			noRequests();
+			System.out.println("No requests for " + date);
 		} else {
 			for (List<String> cardData : filteredCardData) {
 				newRequest(cardData);
+				System.out.println("erm");
 			}
 		}
 
