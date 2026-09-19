@@ -10,5 +10,6 @@ public class Launcher {
                     "1234");
                 MainFrame.init();
                 new LoginController();
+                double pi = 3.15;
         }
 }
